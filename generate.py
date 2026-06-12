@@ -9,7 +9,7 @@ import glob
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import requests
@@ -323,23 +323,25 @@ def stage_or_group(m):
 def build_today(matches):
     now = datetime.now(TZ)
     today = now.date()
+    window_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    window_end = window_start + timedelta(hours=32)  # t/m 08:00 morgenvroeg
 
-    def local_date(m):
+    def local_dt(m):
         return datetime.fromisoformat(
-            m["utcDate"].replace("Z", "+00:00")).astimezone(TZ).date()
+            m["utcDate"].replace("Z", "+00:00")).astimezone(TZ)
 
-    todays = sorted([m for m in matches if local_date(m) == today],
+    todays = sorted([m for m in matches
+                     if window_start <= local_dt(m) < window_end],
                     key=lambda x: x["utcDate"])
 
     header_date = f"{DAGEN[now.weekday()]} {now.day} {MAANDEN[now.month - 1]}"
 
     if not todays:
-        upcoming = sorted([m for m in matches if local_date(m) > today],
+        upcoming = sorted([m for m in matches if local_dt(m) >= window_end],
                           key=lambda x: x["utcDate"])
         sub = "Geen wedstrijden vandaag — rustdag."
         if upcoming:
-            nxt = datetime.fromisoformat(
-                upcoming[0]["utcDate"].replace("Z", "+00:00")).astimezone(TZ)
+            nxt = local_dt(upcoming[0])
             sub = (f"Geen wedstrijden vandaag. Volgende speeldag: "
                    f"{DAGEN[nxt.weekday()]} {nxt.day} {MAANDEN[nxt.month - 1]}.")
         return f'''
@@ -356,7 +358,11 @@ def build_today(matches):
         home, away = nl_name(m["homeTeam"]), nl_name(m["awayTeam"])
         home_lbl = home or "Nog te bepalen"
         away_lbl = away or "Nog te bepalen"
-        _, tijd = fmt_when(m["utcDate"])
+        dt = local_dt(m)
+        tijd = dt.strftime("%H:%M")
+        is_night = dt.date() > today
+        when = (f'{tijd}<span class="t-night">vannacht</span>'
+                if is_night else tijd)
         ft = m.get("score", {}).get("fullTime", {})
         status = m["status"]
         if status == "FINISHED" and ft.get("home") is not None:
@@ -368,7 +374,7 @@ def build_today(matches):
         nl_cls = " t-nl" if "Nederland" in (home, away) else ""
         rows.append(f'''
       <div class="today-row{nl_cls}">
-        <div class="t-when">{tijd}</div>
+        <div class="t-when">{when}</div>
         <div class="t-teams">{flag(home)} {home_lbl} — {away_lbl} {flag(away)}</div>
         <div class="t-meta">{stage_or_group(m)}</div>
         {score}
@@ -377,7 +383,7 @@ def build_today(matches):
     return f'''
   <div class="today">
     <div class="today-head">
-      <span class="today-title">Vandaag</span>
+      <span class="today-title">Vandaag &amp; vannacht</span>
       <span class="today-date">{header_date} · {len(todays)} wedstrijden</span>
     </div>
     {"".join(rows)}
@@ -442,6 +448,7 @@ TEMPLATE = """<!DOCTYPE html>
   .today-row:first-of-type{border-top:none;}
   .today-row.t-nl{color:#FFB385;font-weight:600;}
   .t-when{font-variant-numeric:tabular-nums;color:rgba(244,246,242,.75);font-size:12.5px;}
+  .t-night{display:block;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:#FFB385;margin-top:1px;}
   .t-teams{line-height:1.35;}
   .t-meta{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,246,242,.5);}
   .t-score{font-family:'Caveat',cursive;font-size:26px;font-weight:700;color:#FFB385;text-align:right;}
