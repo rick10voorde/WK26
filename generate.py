@@ -5,6 +5,8 @@ Haalt uitslagen en standen op via football-data.org en schrijft index.html.
 
 Vereist env var: FOOTBALL_DATA_TOKEN (gratis account op football-data.org)
 """
+import glob
+import json
 import os
 import sys
 from datetime import datetime
@@ -85,6 +87,49 @@ def fetch(path):
     return r.json()
 
 
+# ── WK-poule ──────────────────────────────────────────────
+PUNTEN_EXACT = 10   # uitslag precies goed
+PUNTEN_TOTO = 5     # winnaar/gelijkspel goed
+
+PLAYERS = []  # [{naam, kleur, voorspellingen{...}}]
+PLAYER_COLORS = ["#F05A1A", "#2244C8", "#1E7A4C", "#8E44AD", "#C0392B"]
+
+
+def load_predictions():
+    files = sorted(glob.glob("voorspellingen/*.json"))
+    for i, fp in enumerate(files):
+        try:
+            with open(fp, encoding="utf-8") as f:
+                data = json.load(f)
+            PLAYERS.append({
+                "naam": data.get("naam") or os.path.basename(fp).split(".")[0].title(),
+                "kleur": PLAYER_COLORS[i % len(PLAYER_COLORS)],
+                "voorspellingen": data.get("voorspellingen", {}),
+            })
+        except Exception as e:
+            print(f"Waarschuwing: {fp} overgeslagen ({e})")
+
+
+def parse_pred(s):
+    if not s or "-" not in str(s):
+        return None
+    try:
+        h, u = str(s).replace("–", "-").split("-")
+        return int(h.strip()), int(u.strip())
+    except ValueError:
+        return None
+
+
+def pred_points(pred, ah, au):
+    ph, pu = pred
+    if ph == ah and pu == au:
+        return PUNTEN_EXACT
+    if (ph > pu and ah > au) or (ph < pu and ah < au) or (ph == pu and ah == au):
+        return PUNTEN_TOTO
+    return 0
+
+
+
 def fmt_when(utc_date):
     dt = datetime.fromisoformat(utc_date.replace("Z", "+00:00")).astimezone(TZ)
     return f"{dt.day} {MAANDEN[dt.month - 1]}", dt.strftime("%H:%M")
@@ -112,9 +157,29 @@ def match_row(m, highlight_nl=True):
             return f'<span class="nl-name">{n}</span>'
         return n
 
+    # poule-chips: voorspellingen van de spelers bij deze wedstrijd
+    chips = ""
+    if PLAYERS and home and away:
+        key = f"{home} - {away}"
+        parts = []
+        for p in PLAYERS:
+            pred = parse_pred(p["voorspellingen"].get(key))
+            if not pred:
+                continue
+            cls = "chip"
+            if played:
+                pts = pred_points(pred, ft["home"], ft["away"])
+                cls += " exact" if pts == PUNTEN_EXACT else (" toto" if pts == PUNTEN_TOTO else " mis")
+            parts.append(
+                f'<span class="{cls}" style="--pc:{p["kleur"]}">'
+                f'{p["naam"][0]}&thinsp;{pred[0]}-{pred[1]}</span>'
+            )
+        if parts:
+            chips = f'<div class="chips">{"".join(parts)}</div>'
+
     return f'''<div class="match {"played" if played else ""}">
       <div class="m-when"><b>{datum}</b>{tijd}</div>
-      <div class="m-teams">{flag(home)} {nm(home_lbl)}<br>{flag(away)} {nm(away_lbl)}</div>
+      <div class="m-teams">{flag(home)} {nm(home_lbl)}<br>{flag(away)} {nm(away_lbl)}{chips}</div>
       {score}
     </div>'''
 
@@ -191,6 +256,134 @@ def build_knockout(matches):
     return "".join(html), ko_played
 
 
+def build_poule(matches):
+    if not PLAYERS:
+        return ""
+    # echte uitslagen verzamelen op key "Thuis - Uit"
+    results = {}
+    for m in matches:
+        ft = m.get("score", {}).get("fullTime", {})
+        if m["status"] == "FINISHED" and ft.get("home") is not None:
+            h, u = nl_name(m["homeTeam"]), nl_name(m["awayTeam"])
+            if h and u:
+                results[f"{h} - {u}"] = (ft["home"], ft["away"])
+
+    rows = []
+    for p in PLAYERS:
+        total = exact = toto = filled = 0
+        for key, val in p["voorspellingen"].items():
+            pred = parse_pred(val)
+            if not pred:
+                continue
+            filled += 1
+            if key in results:
+                pts = pred_points(pred, *results[key])
+                total += pts
+                if pts == PUNTEN_EXACT:
+                    exact += 1
+                elif pts == PUNTEN_TOTO:
+                    toto += 1
+        rows.append((p, total, exact, toto, filled))
+
+    rows.sort(key=lambda r: (-r[1], -r[2], r[0]["naam"]))
+    medals = ["🥇", "🥈", "🥉"]
+    html = []
+    for i, (p, total, exact, toto, filled) in enumerate(rows):
+        html.append(f'''
+      <div class="poule-row">
+        <div class="poule-pos">{medals[i] if i < 3 else i + 1}</div>
+        <div class="poule-naam"><span class="poule-dot" style="background:{p["kleur"]}"></span>{p["naam"]}</div>
+        <div class="poule-detail">{exact}× exact · {toto}× toto · {filled} ingevuld</div>
+        <div class="poule-punten">{total}</div>
+      </div>''')
+
+    return f'''
+  <div class="poule">
+    <div class="poule-head">
+      <span class="poule-title">De Poule</span>
+      <span class="poule-rules">exact = {PUNTEN_EXACT} ptn · toto = {PUNTEN_TOTO} ptn</span>
+    </div>
+    {"".join(html)}
+  </div>'''
+
+
+
+DAGEN = ["maandag", "dinsdag", "woensdag", "donderdag",
+         "vrijdag", "zaterdag", "zondag"]
+STAGE_LABEL = dict(STAGES)
+
+
+def stage_or_group(m):
+    g = m.get("group")
+    if g:
+        return f"Groep {g.replace('GROUP_', '')}"
+    return STAGE_LABEL.get(m.get("stage"), "")
+
+
+def build_today(matches):
+    now = datetime.now(TZ)
+    today = now.date()
+
+    def local_date(m):
+        return datetime.fromisoformat(
+            m["utcDate"].replace("Z", "+00:00")).astimezone(TZ).date()
+
+    todays = sorted([m for m in matches if local_date(m) == today],
+                    key=lambda x: x["utcDate"])
+
+    header_date = f"{DAGEN[now.weekday()]} {now.day} {MAANDEN[now.month - 1]}"
+
+    if not todays:
+        upcoming = sorted([m for m in matches if local_date(m) > today],
+                          key=lambda x: x["utcDate"])
+        sub = "Geen wedstrijden vandaag — rustdag."
+        if upcoming:
+            nxt = datetime.fromisoformat(
+                upcoming[0]["utcDate"].replace("Z", "+00:00")).astimezone(TZ)
+            sub = (f"Geen wedstrijden vandaag. Volgende speeldag: "
+                   f"{DAGEN[nxt.weekday()]} {nxt.day} {MAANDEN[nxt.month - 1]}.")
+        return f'''
+  <div class="today">
+    <div class="today-head">
+      <span class="today-title">Vandaag</span>
+      <span class="today-date">{header_date}</span>
+    </div>
+    <div class="today-empty">{sub}</div>
+  </div>'''
+
+    rows = []
+    for m in todays:
+        home, away = nl_name(m["homeTeam"]), nl_name(m["awayTeam"])
+        home_lbl = home or "Nog te bepalen"
+        away_lbl = away or "Nog te bepalen"
+        _, tijd = fmt_when(m["utcDate"])
+        ft = m.get("score", {}).get("fullTime", {})
+        status = m["status"]
+        if status == "FINISHED" and ft.get("home") is not None:
+            score = f'<span class="t-score">{ft["home"]}–{ft["away"]}</span>'
+        elif status in ("IN_PLAY", "PAUSED") and ft.get("home") is not None:
+            score = f'<span class="t-score t-live">{ft["home"]}–{ft["away"]} ●</span>'
+        else:
+            score = f'<span class="t-time">{tijd}</span>'
+        nl_cls = " t-nl" if "Nederland" in (home, away) else ""
+        rows.append(f'''
+      <div class="today-row{nl_cls}">
+        <div class="t-when">{tijd}</div>
+        <div class="t-teams">{flag(home)} {home_lbl} — {away_lbl} {flag(away)}</div>
+        <div class="t-meta">{stage_or_group(m)}</div>
+        {score}
+      </div>''')
+
+    return f'''
+  <div class="today">
+    <div class="today-head">
+      <span class="today-title">Vandaag</span>
+      <span class="today-date">{header_date} · {len(todays)} wedstrijden</span>
+    </div>
+    {"".join(rows)}
+  </div>'''
+
+
 TEMPLATE = """<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -241,6 +434,38 @@ TEMPLATE = """<!DOCTYPE html>
   .m-score.tbd{font-family:'Archivo',sans-serif;font-size:12px;color:#B6BFB6;transform:none;letter-spacing:.05em;}
   .m-score.live{color:var(--groen);}
   .match.played{background:linear-gradient(90deg,transparent,rgba(34,68,200,.045) 45%,transparent);}
+  .today{background:var(--ink);color:#F4F6F2;border-radius:12px;padding:18px 20px;margin-bottom:26px;}
+  .today-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;border-bottom:1.5px solid rgba(244,246,242,.25);padding-bottom:10px;margin-bottom:4px;}
+  .today-title{font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.02em;}
+  .today-date{font-size:12px;color:rgba(244,246,242,.65);}
+  .today-row{display:grid;grid-template-columns:52px 1fr auto 58px;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed rgba(244,246,242,.18);font-size:14px;}
+  .today-row:first-of-type{border-top:none;}
+  .today-row.t-nl{color:#FFB385;font-weight:600;}
+  .t-when{font-variant-numeric:tabular-nums;color:rgba(244,246,242,.75);font-size:12.5px;}
+  .t-teams{line-height:1.35;}
+  .t-meta{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,246,242,.5);}
+  .t-score{font-family:'Caveat',cursive;font-size:26px;font-weight:700;color:#FFB385;text-align:right;}
+  .t-live{color:#6FDF9B;}
+  .t-time{font-size:12.5px;color:rgba(244,246,242,.55);text-align:right;}
+  .today-empty{padding:12px 0 4px;font-size:13.5px;color:rgba(244,246,242,.75);}
+  @media (max-width:480px){.t-meta{display:none;}.today-row{grid-template-columns:46px 1fr 56px;}}
+  .chips{margin-top:3px;display:flex;flex-wrap:wrap;gap:4px;}
+  .chip{font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:9px;border:1.2px solid var(--pc);color:var(--pc);background:#fff;font-variant-numeric:tabular-nums;}
+  .chip.exact{background:var(--pc);color:#fff;}
+  .chip.toto{background:color-mix(in srgb,var(--pc) 15%,#fff);}
+  .chip.mis{opacity:.42;}
+  .poule{background:var(--ink);color:#F4F6F2;border-radius:12px;padding:18px 20px;margin-bottom:26px;}
+  .poule-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;border-bottom:1.5px solid rgba(244,246,242,.25);padding-bottom:10px;margin-bottom:6px;}
+  .poule-title{font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.02em;}
+  .poule-rules{font-size:11.5px;color:rgba(244,246,242,.65);}
+  .poule-row{display:grid;grid-template-columns:34px 1fr auto 60px;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed rgba(244,246,242,.18);}
+  .poule-row:first-of-type{border-top:none;}
+  .poule-pos{font-size:18px;text-align:center;}
+  .poule-naam{font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .poule-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .poule-detail{font-size:11.5px;color:rgba(244,246,242,.6);text-align:right;}
+  .poule-punten{font-family:'Caveat',cursive;font-size:30px;font-weight:700;text-align:right;color:#FFB385;}
+  @media (max-width:480px){.poule-detail{display:none;}.poule-row{grid-template-columns:34px 1fr 60px;}}
   .section-title{font-family:'Anton',sans-serif;font-size:clamp(26px,4vw,38px);text-transform:uppercase;margin:54px 0 6px;}
   .section-sub{font-size:13.5px;color:var(--ink-soft);margin-bottom:20px;max-width:720px;}
   .ko-card h3{font-size:12px;letter-spacing:.16em;text-transform:uppercase;border-bottom:1.5px solid var(--ink);padding-bottom:7px;margin-bottom:8px;}
@@ -267,6 +492,8 @@ TEMPLATE = """<!DOCTYPE html>
     <span><span class="nl-demo">Nederland</span>&nbsp; wedstrijden van Oranje</span>
     <span>Alle tijden zijn Nederlandse tijd</span>
   </div>
+  __TODAY__
+  __POULE__
   <div class="groups">__GROUPS__</div>
   <h2 class="section-title">Knock-outfase</h2>
   <p class="section-sub">Vanaf 28 juni. De nummers 1 en 2 van elke groep plaatsen zich, plus de acht beste nummers 3 — in totaal 32 landen.</p>
@@ -283,14 +510,19 @@ def main():
         print("FOUT: zet FOOTBALL_DATA_TOKEN als environment variable / repo secret.")
         sys.exit(1)
 
+    load_predictions()
     matches = fetch("/matches")["matches"]
     standings = fetch("/standings")
 
     groups_html, played = build_groups(matches, standings)
     ko_html, ko_played = build_knockout(matches)
+    poule_html = build_poule(matches)
+    today_html = build_today(matches)
 
     updated = datetime.now(TZ).strftime("%d-%m-%Y %H:%M")
     html = (TEMPLATE
+            .replace("__TODAY__", today_html)
+            .replace("__POULE__", poule_html)
             .replace("__GROUPS__", groups_html)
             .replace("__KO__", ko_html)
             .replace("__UPDATED__", updated)
