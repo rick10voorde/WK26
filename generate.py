@@ -98,6 +98,35 @@ SUPABASE_URL = ""
 SUPABASE_KEY = ""
 SPELERS = ["Rick", "Rean", "Tung"]
 
+AI_ANALYSE = {}   # {"Thuis - Uit": {preview, score, kansen, markt, lean, vertrouwen, odds}}
+
+
+def load_ai_analyse():
+    """Leest ai_analyse.json (door ai_bets.py geschreven). Ontbreekt het, dan
+    blijft AI_ANALYSE leeg en verschijnen er simpelweg geen AI-bet knoppen."""
+    global AI_ANALYSE
+    if not os.path.exists("ai_analyse.json"):
+        return
+    try:
+        with open("ai_analyse.json", encoding="utf-8") as f:
+            AI_ANALYSE = json.load(f) or {}
+        print(f"AI-analyses geladen: {len(AI_ANALYSE)}")
+    except Exception as e:
+        print("ai_analyse.json kon niet worden gelezen:", e)
+        AI_ANALYSE = {}
+
+
+def ai_bet_block(key):
+    """Knop + (verborgen) paneel met de AI-analyse voor deze wedstrijd."""
+    a = AI_ANALYSE.get(key)
+    if not a:
+        return ""
+    payload = json.dumps(a, ensure_ascii=False).replace('"', "&quot;")
+    return (f'<button class="bet-btn" type="button" data-bet="{key}">'
+            f'🤖 AI-bet</button>'
+            f'<div class="bet-panel" data-betpanel="{key}" '
+            f'data-analyse="{payload}" hidden></div>')
+
 
 def load_predictions():
     """Leest poule.txt met de Supabase-gegevens:
@@ -168,15 +197,18 @@ def match_row(m, highlight_nl=True):
 
     # data-attributen zodat de poule-JS deze wedstrijd kan koppelen
     key = f"{home} - {away}" if home and away else ""
+    ts = int(datetime.fromisoformat(
+        m["utcDate"].replace("Z", "+00:00")).timestamp() * 1000)
     res_attr = ""
     if played:
         res_attr = f' data-th="{ft["home"]}" data-tu="{ft["away"]}"'
-    data = f' data-key="{key}"{res_attr}' if key else ""
+    data = f' data-key="{key}" data-ts="{ts}"{res_attr}' if key else ""
     chips = f'<div class="chips" data-chips="{key}"></div>' if key else ""
+    bet = ai_bet_block(key) if (key and not played) else ""
 
     return f'''<div class="match {"played" if played else ""}"{data}>
       <div class="m-when"><b>{datum}</b>{tijd}</div>
-      <div class="m-teams">{flag(home)} {nm(home_lbl)}<br>{flag(away)} {nm(away_lbl)}{chips}</div>
+      <div class="m-teams">{flag(home)} {nm(home_lbl)}<br>{flag(away)} {nm(away_lbl)}{chips}{bet}</div>
       {score}
     </div>'''
 
@@ -426,6 +458,42 @@ TEMPLATE = """<!DOCTYPE html>
   .chip.exact{background:var(--pc);color:#fff;}
   .chip.toto{background:color-mix(in srgb,var(--pc) 15%,#fff);}
   .chip.mis{opacity:.42;}
+  .bet-btn{margin-top:5px;display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;letter-spacing:.02em;padding:2px 8px;border-radius:9px;border:1.2px solid var(--groen);color:var(--groen);background:#fff;cursor:pointer;line-height:1.5;}
+  .bet-btn:hover{background:var(--groen);color:#fff;}
+  .bet-btn.open{background:var(--groen);color:#fff;}
+  .bet-panel{margin-top:6px;background:#F0F4F0;border:1px solid var(--line);border-left:3px solid var(--groen);border-radius:8px;padding:9px 11px;font-size:12px;line-height:1.45;color:var(--ink);}
+  .bet-panel .bp-preview{margin-bottom:6px;}
+  .bet-panel .bp-line{display:flex;gap:6px;margin:2px 0;}
+  .bet-panel .bp-k{color:var(--ink-soft);min-width:74px;font-weight:600;}
+  .bet-panel .bp-markt{font-weight:700;color:var(--groen);}
+  .bet-panel .bp-odds{font-variant-numeric:tabular-nums;}
+  .bet-panel .bp-conf{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:1px 7px;border-radius:8px;background:#E2EAE2;color:var(--groen);}
+  .bet-panel .bp-share{margin-top:8px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:7px;border:1px solid var(--groen);background:#fff;color:var(--groen);cursor:pointer;}
+  .bet-panel .bp-share:hover{background:var(--groen);color:#fff;}
+  .bet-panel .bp-disc{margin-top:7px;font-size:9.5px;color:var(--ink-soft);font-style:italic;}
+  .mday{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--oranje);font-weight:700;margin:12px 0 2px;padding-bottom:3px;border-bottom:1px solid var(--line);}
+  .mday:first-child{margin-top:0;}
+  .toon-alle{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:12px;color:var(--ink-soft);cursor:pointer;}
+  .modal-leeg{padding:16px 0;font-size:13px;color:var(--ink-soft);text-align:center;}
+  /* ── mobiel ── */
+  @media (max-width:560px){
+    .wrap{padding:18px 12px 48px;}
+    .groups,.ko-grid{grid-template-columns:1fr;gap:14px;}
+    h1{font-size:clamp(30px,9vw,52px);}
+    .statusline{font-size:12.5px;gap:6px 16px;}
+    .legend{gap:6px 14px;font-size:12px;}
+    .match{grid-template-columns:62px 1fr 50px;}
+    .bet-btn{font-size:11.5px;padding:4px 11px;}
+    .bet-panel{font-size:12.5px;}
+    .today-row{grid-template-columns:46px 1fr 54px;}
+    .modal{margin:10px 0;border-radius:12px;}
+    .modal-body{max-height:70vh;}
+    .mrow{grid-template-columns:1fr 104px;}
+    .mrow-inp input{width:44px;padding:8px 0;font-size:16px;}
+    .speler-chip{padding:8px 16px;font-size:13.5px;}
+    .poule-btn{padding:10px 16px;font-size:13.5px;}
+    .poule-row{grid-template-columns:30px 1fr 56px;}
+  }
   .poule{background:var(--ink);color:#F4F6F2;border-radius:12px;padding:18px 20px;margin-bottom:26px;}
   .poule-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;border-bottom:1.5px solid rgba(244,246,242,.25);padding-bottom:10px;margin-bottom:6px;}
   .poule-title{font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.02em;}
@@ -513,6 +581,7 @@ TEMPLATE = """<!DOCTYPE html>
 </div>
 
 __POULE_JS__
+__BETS_JS__
 </body>
 </html>
 """
@@ -541,9 +610,9 @@ def build_poule_js():
   // alle wedstrijden uit de pagina halen (met evt. echte uitslag)
   const MATCHES = [...document.querySelectorAll(".match[data-key]")].map(el => ({{
     key: el.getAttribute("data-key"),
+    ts: el.hasAttribute("data-ts") ? +el.getAttribute("data-ts") : 0,
     th: el.hasAttribute("data-th") ? +el.getAttribute("data-th") : null,
-    tu: el.hasAttribute("data-tu") ? +el.getAttribute("data-tu") : null,
-    when: (el.querySelector(".m-when")||{{}}).textContent || ""
+    tu: el.hasAttribute("data-tu") ? +el.getAttribute("data-tu") : null
   }})).filter(m => m.key);
 
   const punten = (ph,pu,ah,au) => {{
@@ -634,20 +703,41 @@ def build_poule_js():
   document.getElementById("modal-close").addEventListener("click", ()=>modal.classList.remove("open"));
   modal.addEventListener("click", e=>{{ if(e.target===modal) modal.classList.remove("open"); }});
 
-  function openModal(){{
-    document.getElementById("modal-titel").textContent = "Voorspellingen — " + IK;
-    body.innerHTML = MATCHES.map(m=>{{
-      const d = predVan(IK,m.key);
-      const locked = m.th!=null; // gespeeld: niet meer wijzigbaar
-      return `<div class="mrow">
-        <div><div class="mrow-when">${{m.when.replace(/\\s+/g,' ').trim()}}</div>${{m.key}}</div>
+  let TOON_ALLE = false;
+  function modalMatches(){{
+    let arr = MATCHES.slice().sort((a,b)=> (a.ts||0)-(b.ts||0));
+    if(!TOON_ALLE) arr = arr.filter(m=> m.th==null);   // standaard: alleen nog te spelen
+    return arr;
+  }}
+  function renderModalBody(){{
+    const arr = modalMatches();
+    let html = "", lastDay = "";
+    arr.forEach(m=>{{
+      const d = new Date(m.ts);
+      const day = d.toLocaleDateString('nl-NL',{{weekday:'long',day:'numeric',month:'short'}});
+      if(day!==lastDay){{ html += `<div class="mday">${{day}}</div>`; lastDay = day; }}
+      const pred = predVan(IK,m.key);
+      const locked = m.th!=null;
+      const tijd = d.toLocaleTimeString('nl-NL',{{hour:'2-digit',minute:'2-digit'}});
+      html += `<div class="mrow">
+        <div><div class="mrow-when">${{tijd}}</div>${{m.key}}</div>
         <div class="mrow-inp">
-          <input type="number" min="0" max="20" data-key="${{m.key}}" data-side="h" value="${{d?d.thuis:''}}" ${{locked?'disabled':''}}>
+          <input type="number" min="0" max="20" data-key="${{m.key}}" data-side="h" value="${{pred?pred.thuis:''}}" ${{locked?'disabled':''}}>
           <span>-</span>
-          <input type="number" min="0" max="20" data-key="${{m.key}}" data-side="u" value="${{d?d.uit:''}}" ${{locked?'disabled':''}}>
+          <input type="number" min="0" max="20" data-key="${{m.key}}" data-side="u" value="${{pred?pred.uit:''}}" ${{locked?'disabled':''}}>
         </div>
       </div>`;
-    }}).join("");
+    }});
+    if(!arr.length) html = `<div class="modal-leeg">Geen komende wedstrijden om in te vullen.</div>`;
+    html += `<label class="toon-alle"><input type="checkbox" id="toon-alle-chk" ${{TOON_ALLE?'checked':''}}> ook al gespeelde wedstrijden tonen</label>`;
+    body.innerHTML = html;
+    const chk = document.getElementById("toon-alle-chk");
+    if(chk) chk.addEventListener("change", e=>{{ TOON_ALLE = e.target.checked; renderModalBody(); }});
+  }}
+  function openModal(){{
+    document.getElementById("modal-titel").textContent = "Voorspellingen — " + IK;
+    TOON_ALLE = false;
+    renderModalBody();
     status.textContent = "";
     modal.classList.add("open");
   }}
@@ -685,6 +775,73 @@ def build_poule_js():
 </script>'''
 
 
+def build_bets_js():
+    if not AI_ANALYSE:
+        return ""
+    return '''<script>
+(function(){
+  function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function oddsLine(o){
+    if(!o) return '';
+    const p=[];
+    if(o.thuis!=null) p.push('1 '+o.thuis);
+    if(o.gelijk!=null) p.push('X '+o.gelijk);
+    if(o.uit!=null) p.push('2 '+o.uit);
+    let s=p.join('   ');
+    if(o.over25!=null||o.under25!=null){ s+=(s?'   |   ':'')+'o2.5 '+(o.over25!=null?o.over25:'-')+'  u2.5 '+(o.under25!=null?o.under25:'-'); }
+    const bron=o.bron?' ('+esc(o.bron)+')':'';
+    return s?('<div class="bp-line"><span class="bp-k">Odds</span><span class="bp-odds">'+s+bron+'</span></div>'):'';
+  }
+  function render(a,key){
+    const k=a.kansen||{};
+    const kans=(k.thuis!=null)?(k.thuis+'% / '+k.gelijk+'% / '+k.uit+'%'):'';
+    let h='';
+    if(a.preview) h+='<div class="bp-preview">'+esc(a.preview)+'</div>';
+    if(a.markt) h+='<div class="bp-line"><span class="bp-k">Bet-idee</span><span class="bp-markt">'+esc(a.markt)+'</span></div>';
+    if(a.score) h+='<div class="bp-line"><span class="bp-k">Verwacht</span><span>'+esc(a.score)+'</span></div>';
+    if(kans) h+='<div class="bp-line"><span class="bp-k">Kans 1/X/2</span><span>'+kans+'</span></div>';
+    h+=oddsLine(a.odds);
+    if(a.lean) h+='<div class="bp-line"><span class="bp-k">Waarom</span><span>'+esc(a.lean)+'</span></div>';
+    if(a.vertrouwen) h+='<div class="bp-line"><span class="bp-k">Vertrouwen</span><span class="bp-conf">'+esc(a.vertrouwen)+'</span></div>';
+    h+='<button class="bp-share" type="button">📋 Deel met de groep</button>';
+    h+='<div class="bp-disc">AI-inschatting, geen garantie. Wed met mate.</div>';
+    return h;
+  }
+  function shareText(a,key){
+    let t='🤖 '+key+'\\n';
+    if(a.markt) t+='Bet-idee: '+a.markt+'\\n';
+    if(a.score) t+='Verwacht: '+a.score+'\\n';
+    if(a.odds){ const o=a.odds,p=[]; if(o.thuis!=null)p.push('1 '+o.thuis); if(o.gelijk!=null)p.push('X '+o.gelijk); if(o.uit!=null)p.push('2 '+o.uit); if(p.length) t+='Odds'+(o.bron?' ('+o.bron+')':'')+': '+p.join('  ')+'\\n'; }
+    if(a.lean) t+=a.lean+'\\n';
+    t+='(AI-inschatting, geen garantie)';
+    return t;
+  }
+  document.querySelectorAll('.bet-btn[data-bet]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key=btn.getAttribute('data-bet');
+      const panel=document.querySelector('.bet-panel[data-betpanel="'+CSS.escape(key)+'"]');
+      if(!panel) return;
+      if(panel.hidden){
+        if(!panel.dataset.rendered){
+          let a={}; try{ a=JSON.parse(panel.getAttribute('data-analyse')); }catch(e){}
+          panel.innerHTML=render(a,key);
+          panel.dataset.rendered='1';
+          const sb=panel.querySelector('.bp-share');
+          if(sb) sb.addEventListener('click', ()=>{
+            let a2={}; try{ a2=JSON.parse(panel.getAttribute('data-analyse')); }catch(e){}
+            navigator.clipboard.writeText(shareText(a2,key)).then(
+              ()=>{ sb.textContent='✓ Gekopieerd'; setTimeout(()=>sb.textContent='📋 Deel met de groep',1500); },
+              ()=>{ sb.textContent='Kopiëren mislukt'; });
+          });
+        }
+        panel.hidden=false; btn.classList.add('open');
+      } else { panel.hidden=true; btn.classList.remove('open'); }
+    });
+  });
+})();
+</script>'''
+
+
 TEMPLATE_FOOTER_NOTE = None
 
 
@@ -694,6 +851,7 @@ def main():
         sys.exit(1)
 
     load_predictions()
+    load_ai_analyse()
     matches = fetch("/matches")["matches"]
     standings = fetch("/standings")
 
@@ -702,12 +860,14 @@ def main():
     poule_html = build_poule(matches)
     today_html = build_today(matches)
     poule_js = build_poule_js()
+    bets_js = build_bets_js()
 
     updated = datetime.now(TZ).strftime("%d-%m-%Y %H:%M")
     html = (TEMPLATE
             .replace("__TODAY__", today_html)
             .replace("__POULE__", poule_html)
             .replace("__POULE_JS__", poule_js)
+            .replace("__BETS_JS__", bets_js)
             .replace("__GROUPS__", groups_html)
             .replace("__KO__", ko_html)
             .replace("__UPDATED__", updated)
