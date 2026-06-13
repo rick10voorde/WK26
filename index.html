@@ -80,6 +80,31 @@
   .poule-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
   .poule-detail{font-size:11.5px;color:rgba(244,246,242,.6);text-align:right;}
   .poule-punten{font-family:'Caveat',cursive;font-size:30px;font-weight:700;text-align:right;color:#FFB385;}
+  .poule-btn{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:8px;background:var(--oranje);color:#fff;text-decoration:none;font-size:13px;font-weight:600;border:none;cursor:pointer;}
+  .poule-btn:active{opacity:.85;}
+  .poule-loading{padding:10px 0;font-size:13px;color:rgba(244,246,242,.6);}
+  .poule-invul{border-top:1.5px solid rgba(244,246,242,.25);margin-top:12px;padding-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+  .poule-invul-label{font-size:13px;color:rgba(244,246,242,.8);font-weight:600;}
+  .speler-keuze{display:flex;gap:6px;flex-wrap:wrap;}
+  .speler-chip{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(244,246,242,.4);background:transparent;color:#F4F6F2;font-size:13px;font-weight:600;cursor:pointer;}
+  .speler-chip.actief{background:var(--oranje);border-color:var(--oranje);}
+  .poule-hint{font-size:11.5px;color:rgba(244,246,242,.55);width:100%;}
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:20px;overflow-y:auto;}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--card);color:var(--ink);border-radius:14px;max-width:560px;width:100%;margin:24px 0;padding:0;overflow:hidden;}
+  .modal-head{position:sticky;top:0;background:var(--ink);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+  .modal-head h3{font-family:'Anton',sans-serif;font-size:20px;text-transform:uppercase;font-weight:400;}
+  .modal-close{background:none;border:none;color:#fff;font-size:26px;cursor:pointer;line-height:1;}
+  .modal-body{padding:14px 20px 20px;max-height:62vh;overflow-y:auto;}
+  .mrow{display:grid;grid-template-columns:1fr 96px;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+  .mrow-when{font-size:11px;color:var(--ink-soft);}
+  .mrow-inp{display:flex;align-items:center;gap:4px;}
+  .mrow-inp input{width:38px;padding:6px 0;text-align:center;border:1.5px solid var(--line);border-radius:7px;font-size:15px;font-variant-numeric:tabular-nums;}
+  .mrow-inp input:focus{outline:none;border-color:var(--oranje);}
+  .modal-foot{position:sticky;bottom:0;background:var(--card);border-top:1.5px solid var(--line);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .modal-foot .save{background:var(--groen);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;}
+  .modal-status{font-size:12px;color:var(--ink-soft);}
   @media (max-width:480px){.poule-detail{display:none;}.poule-row{grid-template-columns:34px 1fr 60px;}}
   .section-title{font-family:'Anton',sans-serif;font-size:clamp(26px,4vw,38px);text-transform:uppercase;margin:54px 0 6px;}
   .section-sub{font-size:13.5px;color:var(--ink-soft);margin-bottom:20px;max-width:720px;}
@@ -97,8 +122,8 @@
     <h1>WK 2026<span class="accent">.</span> Speelschema &amp; uitslagen</h1>
     <div class="statusline">
       <span><span class="dot"></span><b>Toernooi loopt</b> · 11 juni — 19 juli</span>
-      <span>Bijgewerkt: <b>13-06-2026 09:14</b></span>
-      <span>Gespeeld: <b>4</b> van 104 wedstrijden</span>
+      <span>Bijgewerkt: <b>14-06-2026 01:12</b></span>
+      <span>Gespeeld: <b>5</b> van 104 wedstrijden</span>
     </div>
   </header>
   <div class="legend">
@@ -111,41 +136,66 @@
   <div class="today">
     <div class="today-head">
       <span class="today-title">Vandaag &amp; vannacht</span>
-      <span class="today-date">zaterdag 13 jun · 5 wedstrijden</span>
+      <span class="today-date">zondag 14 jun · 7 wedstrijden</span>
     </div>
     
       <div class="today-row">
-        <div class="t-when">03:00</div>
-        <div class="t-teams">🇺🇸 Verenigde Staten — Paraguay 🇵🇾</div>
-        <div class="t-meta">Groep D</div>
-        <span class="t-score">4–1</span>
-      </div>
-      <div class="today-row">
-        <div class="t-when">21:00</div>
-        <div class="t-teams">🇶🇦 Qatar — Zwitserland 🇨🇭</div>
-        <div class="t-meta">Groep B</div>
-        <span class="t-time">21:00</span>
-      </div>
-      <div class="today-row">
-        <div class="t-when">00:00<span class="t-night">vannacht</span></div>
+        <div class="t-when">00:00</div>
         <div class="t-teams">🇧🇷 Brazilië — Marokko 🇲🇦</div>
         <div class="t-meta">Groep C</div>
-        <span class="t-time">00:00</span>
+        <span class="t-score t-live">1–1 ●</span>
       </div>
       <div class="today-row">
-        <div class="t-when">03:00<span class="t-night">vannacht</span></div>
+        <div class="t-when">03:00</div>
         <div class="t-teams">🇭🇹 Haïti — Schotland 🏴󠁧󠁢󠁳󠁣󠁴󠁿</div>
         <div class="t-meta">Groep C</div>
         <span class="t-time">03:00</span>
       </div>
       <div class="today-row">
-        <div class="t-when">06:00<span class="t-night">vannacht</span></div>
+        <div class="t-when">06:00</div>
         <div class="t-teams">🇦🇺 Australië — Turkije 🇹🇷</div>
         <div class="t-meta">Groep D</div>
         <span class="t-time">06:00</span>
       </div>
+      <div class="today-row">
+        <div class="t-when">19:00</div>
+        <div class="t-teams">🇩🇪 Duitsland — Curaçao 🇨🇼</div>
+        <div class="t-meta">Groep E</div>
+        <span class="t-time">19:00</span>
+      </div>
+      <div class="today-row t-nl">
+        <div class="t-when">22:00</div>
+        <div class="t-teams">🇳🇱 Nederland — Japan 🇯🇵</div>
+        <div class="t-meta">Groep F</div>
+        <span class="t-time">22:00</span>
+      </div>
+      <div class="today-row">
+        <div class="t-when">01:00<span class="t-night">vannacht</span></div>
+        <div class="t-teams">🇨🇮 Ivoorkust — Ecuador 🇪🇨</div>
+        <div class="t-meta">Groep E</div>
+        <span class="t-time">01:00</span>
+      </div>
+      <div class="today-row">
+        <div class="t-when">04:00<span class="t-night">vannacht</span></div>
+        <div class="t-teams">🇸🇪 Zweden — Tunesië 🇹🇳</div>
+        <div class="t-meta">Groep F</div>
+        <span class="t-time">04:00</span>
+      </div>
   </div>
   
+  <div class="poule" id="poule">
+    <div class="poule-head">
+      <span class="poule-title">De Poule</span>
+      <span class="poule-rules">exact = 10 ptn · toto = 5 ptn</span>
+    </div>
+    <div id="poule-stand"><div class="poule-loading">Stand laden…</div></div>
+    <div class="poule-invul">
+      <span class="poule-invul-label">Wie ben jij?</span>
+      <div id="speler-keuze" class="speler-keuze"></div>
+      <button id="invul-start" class="poule-btn" type="button" hidden>Voorspellingen invullen / wijzigen</button>
+      <span id="invul-hint" class="poule-hint"></span>
+    </div>
+  </div>
   <div class="groups">
     <div class="group-card ">
       <div class="group-head">
@@ -156,29 +206,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match played">
+      <div class="matches"><div class="match played" data-key="Mexico - Zuid-Afrika" data-th="2" data-tu="0">
       <div class="m-when"><b>11 jun</b>21:00</div>
-      <div class="m-teams">🇲🇽 Mexico<br>🇿🇦 Zuid-Afrika</div>
+      <div class="m-teams">🇲🇽 Mexico<br>🇿🇦 Zuid-Afrika<div class="chips" data-chips="Mexico - Zuid-Afrika"></div></div>
       <div class="m-score">2–0</div>
-    </div><div class="match played">
+    </div><div class="match played" data-key="Zuid-Korea - Tsjechië" data-th="2" data-tu="1">
       <div class="m-when"><b>12 jun</b>04:00</div>
-      <div class="m-teams">🇰🇷 Zuid-Korea<br>🇨🇿 Tsjechië</div>
+      <div class="m-teams">🇰🇷 Zuid-Korea<br>🇨🇿 Tsjechië<div class="chips" data-chips="Zuid-Korea - Tsjechië"></div></div>
       <div class="m-score">2–1</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Tsjechië - Zuid-Afrika">
       <div class="m-when"><b>18 jun</b>18:00</div>
-      <div class="m-teams">🇨🇿 Tsjechië<br>🇿🇦 Zuid-Afrika</div>
+      <div class="m-teams">🇨🇿 Tsjechië<br>🇿🇦 Zuid-Afrika<div class="chips" data-chips="Tsjechië - Zuid-Afrika"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Mexico - Zuid-Korea">
       <div class="m-when"><b>19 jun</b>03:00</div>
-      <div class="m-teams">🇲🇽 Mexico<br>🇰🇷 Zuid-Korea</div>
+      <div class="m-teams">🇲🇽 Mexico<br>🇰🇷 Zuid-Korea<div class="chips" data-chips="Mexico - Zuid-Korea"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Tsjechië - Mexico">
       <div class="m-when"><b>25 jun</b>03:00</div>
-      <div class="m-teams">🇨🇿 Tsjechië<br>🇲🇽 Mexico</div>
+      <div class="m-teams">🇨🇿 Tsjechië<br>🇲🇽 Mexico<div class="chips" data-chips="Tsjechië - Mexico"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Zuid-Afrika - Zuid-Korea">
       <div class="m-when"><b>25 jun</b>03:00</div>
-      <div class="m-teams">🇿🇦 Zuid-Afrika<br>🇰🇷 Zuid-Korea</div>
+      <div class="m-teams">🇿🇦 Zuid-Afrika<br>🇰🇷 Zuid-Korea<div class="chips" data-chips="Zuid-Afrika - Zuid-Korea"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -191,29 +241,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match played">
+      <div class="matches"><div class="match played" data-key="Canada - Bosnië-Herzegovina" data-th="1" data-tu="1">
       <div class="m-when"><b>12 jun</b>21:00</div>
-      <div class="m-teams">🇨🇦 Canada<br>🇧🇦 Bosnië-Herzegovina</div>
+      <div class="m-teams">🇨🇦 Canada<br>🇧🇦 Bosnië-Herzegovina<div class="chips" data-chips="Canada - Bosnië-Herzegovina"></div></div>
       <div class="m-score">1–1</div>
-    </div><div class="match ">
+    </div><div class="match played" data-key="Qatar - Zwitserland" data-th="1" data-tu="1">
       <div class="m-when"><b>13 jun</b>21:00</div>
-      <div class="m-teams">🇶🇦 Qatar<br>🇨🇭 Zwitserland</div>
-      <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+      <div class="m-teams">🇶🇦 Qatar<br>🇨🇭 Zwitserland<div class="chips" data-chips="Qatar - Zwitserland"></div></div>
+      <div class="m-score">1–1</div>
+    </div><div class="match " data-key="Zwitserland - Bosnië-Herzegovina">
       <div class="m-when"><b>18 jun</b>21:00</div>
-      <div class="m-teams">🇨🇭 Zwitserland<br>🇧🇦 Bosnië-Herzegovina</div>
+      <div class="m-teams">🇨🇭 Zwitserland<br>🇧🇦 Bosnië-Herzegovina<div class="chips" data-chips="Zwitserland - Bosnië-Herzegovina"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Canada - Qatar">
       <div class="m-when"><b>19 jun</b>00:00</div>
-      <div class="m-teams">🇨🇦 Canada<br>🇶🇦 Qatar</div>
+      <div class="m-teams">🇨🇦 Canada<br>🇶🇦 Qatar<div class="chips" data-chips="Canada - Qatar"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Zwitserland - Canada">
       <div class="m-when"><b>24 jun</b>21:00</div>
-      <div class="m-teams">🇨🇭 Zwitserland<br>🇨🇦 Canada</div>
+      <div class="m-teams">🇨🇭 Zwitserland<br>🇨🇦 Canada<div class="chips" data-chips="Zwitserland - Canada"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Bosnië-Herzegovina - Qatar">
       <div class="m-when"><b>24 jun</b>21:00</div>
-      <div class="m-teams">🇧🇦 Bosnië-Herzegovina<br>🇶🇦 Qatar</div>
+      <div class="m-teams">🇧🇦 Bosnië-Herzegovina<br>🇶🇦 Qatar<div class="chips" data-chips="Bosnië-Herzegovina - Qatar"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -226,29 +276,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match ">
+      <div class="matches"><div class="match " data-key="Brazilië - Marokko">
       <div class="m-when"><b>14 jun</b>00:00</div>
-      <div class="m-teams">🇧🇷 Brazilië<br>🇲🇦 Marokko</div>
-      <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+      <div class="m-teams">🇧🇷 Brazilië<br>🇲🇦 Marokko<div class="chips" data-chips="Brazilië - Marokko"></div></div>
+      <div class="m-score live">1–1</div>
+    </div><div class="match " data-key="Haïti - Schotland">
       <div class="m-when"><b>14 jun</b>03:00</div>
-      <div class="m-teams">🇭🇹 Haïti<br>🏴󠁧󠁢󠁳󠁣󠁴󠁿 Schotland</div>
+      <div class="m-teams">🇭🇹 Haïti<br>🏴󠁧󠁢󠁳󠁣󠁴󠁿 Schotland<div class="chips" data-chips="Haïti - Schotland"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Schotland - Marokko">
       <div class="m-when"><b>20 jun</b>00:00</div>
-      <div class="m-teams">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Schotland<br>🇲🇦 Marokko</div>
+      <div class="m-teams">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Schotland<br>🇲🇦 Marokko<div class="chips" data-chips="Schotland - Marokko"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Brazilië - Haïti">
       <div class="m-when"><b>20 jun</b>02:30</div>
-      <div class="m-teams">🇧🇷 Brazilië<br>🇭🇹 Haïti</div>
+      <div class="m-teams">🇧🇷 Brazilië<br>🇭🇹 Haïti<div class="chips" data-chips="Brazilië - Haïti"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Marokko - Haïti">
       <div class="m-when"><b>25 jun</b>00:00</div>
-      <div class="m-teams">🇲🇦 Marokko<br>🇭🇹 Haïti</div>
+      <div class="m-teams">🇲🇦 Marokko<br>🇭🇹 Haïti<div class="chips" data-chips="Marokko - Haïti"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Schotland - Brazilië">
       <div class="m-when"><b>25 jun</b>00:00</div>
-      <div class="m-teams">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Schotland<br>🇧🇷 Brazilië</div>
+      <div class="m-teams">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Schotland<br>🇧🇷 Brazilië<div class="chips" data-chips="Schotland - Brazilië"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -261,29 +311,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match played">
+      <div class="matches"><div class="match played" data-key="Verenigde Staten - Paraguay" data-th="4" data-tu="1">
       <div class="m-when"><b>13 jun</b>03:00</div>
-      <div class="m-teams">🇺🇸 Verenigde Staten<br>🇵🇾 Paraguay</div>
+      <div class="m-teams">🇺🇸 Verenigde Staten<br>🇵🇾 Paraguay<div class="chips" data-chips="Verenigde Staten - Paraguay"></div></div>
       <div class="m-score">4–1</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Australië - Turkije">
       <div class="m-when"><b>14 jun</b>06:00</div>
-      <div class="m-teams">🇦🇺 Australië<br>🇹🇷 Turkije</div>
+      <div class="m-teams">🇦🇺 Australië<br>🇹🇷 Turkije<div class="chips" data-chips="Australië - Turkije"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Verenigde Staten - Australië">
       <div class="m-when"><b>19 jun</b>21:00</div>
-      <div class="m-teams">🇺🇸 Verenigde Staten<br>🇦🇺 Australië</div>
+      <div class="m-teams">🇺🇸 Verenigde Staten<br>🇦🇺 Australië<div class="chips" data-chips="Verenigde Staten - Australië"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Turkije - Paraguay">
       <div class="m-when"><b>20 jun</b>05:00</div>
-      <div class="m-teams">🇹🇷 Turkije<br>🇵🇾 Paraguay</div>
+      <div class="m-teams">🇹🇷 Turkije<br>🇵🇾 Paraguay<div class="chips" data-chips="Turkije - Paraguay"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Turkije - Verenigde Staten">
       <div class="m-when"><b>26 jun</b>04:00</div>
-      <div class="m-teams">🇹🇷 Turkije<br>🇺🇸 Verenigde Staten</div>
+      <div class="m-teams">🇹🇷 Turkije<br>🇺🇸 Verenigde Staten<div class="chips" data-chips="Turkije - Verenigde Staten"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Paraguay - Australië">
       <div class="m-when"><b>26 jun</b>04:00</div>
-      <div class="m-teams">🇵🇾 Paraguay<br>🇦🇺 Australië</div>
+      <div class="m-teams">🇵🇾 Paraguay<br>🇦🇺 Australië<div class="chips" data-chips="Paraguay - Australië"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -296,29 +346,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match ">
+      <div class="matches"><div class="match " data-key="Duitsland - Curaçao">
       <div class="m-when"><b>14 jun</b>19:00</div>
-      <div class="m-teams">🇩🇪 Duitsland<br>🇨🇼 Curaçao</div>
+      <div class="m-teams">🇩🇪 Duitsland<br>🇨🇼 Curaçao<div class="chips" data-chips="Duitsland - Curaçao"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Ivoorkust - Ecuador">
       <div class="m-when"><b>15 jun</b>01:00</div>
-      <div class="m-teams">🇨🇮 Ivoorkust<br>🇪🇨 Ecuador</div>
+      <div class="m-teams">🇨🇮 Ivoorkust<br>🇪🇨 Ecuador<div class="chips" data-chips="Ivoorkust - Ecuador"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Duitsland - Ivoorkust">
       <div class="m-when"><b>20 jun</b>22:00</div>
-      <div class="m-teams">🇩🇪 Duitsland<br>🇨🇮 Ivoorkust</div>
+      <div class="m-teams">🇩🇪 Duitsland<br>🇨🇮 Ivoorkust<div class="chips" data-chips="Duitsland - Ivoorkust"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Ecuador - Curaçao">
       <div class="m-when"><b>21 jun</b>02:00</div>
-      <div class="m-teams">🇪🇨 Ecuador<br>🇨🇼 Curaçao</div>
+      <div class="m-teams">🇪🇨 Ecuador<br>🇨🇼 Curaçao<div class="chips" data-chips="Ecuador - Curaçao"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Ecuador - Duitsland">
       <div class="m-when"><b>25 jun</b>22:00</div>
-      <div class="m-teams">🇪🇨 Ecuador<br>🇩🇪 Duitsland</div>
+      <div class="m-teams">🇪🇨 Ecuador<br>🇩🇪 Duitsland<div class="chips" data-chips="Ecuador - Duitsland"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Curaçao - Ivoorkust">
       <div class="m-when"><b>25 jun</b>22:00</div>
-      <div class="m-teams">🇨🇼 Curaçao<br>🇨🇮 Ivoorkust</div>
+      <div class="m-teams">🇨🇼 Curaçao<br>🇨🇮 Ivoorkust<div class="chips" data-chips="Curaçao - Ivoorkust"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -331,29 +381,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match ">
+      <div class="matches"><div class="match " data-key="Nederland - Japan">
       <div class="m-when"><b>14 jun</b>22:00</div>
-      <div class="m-teams">🇳🇱 <span class="nl-name">Nederland</span><br>🇯🇵 Japan</div>
+      <div class="m-teams">🇳🇱 <span class="nl-name">Nederland</span><br>🇯🇵 Japan<div class="chips" data-chips="Nederland - Japan"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Zweden - Tunesië">
       <div class="m-when"><b>15 jun</b>04:00</div>
-      <div class="m-teams">🇸🇪 Zweden<br>🇹🇳 Tunesië</div>
+      <div class="m-teams">🇸🇪 Zweden<br>🇹🇳 Tunesië<div class="chips" data-chips="Zweden - Tunesië"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Nederland - Zweden">
       <div class="m-when"><b>20 jun</b>19:00</div>
-      <div class="m-teams">🇳🇱 <span class="nl-name">Nederland</span><br>🇸🇪 Zweden</div>
+      <div class="m-teams">🇳🇱 <span class="nl-name">Nederland</span><br>🇸🇪 Zweden<div class="chips" data-chips="Nederland - Zweden"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Tunesië - Japan">
       <div class="m-when"><b>21 jun</b>06:00</div>
-      <div class="m-teams">🇹🇳 Tunesië<br>🇯🇵 Japan</div>
+      <div class="m-teams">🇹🇳 Tunesië<br>🇯🇵 Japan<div class="chips" data-chips="Tunesië - Japan"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Tunesië - Nederland">
       <div class="m-when"><b>26 jun</b>01:00</div>
-      <div class="m-teams">🇹🇳 Tunesië<br>🇳🇱 <span class="nl-name">Nederland</span></div>
+      <div class="m-teams">🇹🇳 Tunesië<br>🇳🇱 <span class="nl-name">Nederland</span><div class="chips" data-chips="Tunesië - Nederland"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Japan - Zweden">
       <div class="m-when"><b>26 jun</b>01:00</div>
-      <div class="m-teams">🇯🇵 Japan<br>🇸🇪 Zweden</div>
+      <div class="m-teams">🇯🇵 Japan<br>🇸🇪 Zweden<div class="chips" data-chips="Japan - Zweden"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -366,29 +416,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match ">
+      <div class="matches"><div class="match " data-key="België - Egypte">
       <div class="m-when"><b>15 jun</b>21:00</div>
-      <div class="m-teams">🇧🇪 België<br>🇪🇬 Egypte</div>
+      <div class="m-teams">🇧🇪 België<br>🇪🇬 Egypte<div class="chips" data-chips="België - Egypte"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Iran - Nieuw-Zeeland">
       <div class="m-when"><b>16 jun</b>03:00</div>
-      <div class="m-teams">🇮🇷 Iran<br>🇳🇿 Nieuw-Zeeland</div>
+      <div class="m-teams">🇮🇷 Iran<br>🇳🇿 Nieuw-Zeeland<div class="chips" data-chips="Iran - Nieuw-Zeeland"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="België - Iran">
       <div class="m-when"><b>21 jun</b>21:00</div>
-      <div class="m-teams">🇧🇪 België<br>🇮🇷 Iran</div>
+      <div class="m-teams">🇧🇪 België<br>🇮🇷 Iran<div class="chips" data-chips="België - Iran"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Nieuw-Zeeland - Egypte">
       <div class="m-when"><b>22 jun</b>03:00</div>
-      <div class="m-teams">🇳🇿 Nieuw-Zeeland<br>🇪🇬 Egypte</div>
+      <div class="m-teams">🇳🇿 Nieuw-Zeeland<br>🇪🇬 Egypte<div class="chips" data-chips="Nieuw-Zeeland - Egypte"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Nieuw-Zeeland - België">
       <div class="m-when"><b>27 jun</b>05:00</div>
-      <div class="m-teams">🇳🇿 Nieuw-Zeeland<br>🇧🇪 België</div>
+      <div class="m-teams">🇳🇿 Nieuw-Zeeland<br>🇧🇪 België<div class="chips" data-chips="Nieuw-Zeeland - België"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Egypte - Iran">
       <div class="m-when"><b>27 jun</b>05:00</div>
-      <div class="m-teams">🇪🇬 Egypte<br>🇮🇷 Iran</div>
+      <div class="m-teams">🇪🇬 Egypte<br>🇮🇷 Iran<div class="chips" data-chips="Egypte - Iran"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -401,29 +451,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match ">
+      <div class="matches"><div class="match " data-key="Spanje - Kaapverdië">
       <div class="m-when"><b>15 jun</b>18:00</div>
-      <div class="m-teams">🇪🇸 Spanje<br>🇨🇻 Kaapverdië</div>
+      <div class="m-teams">🇪🇸 Spanje<br>🇨🇻 Kaapverdië<div class="chips" data-chips="Spanje - Kaapverdië"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Saoedi-Arabië - Uruguay">
       <div class="m-when"><b>16 jun</b>00:00</div>
-      <div class="m-teams">🇸🇦 Saoedi-Arabië<br>🇺🇾 Uruguay</div>
+      <div class="m-teams">🇸🇦 Saoedi-Arabië<br>🇺🇾 Uruguay<div class="chips" data-chips="Saoedi-Arabië - Uruguay"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Spanje - Saoedi-Arabië">
       <div class="m-when"><b>21 jun</b>18:00</div>
-      <div class="m-teams">🇪🇸 Spanje<br>🇸🇦 Saoedi-Arabië</div>
+      <div class="m-teams">🇪🇸 Spanje<br>🇸🇦 Saoedi-Arabië<div class="chips" data-chips="Spanje - Saoedi-Arabië"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Uruguay - Kaapverdië">
       <div class="m-when"><b>22 jun</b>00:00</div>
-      <div class="m-teams">🇺🇾 Uruguay<br>🇨🇻 Kaapverdië</div>
+      <div class="m-teams">🇺🇾 Uruguay<br>🇨🇻 Kaapverdië<div class="chips" data-chips="Uruguay - Kaapverdië"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Uruguay - Spanje">
       <div class="m-when"><b>27 jun</b>02:00</div>
-      <div class="m-teams">🇺🇾 Uruguay<br>🇪🇸 Spanje</div>
+      <div class="m-teams">🇺🇾 Uruguay<br>🇪🇸 Spanje<div class="chips" data-chips="Uruguay - Spanje"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Kaapverdië - Saoedi-Arabië">
       <div class="m-when"><b>27 jun</b>02:00</div>
-      <div class="m-teams">🇨🇻 Kaapverdië<br>🇸🇦 Saoedi-Arabië</div>
+      <div class="m-teams">🇨🇻 Kaapverdië<br>🇸🇦 Saoedi-Arabië<div class="chips" data-chips="Kaapverdië - Saoedi-Arabië"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -436,29 +486,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match ">
+      <div class="matches"><div class="match " data-key="Frankrijk - Senegal">
       <div class="m-when"><b>16 jun</b>21:00</div>
-      <div class="m-teams">🇫🇷 Frankrijk<br>🇸🇳 Senegal</div>
+      <div class="m-teams">🇫🇷 Frankrijk<br>🇸🇳 Senegal<div class="chips" data-chips="Frankrijk - Senegal"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Irak - Noorwegen">
       <div class="m-when"><b>17 jun</b>00:00</div>
-      <div class="m-teams">🇮🇶 Irak<br>🇳🇴 Noorwegen</div>
+      <div class="m-teams">🇮🇶 Irak<br>🇳🇴 Noorwegen<div class="chips" data-chips="Irak - Noorwegen"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Frankrijk - Irak">
       <div class="m-when"><b>22 jun</b>23:00</div>
-      <div class="m-teams">🇫🇷 Frankrijk<br>🇮🇶 Irak</div>
+      <div class="m-teams">🇫🇷 Frankrijk<br>🇮🇶 Irak<div class="chips" data-chips="Frankrijk - Irak"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Noorwegen - Senegal">
       <div class="m-when"><b>23 jun</b>02:00</div>
-      <div class="m-teams">🇳🇴 Noorwegen<br>🇸🇳 Senegal</div>
+      <div class="m-teams">🇳🇴 Noorwegen<br>🇸🇳 Senegal<div class="chips" data-chips="Noorwegen - Senegal"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Noorwegen - Frankrijk">
       <div class="m-when"><b>26 jun</b>21:00</div>
-      <div class="m-teams">🇳🇴 Noorwegen<br>🇫🇷 Frankrijk</div>
+      <div class="m-teams">🇳🇴 Noorwegen<br>🇫🇷 Frankrijk<div class="chips" data-chips="Noorwegen - Frankrijk"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Senegal - Irak">
       <div class="m-when"><b>26 jun</b>21:00</div>
-      <div class="m-teams">🇸🇳 Senegal<br>🇮🇶 Irak</div>
+      <div class="m-teams">🇸🇳 Senegal<br>🇮🇶 Irak<div class="chips" data-chips="Senegal - Irak"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -471,29 +521,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match ">
+      <div class="matches"><div class="match " data-key="Argentinië - Algerije">
       <div class="m-when"><b>17 jun</b>03:00</div>
-      <div class="m-teams">🇦🇷 Argentinië<br>🇩🇿 Algerije</div>
+      <div class="m-teams">🇦🇷 Argentinië<br>🇩🇿 Algerije<div class="chips" data-chips="Argentinië - Algerije"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Oostenrijk - Jordanië">
       <div class="m-when"><b>17 jun</b>06:00</div>
-      <div class="m-teams">🇦🇹 Oostenrijk<br>🇯🇴 Jordanië</div>
+      <div class="m-teams">🇦🇹 Oostenrijk<br>🇯🇴 Jordanië<div class="chips" data-chips="Oostenrijk - Jordanië"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Argentinië - Oostenrijk">
       <div class="m-when"><b>22 jun</b>19:00</div>
-      <div class="m-teams">🇦🇷 Argentinië<br>🇦🇹 Oostenrijk</div>
+      <div class="m-teams">🇦🇷 Argentinië<br>🇦🇹 Oostenrijk<div class="chips" data-chips="Argentinië - Oostenrijk"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Jordanië - Algerije">
       <div class="m-when"><b>23 jun</b>05:00</div>
-      <div class="m-teams">🇯🇴 Jordanië<br>🇩🇿 Algerije</div>
+      <div class="m-teams">🇯🇴 Jordanië<br>🇩🇿 Algerije<div class="chips" data-chips="Jordanië - Algerije"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Jordanië - Argentinië">
       <div class="m-when"><b>28 jun</b>04:00</div>
-      <div class="m-teams">🇯🇴 Jordanië<br>🇦🇷 Argentinië</div>
+      <div class="m-teams">🇯🇴 Jordanië<br>🇦🇷 Argentinië<div class="chips" data-chips="Jordanië - Argentinië"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Algerije - Oostenrijk">
       <div class="m-when"><b>28 jun</b>04:00</div>
-      <div class="m-teams">🇩🇿 Algerije<br>🇦🇹 Oostenrijk</div>
+      <div class="m-teams">🇩🇿 Algerije<br>🇦🇹 Oostenrijk<div class="chips" data-chips="Algerije - Oostenrijk"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -506,29 +556,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match ">
+      <div class="matches"><div class="match " data-key="Portugal - DR Congo">
       <div class="m-when"><b>17 jun</b>19:00</div>
-      <div class="m-teams">🇵🇹 Portugal<br>🇨🇩 DR Congo</div>
+      <div class="m-teams">🇵🇹 Portugal<br>🇨🇩 DR Congo<div class="chips" data-chips="Portugal - DR Congo"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Oezbekistan - Colombia">
       <div class="m-when"><b>18 jun</b>04:00</div>
-      <div class="m-teams">🇺🇿 Oezbekistan<br>🇨🇴 Colombia</div>
+      <div class="m-teams">🇺🇿 Oezbekistan<br>🇨🇴 Colombia<div class="chips" data-chips="Oezbekistan - Colombia"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Portugal - Oezbekistan">
       <div class="m-when"><b>23 jun</b>19:00</div>
-      <div class="m-teams">🇵🇹 Portugal<br>🇺🇿 Oezbekistan</div>
+      <div class="m-teams">🇵🇹 Portugal<br>🇺🇿 Oezbekistan<div class="chips" data-chips="Portugal - Oezbekistan"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Colombia - DR Congo">
       <div class="m-when"><b>24 jun</b>04:00</div>
-      <div class="m-teams">🇨🇴 Colombia<br>🇨🇩 DR Congo</div>
+      <div class="m-teams">🇨🇴 Colombia<br>🇨🇩 DR Congo<div class="chips" data-chips="Colombia - DR Congo"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Colombia - Portugal">
       <div class="m-when"><b>28 jun</b>01:30</div>
-      <div class="m-teams">🇨🇴 Colombia<br>🇵🇹 Portugal</div>
+      <div class="m-teams">🇨🇴 Colombia<br>🇵🇹 Portugal<div class="chips" data-chips="Colombia - Portugal"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="DR Congo - Oezbekistan">
       <div class="m-when"><b>28 jun</b>01:30</div>
-      <div class="m-teams">🇨🇩 DR Congo<br>🇺🇿 Oezbekistan</div>
+      <div class="m-teams">🇨🇩 DR Congo<br>🇺🇿 Oezbekistan<div class="chips" data-chips="DR Congo - Oezbekistan"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div>
@@ -541,29 +591,29 @@
         <tr><th>Land</th><th>G</th><th>DS</th><th>Ptn</th></tr>
         
       </table>
-      <div class="matches"><div class="match ">
+      <div class="matches"><div class="match " data-key="Engeland - Kroatië">
       <div class="m-when"><b>17 jun</b>22:00</div>
-      <div class="m-teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Engeland<br>🇭🇷 Kroatië</div>
+      <div class="m-teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Engeland<br>🇭🇷 Kroatië<div class="chips" data-chips="Engeland - Kroatië"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Ghana - Panama">
       <div class="m-when"><b>18 jun</b>01:00</div>
-      <div class="m-teams">🇬🇭 Ghana<br>🇵🇦 Panama</div>
+      <div class="m-teams">🇬🇭 Ghana<br>🇵🇦 Panama<div class="chips" data-chips="Ghana - Panama"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Engeland - Ghana">
       <div class="m-when"><b>23 jun</b>22:00</div>
-      <div class="m-teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Engeland<br>🇬🇭 Ghana</div>
+      <div class="m-teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Engeland<br>🇬🇭 Ghana<div class="chips" data-chips="Engeland - Ghana"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Panama - Kroatië">
       <div class="m-when"><b>24 jun</b>01:00</div>
-      <div class="m-teams">🇵🇦 Panama<br>🇭🇷 Kroatië</div>
+      <div class="m-teams">🇵🇦 Panama<br>🇭🇷 Kroatië<div class="chips" data-chips="Panama - Kroatië"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Panama - Engeland">
       <div class="m-when"><b>27 jun</b>23:00</div>
-      <div class="m-teams">🇵🇦 Panama<br>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Engeland</div>
+      <div class="m-teams">🇵🇦 Panama<br>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Engeland<div class="chips" data-chips="Panama - Engeland"></div></div>
       <div class="m-score tbd">— : —</div>
-    </div><div class="match ">
+    </div><div class="match " data-key="Kroatië - Ghana">
       <div class="m-when"><b>27 jun</b>23:00</div>
-      <div class="m-teams">🇭🇷 Kroatië<br>🇬🇭 Ghana</div>
+      <div class="m-teams">🇭🇷 Kroatië<br>🇬🇭 Ghana<div class="chips" data-chips="Kroatië - Ghana"></div></div>
       <div class="m-score tbd">— : —</div>
     </div></div>
     </div></div>
@@ -700,5 +750,179 @@
     </div></div></div></div>
   <footer>Automatisch bijgewerkt via GitHub Actions · Data: football-data.org · Tijden in Nederlandse tijd</footer>
 </div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-titel">Voorspellingen</h3>
+      <button class="modal-close" id="modal-close" type="button">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <span class="modal-status" id="modal-status"></span>
+      <button class="save" id="modal-save" type="button">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const SB_URL = "https://jjdpqzwvckubqqpuneup.supabase.co";
+  const SB_KEY = "sb_publishable_V5vkJ6vDVjdbekgaVl7Hjg_6zAFXN17";
+  const SPELERS = ["Rick", "Rean", "Tung"];
+  const KLEUREN = ["#F05A1A", "#2244C8", "#1E7A4C", "#8E44AD", "#C0392B"];
+  const EXACT = 10, TOTO = 5;
+  const REST = SB_URL + "/rest/v1/voorspellingen";
+  const H = { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json" };
+
+  const kleurVan = n => KLEUREN[Math.max(0, SPELERS.indexOf(n)) % KLEUREN.length];
+  let DATA = [];          // alle rijen uit Supabase
+  let IK = localStorage.getItem("wk26-speler") || "";
+
+  // alle wedstrijden uit de pagina halen (met evt. echte uitslag)
+  const MATCHES = [...document.querySelectorAll(".match[data-key]")].map(el => ({
+    key: el.getAttribute("data-key"),
+    th: el.hasAttribute("data-th") ? +el.getAttribute("data-th") : null,
+    tu: el.hasAttribute("data-tu") ? +el.getAttribute("data-tu") : null,
+    when: (el.querySelector(".m-when")||{}).textContent || ""
+  })).filter(m => m.key);
+
+  const punten = (ph,pu,ah,au) => {
+    if(ah==null) return null;
+    if(ph===ah && pu===au) return EXACT;
+    if((ph>pu&&ah>au)||(ph<pu&&ah<au)||(ph===pu&&ah===au)) return TOTO;
+    return 0;
+  };
+
+  async function laden(){
+    try{
+      const r = await fetch(REST + "?select=*", { headers: H });
+      DATA = await r.json();
+      if(!Array.isArray(DATA)) DATA = [];
+    }catch(e){ DATA = []; }
+    tekenStand(); tekenChips();
+  }
+
+  function predVan(speler, key){
+    return DATA.find(d => d.speler===speler && d.wedstrijd===key);
+  }
+
+  function tekenStand(){
+    const resultMap = {};
+    MATCHES.forEach(m => { if(m.th!=null) resultMap[m.key]=[m.th,m.tu]; });
+    const rij = SPELERS.map(sp => {
+      let tot=0,ex=0,to=0,inv=0;
+      DATA.filter(d=>d.speler===sp).forEach(d=>{
+        inv++;
+        const res = resultMap[d.wedstrijd];
+        if(res){ const p = punten(d.thuis,d.uit,res[0],res[1]);
+          tot+=p; if(p===EXACT)ex++; else if(p===TOTO)to++; }
+      });
+      return {sp,tot,ex,to,inv};
+    }).sort((a,b)=> b.tot-a.tot || b.ex-a.ex || a.sp.localeCompare(b.sp));
+    const med=["🥇","🥈","🥉"];
+    document.getElementById("poule-stand").innerHTML = rij.map((r,i)=>`
+      <div class="poule-row">
+        <div class="poule-pos">${i<3?med[i]:i+1}</div>
+        <div class="poule-naam"><span class="poule-dot" style="background:${kleurVan(r.sp)}"></span>${r.sp}</div>
+        <div class="poule-detail">${r.ex}× exact · ${r.to}× toto · ${r.inv} ingevuld</div>
+        <div class="poule-punten">${r.tot}</div>
+      </div>`).join("");
+  }
+
+  function tekenChips(){
+    const resultMap = {};
+    MATCHES.forEach(m => { if(m.th!=null) resultMap[m.key]=[m.th,m.tu]; });
+    document.querySelectorAll(".chips[data-chips]").forEach(box=>{
+      const key = box.getAttribute("data-chips");
+      const res = resultMap[key];
+      box.innerHTML = SPELERS.map(sp=>{
+        const d = predVan(sp,key); if(!d) return "";
+        let cls="chip";
+        if(res){ const p=punten(d.thuis,d.uit,res[0],res[1]);
+          cls += p===EXACT?" exact":(p===TOTO?" toto":" mis"); }
+        return `<span class="${cls}" style="--pc:${kleurVan(sp)}">${sp[0]}&thinsp;${d.thuis}-${d.uit}</span>`;
+      }).join("");
+    });
+  }
+
+  // speler-keuze knoppen
+  const keuze = document.getElementById("speler-keuze");
+  function tekenKeuze(){
+    keuze.innerHTML = SPELERS.map(sp=>
+      `<button class="speler-chip${sp===IK?" actief":""}" data-sp="${sp}" type="button">${sp}</button>`).join("");
+  }
+  tekenKeuze();
+  keuze.addEventListener("click", e=>{
+    const b = e.target.closest("[data-sp]"); if(!b) return;
+    IK = b.getAttribute("data-sp");
+    localStorage.setItem("wk26-speler", IK);
+    tekenKeuze(); toonStartknop();
+  });
+
+  const startBtn = document.getElementById("invul-start");
+  const hint = document.getElementById("invul-hint");
+  function toonStartknop(){
+    if(IK){ startBtn.hidden=false; hint.textContent = "Je vult in als "+IK+". Je kunt altijd wijzigen tot de aftrap."; }
+  }
+  toonStartknop();
+
+  // modal
+  const modal = document.getElementById("modal");
+  const body = document.getElementById("modal-body");
+  const status = document.getElementById("modal-status");
+  startBtn.addEventListener("click", openModal);
+  document.getElementById("modal-close").addEventListener("click", ()=>modal.classList.remove("open"));
+  modal.addEventListener("click", e=>{ if(e.target===modal) modal.classList.remove("open"); });
+
+  function openModal(){
+    document.getElementById("modal-titel").textContent = "Voorspellingen — " + IK;
+    body.innerHTML = MATCHES.map(m=>{
+      const d = predVan(IK,m.key);
+      const locked = m.th!=null; // gespeeld: niet meer wijzigbaar
+      return `<div class="mrow">
+        <div><div class="mrow-when">${m.when.replace(/\s+/g,' ').trim()}</div>${m.key}</div>
+        <div class="mrow-inp">
+          <input type="number" min="0" max="20" data-key="${m.key}" data-side="h" value="${d?d.thuis:''}" ${locked?'disabled':''}>
+          <span>-</span>
+          <input type="number" min="0" max="20" data-key="${m.key}" data-side="u" value="${d?d.uit:''}" ${locked?'disabled':''}>
+        </div>
+      </div>`;
+    }).join("");
+    status.textContent = "";
+    modal.classList.add("open");
+  }
+
+  document.getElementById("modal-save").addEventListener("click", async ()=>{
+    const inputs = [...body.querySelectorAll("input")];
+    const byKey = {};
+    inputs.forEach(inp=>{
+      const k = inp.getAttribute("data-key");
+      byKey[k] = byKey[k] || {};
+      byKey[k][inp.getAttribute("data-side")] = inp.value.trim();
+    });
+    const rows = [];
+    Object.entries(byKey).forEach(([k,v])=>{
+      if(v.h!==""&&v.u!==""&&v.h!=null&&v.u!=null)
+        rows.push({ speler:IK, wedstrijd:k, thuis:+v.h, uit:+v.u });
+    });
+    if(!rows.length){ status.textContent="Niets ingevuld."; return; }
+    status.textContent = "Opslaan…";
+    try{
+      const r = await fetch(REST + "?on_conflict=speler,wedstrijd", {
+        method:"POST",
+        headers: {...H, "Prefer":"resolution=merge-duplicates"},
+        body: JSON.stringify(rows)
+      });
+      if(!r.ok) throw new Error(await r.text());
+      status.textContent = "Opgeslagen!";
+      await laden();
+      setTimeout(()=>modal.classList.remove("open"), 700);
+    }catch(e){ status.textContent = "Fout bij opslaan."; console.error(e); }
+  });
+
+  laden();
+})();
+</script>
 </body>
 </html>
