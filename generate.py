@@ -5,7 +5,8 @@ Haalt uitslagen en standen op via football-data.org en schrijft index.html.
 
 Vereist env var: FOOTBALL_DATA_TOKEN (gratis account op football-data.org)
 """
-import glob
+
+
 import json
 import os
 import sys
@@ -93,21 +94,29 @@ PUNTEN_TOTO = 5     # winnaar/gelijkspel goed
 
 PLAYERS = []  # [{naam, kleur, voorspellingen{...}}]
 PLAYER_COLORS = ["#F05A1A", "#2244C8", "#1E7A4C", "#8E44AD", "#C0392B"]
+SUPABASE_URL = ""
+SUPABASE_KEY = ""
+SPELERS = ["Rick", "Rean", "Tung"]
 
 
 def load_predictions():
-    files = sorted(glob.glob("voorspellingen/*.json"))
-    for i, fp in enumerate(files):
-        try:
-            with open(fp, encoding="utf-8") as f:
-                data = json.load(f)
-            PLAYERS.append({
-                "naam": data.get("naam") or os.path.basename(fp).split(".")[0].title(),
-                "kleur": PLAYER_COLORS[i % len(PLAYER_COLORS)],
-                "voorspellingen": data.get("voorspellingen", {}),
-            })
-        except Exception as e:
-            print(f"Waarschuwing: {fp} overgeslagen ({e})")
+    """Leest poule.txt met de Supabase-gegevens:
+    url=..., key=..., spelers=Rick,Rean,Tung (spelers optioneel)."""
+    global SUPABASE_URL, SUPABASE_KEY, SPELERS
+    if not os.path.exists("poule.txt"):
+        return
+    cfg = {}
+    with open("poule.txt", encoding="utf-8") as f:
+        for line in f:
+            if "=" in line:
+                k, v = line.split("=", 1)
+                cfg[k.strip()] = v.strip()
+    SUPABASE_URL = cfg.get("url", "").rstrip("/")
+    SUPABASE_KEY = cfg.get("key", "")
+    if cfg.get("spelers"):
+        SPELERS = [s.strip() for s in cfg["spelers"].split(",") if s.strip()]
+    if SUPABASE_URL and SUPABASE_KEY:
+        print(f"Poule actief · spelers: {', '.join(SPELERS)}")
 
 
 def parse_pred(s):
@@ -157,27 +166,15 @@ def match_row(m, highlight_nl=True):
             return f'<span class="nl-name">{n}</span>'
         return n
 
-    # poule-chips: voorspellingen van de spelers bij deze wedstrijd
-    chips = ""
-    if PLAYERS and home and away:
-        key = f"{home} - {away}"
-        parts = []
-        for p in PLAYERS:
-            pred = parse_pred(p["voorspellingen"].get(key))
-            if not pred:
-                continue
-            cls = "chip"
-            if played:
-                pts = pred_points(pred, ft["home"], ft["away"])
-                cls += " exact" if pts == PUNTEN_EXACT else (" toto" if pts == PUNTEN_TOTO else " mis")
-            parts.append(
-                f'<span class="{cls}" style="--pc:{p["kleur"]}">'
-                f'{p["naam"][0]}&thinsp;{pred[0]}-{pred[1]}</span>'
-            )
-        if parts:
-            chips = f'<div class="chips">{"".join(parts)}</div>'
+    # data-attributen zodat de poule-JS deze wedstrijd kan koppelen
+    key = f"{home} - {away}" if home and away else ""
+    res_attr = ""
+    if played:
+        res_attr = f' data-th="{ft["home"]}" data-tu="{ft["away"]}"'
+    data = f' data-key="{key}"{res_attr}' if key else ""
+    chips = f'<div class="chips" data-chips="{key}"></div>' if key else ""
 
-    return f'''<div class="match {"played" if played else ""}">
+    return f'''<div class="match {"played" if played else ""}"{data}>
       <div class="m-when"><b>{datum}</b>{tijd}</div>
       <div class="m-teams">{flag(home)} {nm(home_lbl)}<br>{flag(away)} {nm(away_lbl)}{chips}</div>
       {score}
@@ -257,53 +254,21 @@ def build_knockout(matches):
 
 
 def build_poule(matches):
-    if not PLAYERS:
+    if not (SUPABASE_URL and SUPABASE_KEY):
         return ""
-    # echte uitslagen verzamelen op key "Thuis - Uit"
-    results = {}
-    for m in matches:
-        ft = m.get("score", {}).get("fullTime", {})
-        if m["status"] == "FINISHED" and ft.get("home") is not None:
-            h, u = nl_name(m["homeTeam"]), nl_name(m["awayTeam"])
-            if h and u:
-                results[f"{h} - {u}"] = (ft["home"], ft["away"])
-
-    rows = []
-    for p in PLAYERS:
-        total = exact = toto = filled = 0
-        for key, val in p["voorspellingen"].items():
-            pred = parse_pred(val)
-            if not pred:
-                continue
-            filled += 1
-            if key in results:
-                pts = pred_points(pred, *results[key])
-                total += pts
-                if pts == PUNTEN_EXACT:
-                    exact += 1
-                elif pts == PUNTEN_TOTO:
-                    toto += 1
-        rows.append((p, total, exact, toto, filled))
-
-    rows.sort(key=lambda r: (-r[1], -r[2], r[0]["naam"]))
-    medals = ["🥇", "🥈", "🥉"]
-    html = []
-    for i, (p, total, exact, toto, filled) in enumerate(rows):
-        html.append(f'''
-      <div class="poule-row">
-        <div class="poule-pos">{medals[i] if i < 3 else i + 1}</div>
-        <div class="poule-naam"><span class="poule-dot" style="background:{p["kleur"]}"></span>{p["naam"]}</div>
-        <div class="poule-detail">{exact}× exact · {toto}× toto · {filled} ingevuld</div>
-        <div class="poule-punten">{total}</div>
-      </div>''')
-
     return f'''
-  <div class="poule">
+  <div class="poule" id="poule">
     <div class="poule-head">
       <span class="poule-title">De Poule</span>
       <span class="poule-rules">exact = {PUNTEN_EXACT} ptn · toto = {PUNTEN_TOTO} ptn</span>
     </div>
-    {"".join(html)}
+    <div id="poule-stand"><div class="poule-loading">Stand laden…</div></div>
+    <div class="poule-invul">
+      <span class="poule-invul-label">Wie ben jij?</span>
+      <div id="speler-keuze" class="speler-keuze"></div>
+      <button id="invul-start" class="poule-btn" type="button" hidden>Voorspellingen invullen / wijzigen</button>
+      <span id="invul-hint" class="poule-hint"></span>
+    </div>
   </div>'''
 
 
@@ -472,6 +437,31 @@ TEMPLATE = """<!DOCTYPE html>
   .poule-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
   .poule-detail{font-size:11.5px;color:rgba(244,246,242,.6);text-align:right;}
   .poule-punten{font-family:'Caveat',cursive;font-size:30px;font-weight:700;text-align:right;color:#FFB385;}
+  .poule-btn{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:8px;background:var(--oranje);color:#fff;text-decoration:none;font-size:13px;font-weight:600;border:none;cursor:pointer;}
+  .poule-btn:active{opacity:.85;}
+  .poule-loading{padding:10px 0;font-size:13px;color:rgba(244,246,242,.6);}
+  .poule-invul{border-top:1.5px solid rgba(244,246,242,.25);margin-top:12px;padding-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+  .poule-invul-label{font-size:13px;color:rgba(244,246,242,.8);font-weight:600;}
+  .speler-keuze{display:flex;gap:6px;flex-wrap:wrap;}
+  .speler-chip{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(244,246,242,.4);background:transparent;color:#F4F6F2;font-size:13px;font-weight:600;cursor:pointer;}
+  .speler-chip.actief{background:var(--oranje);border-color:var(--oranje);}
+  .poule-hint{font-size:11.5px;color:rgba(244,246,242,.55);width:100%;}
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:20px;overflow-y:auto;}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--card);color:var(--ink);border-radius:14px;max-width:560px;width:100%;margin:24px 0;padding:0;overflow:hidden;}
+  .modal-head{position:sticky;top:0;background:var(--ink);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+  .modal-head h3{font-family:'Anton',sans-serif;font-size:20px;text-transform:uppercase;font-weight:400;}
+  .modal-close{background:none;border:none;color:#fff;font-size:26px;cursor:pointer;line-height:1;}
+  .modal-body{padding:14px 20px 20px;max-height:62vh;overflow-y:auto;}
+  .mrow{display:grid;grid-template-columns:1fr 96px;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+  .mrow-when{font-size:11px;color:var(--ink-soft);}
+  .mrow-inp{display:flex;align-items:center;gap:4px;}
+  .mrow-inp input{width:38px;padding:6px 0;text-align:center;border:1.5px solid var(--line);border-radius:7px;font-size:15px;font-variant-numeric:tabular-nums;}
+  .mrow-inp input:focus{outline:none;border-color:var(--oranje);}
+  .modal-foot{position:sticky;bottom:0;background:var(--card);border-top:1.5px solid var(--line);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .modal-foot .save{background:var(--groen);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;}
+  .modal-status{font-size:12px;color:var(--ink-soft);}
   @media (max-width:480px){.poule-detail{display:none;}.poule-row{grid-template-columns:34px 1fr 60px;}}
   .section-title{font-family:'Anton',sans-serif;font-size:clamp(26px,4vw,38px);text-transform:uppercase;margin:54px 0 6px;}
   .section-sub{font-size:13.5px;color:var(--ink-soft);margin-bottom:20px;max-width:720px;}
@@ -507,9 +497,195 @@ TEMPLATE = """<!DOCTYPE html>
   <div class="ko-grid">__KO__</div>
   <footer>Automatisch bijgewerkt via GitHub Actions · Data: football-data.org · Tijden in Nederlandse tijd</footer>
 </div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-titel">Voorspellingen</h3>
+      <button class="modal-close" id="modal-close" type="button">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <span class="modal-status" id="modal-status"></span>
+      <button class="save" id="modal-save" type="button">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+__POULE_JS__
 </body>
 </html>
 """
+
+
+def build_poule_js():
+    if not (SUPABASE_URL and SUPABASE_KEY):
+        return ""
+    spelers_json = json.dumps(SPELERS, ensure_ascii=False)
+    kleuren_json = json.dumps(PLAYER_COLORS, ensure_ascii=False)
+    # let op: dubbele accolades omdat dit een f-string is
+    return f'''<script>
+(function(){{
+  const SB_URL = "{SUPABASE_URL}";
+  const SB_KEY = "{SUPABASE_KEY}";
+  const SPELERS = {spelers_json};
+  const KLEUREN = {kleuren_json};
+  const EXACT = {PUNTEN_EXACT}, TOTO = {PUNTEN_TOTO};
+  const REST = SB_URL + "/rest/v1/voorspellingen";
+  const H = {{ "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json" }};
+
+  const kleurVan = n => KLEUREN[Math.max(0, SPELERS.indexOf(n)) % KLEUREN.length];
+  let DATA = [];          // alle rijen uit Supabase
+  let IK = localStorage.getItem("wk26-speler") || "";
+
+  // alle wedstrijden uit de pagina halen (met evt. echte uitslag)
+  const MATCHES = [...document.querySelectorAll(".match[data-key]")].map(el => ({{
+    key: el.getAttribute("data-key"),
+    th: el.hasAttribute("data-th") ? +el.getAttribute("data-th") : null,
+    tu: el.hasAttribute("data-tu") ? +el.getAttribute("data-tu") : null,
+    when: (el.querySelector(".m-when")||{{}}).textContent || ""
+  }})).filter(m => m.key);
+
+  const punten = (ph,pu,ah,au) => {{
+    if(ah==null) return null;
+    if(ph===ah && pu===au) return EXACT;
+    if((ph>pu&&ah>au)||(ph<pu&&ah<au)||(ph===pu&&ah===au)) return TOTO;
+    return 0;
+  }};
+
+  async function laden(){{
+    try{{
+      const r = await fetch(REST + "?select=*", {{ headers: H }});
+      DATA = await r.json();
+      if(!Array.isArray(DATA)) DATA = [];
+    }}catch(e){{ DATA = []; }}
+    tekenStand(); tekenChips();
+  }}
+
+  function predVan(speler, key){{
+    return DATA.find(d => d.speler===speler && d.wedstrijd===key);
+  }}
+
+  function tekenStand(){{
+    const resultMap = {{}};
+    MATCHES.forEach(m => {{ if(m.th!=null) resultMap[m.key]=[m.th,m.tu]; }});
+    const rij = SPELERS.map(sp => {{
+      let tot=0,ex=0,to=0,inv=0;
+      DATA.filter(d=>d.speler===sp).forEach(d=>{{
+        inv++;
+        const res = resultMap[d.wedstrijd];
+        if(res){{ const p = punten(d.thuis,d.uit,res[0],res[1]);
+          tot+=p; if(p===EXACT)ex++; else if(p===TOTO)to++; }}
+      }});
+      return {{sp,tot,ex,to,inv}};
+    }}).sort((a,b)=> b.tot-a.tot || b.ex-a.ex || a.sp.localeCompare(b.sp));
+    const med=["🥇","🥈","🥉"];
+    document.getElementById("poule-stand").innerHTML = rij.map((r,i)=>`
+      <div class="poule-row">
+        <div class="poule-pos">${{i<3?med[i]:i+1}}</div>
+        <div class="poule-naam"><span class="poule-dot" style="background:${{kleurVan(r.sp)}}"></span>${{r.sp}}</div>
+        <div class="poule-detail">${{r.ex}}× exact · ${{r.to}}× toto · ${{r.inv}} ingevuld</div>
+        <div class="poule-punten">${{r.tot}}</div>
+      </div>`).join("");
+  }}
+
+  function tekenChips(){{
+    const resultMap = {{}};
+    MATCHES.forEach(m => {{ if(m.th!=null) resultMap[m.key]=[m.th,m.tu]; }});
+    document.querySelectorAll(".chips[data-chips]").forEach(box=>{{
+      const key = box.getAttribute("data-chips");
+      const res = resultMap[key];
+      box.innerHTML = SPELERS.map(sp=>{{
+        const d = predVan(sp,key); if(!d) return "";
+        let cls="chip";
+        if(res){{ const p=punten(d.thuis,d.uit,res[0],res[1]);
+          cls += p===EXACT?" exact":(p===TOTO?" toto":" mis"); }}
+        return `<span class="${{cls}}" style="--pc:${{kleurVan(sp)}}">${{sp[0]}}&thinsp;${{d.thuis}}-${{d.uit}}</span>`;
+      }}).join("");
+    }});
+  }}
+
+  // speler-keuze knoppen
+  const keuze = document.getElementById("speler-keuze");
+  function tekenKeuze(){{
+    keuze.innerHTML = SPELERS.map(sp=>
+      `<button class="speler-chip${{sp===IK?" actief":""}}" data-sp="${{sp}}" type="button">${{sp}}</button>`).join("");
+  }}
+  tekenKeuze();
+  keuze.addEventListener("click", e=>{{
+    const b = e.target.closest("[data-sp]"); if(!b) return;
+    IK = b.getAttribute("data-sp");
+    localStorage.setItem("wk26-speler", IK);
+    tekenKeuze(); toonStartknop();
+  }});
+
+  const startBtn = document.getElementById("invul-start");
+  const hint = document.getElementById("invul-hint");
+  function toonStartknop(){{
+    if(IK){{ startBtn.hidden=false; hint.textContent = "Je vult in als "+IK+". Je kunt altijd wijzigen tot de aftrap."; }}
+  }}
+  toonStartknop();
+
+  // modal
+  const modal = document.getElementById("modal");
+  const body = document.getElementById("modal-body");
+  const status = document.getElementById("modal-status");
+  startBtn.addEventListener("click", openModal);
+  document.getElementById("modal-close").addEventListener("click", ()=>modal.classList.remove("open"));
+  modal.addEventListener("click", e=>{{ if(e.target===modal) modal.classList.remove("open"); }});
+
+  function openModal(){{
+    document.getElementById("modal-titel").textContent = "Voorspellingen — " + IK;
+    body.innerHTML = MATCHES.map(m=>{{
+      const d = predVan(IK,m.key);
+      const locked = m.th!=null; // gespeeld: niet meer wijzigbaar
+      return `<div class="mrow">
+        <div><div class="mrow-when">${{m.when.replace(/\\s+/g,' ').trim()}}</div>${{m.key}}</div>
+        <div class="mrow-inp">
+          <input type="number" min="0" max="20" data-key="${{m.key}}" data-side="h" value="${{d?d.thuis:''}}" ${{locked?'disabled':''}}>
+          <span>-</span>
+          <input type="number" min="0" max="20" data-key="${{m.key}}" data-side="u" value="${{d?d.uit:''}}" ${{locked?'disabled':''}}>
+        </div>
+      </div>`;
+    }}).join("");
+    status.textContent = "";
+    modal.classList.add("open");
+  }}
+
+  document.getElementById("modal-save").addEventListener("click", async ()=>{{
+    const inputs = [...body.querySelectorAll("input")];
+    const byKey = {{}};
+    inputs.forEach(inp=>{{
+      const k = inp.getAttribute("data-key");
+      byKey[k] = byKey[k] || {{}};
+      byKey[k][inp.getAttribute("data-side")] = inp.value.trim();
+    }});
+    const rows = [];
+    Object.entries(byKey).forEach(([k,v])=>{{
+      if(v.h!==""&&v.u!==""&&v.h!=null&&v.u!=null)
+        rows.push({{ speler:IK, wedstrijd:k, thuis:+v.h, uit:+v.u }});
+    }});
+    if(!rows.length){{ status.textContent="Niets ingevuld."; return; }}
+    status.textContent = "Opslaan…";
+    try{{
+      const r = await fetch(REST + "?on_conflict=speler,wedstrijd", {{
+        method:"POST",
+        headers: {{...H, "Prefer":"resolution=merge-duplicates"}},
+        body: JSON.stringify(rows)
+      }});
+      if(!r.ok) throw new Error(await r.text());
+      status.textContent = "Opgeslagen!";
+      await laden();
+      setTimeout(()=>modal.classList.remove("open"), 700);
+    }}catch(e){{ status.textContent = "Fout bij opslaan."; console.error(e); }}
+  }});
+
+  laden();
+}})();
+</script>'''
+
+
+TEMPLATE_FOOTER_NOTE = None
 
 
 def main():
@@ -525,11 +701,13 @@ def main():
     ko_html, ko_played = build_knockout(matches)
     poule_html = build_poule(matches)
     today_html = build_today(matches)
+    poule_js = build_poule_js()
 
     updated = datetime.now(TZ).strftime("%d-%m-%Y %H:%M")
     html = (TEMPLATE
             .replace("__TODAY__", today_html)
             .replace("__POULE__", poule_html)
+            .replace("__POULE_JS__", poule_js)
             .replace("__GROUPS__", groups_html)
             .replace("__KO__", ko_html)
             .replace("__UPDATED__", updated)

@@ -1,0 +1,3 @@
+url=https://jjdpqzwvckubqqpuneup.supabase.co
+key=sb_publishable_V5vkJ6vDVjdbekgaVl7Hjg_6zAFXN17
+spelers=Rick,Rean,Tung
