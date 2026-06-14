@@ -122,31 +122,53 @@ def bets_today(matches):
 
 
 def ai_bets_block(today_matches, datum):
-    """De Bookie: eigen kaart met live AI-bets (zoek-knop per type)."""
-    if not (SUPABASE_URL and SUPABASE_KEY) or not today_matches:
+    if not (SUPABASE_URL and SUPABASE_KEY):
         return ""
-    cfg = {
-        "url": SUPABASE_URL + "/functions/v1/ai-bet",
-        "key": SUPABASE_KEY,
-        "datum": datum,
-        "wedstrijden": today_matches,
-    }
-    data = json.dumps(cfg, ensure_ascii=False).replace('"', "&quot;")
-    return f'''
-  <section class="bookie" data-aicfg="{data}">
+    return '''
+  <section class="bookie">
     <div class="bookie-head">
-      <div class="bookie-kicker">AI-wedtips · live via Unibet</div>
+      <div class="bookie-kicker">AI-wedtips · WK 2026 · live via Unibet</div>
       <h2 class="bookie-title">De Bookie<span class="accent">.</span></h2>
-      <p class="bookie-intro">Opus 4.8 zoekt ter plekke vorm, blessures, nieuws én alle Unibet-markten van vandaag. Kies een soort en laat hem zoeken — elke keer een verse analyse.</p>
+      <p class="bookie-intro">Laat De Bookie een WK-wedtip samenstellen. Kies via duidelijke stappen je wedstrijd, tickettype, markten en risico — Opus 4.8 zoekt live vorm, nieuws &amp; Unibet-markten en bouwt je bet. Met WhatsApp-deelknop en je eigen bet-historie.</p>
     </div>
-    <div class="bookie-tabs">
-      <button class="bookie-tab" type="button" data-bt="builder"><span class="bt-ico">🏗️</span><span class="bt-lbl">Bet builder</span><span class="bt-sub">1 wedstrijd, meerdere markten</span></button>
-      <button class="bookie-tab" type="button" data-bt="combi"><span class="bt-ico">🔗</span><span class="bt-lbl">Combi van de dag</span><span class="bt-sub">2–3 wedstrijden samen</span></button>
-      <button class="bookie-tab" type="button" data-bt="longshot"><span class="bt-ico">🎲</span><span class="bt-lbl">Verrassing</span><span class="bt-sub">durf-bet, hoge odds</span></button>
+    <div class="bookie-cta">
+      <a class="bookie-btn" href="./bookie.html">⚡ Open de WK-tipmachine →</a>
     </div>
-    <div class="bookie-panel" id="bookie-panel" hidden></div>
-    <div class="bookie-foot">Alle odds via Unibet · AI-inschatting, geen garantie · speel met mate</div>
+    <div class="bookie-foot">Alle odds via Unibet · AI-inschatting, geen garantie · speel met mate · 18+</div>
   </section>'''
+
+
+def write_matches_json(matches):
+    now = datetime.now(TZ)
+    today_end = now + timedelta(hours=30)
+    up_end = now + timedelta(days=6)
+    today, upcoming = [], []
+    for m in matches:
+        if m["status"] == "FINISHED":
+            continue
+        h_nl, a_nl = nl_name(m["homeTeam"]), nl_name(m["awayTeam"])
+        if not h_nl or not a_nl:
+            continue
+        dt = datetime.fromisoformat(m["utcDate"].replace("Z", "+00:00")).astimezone(TZ)
+        if dt < now - timedelta(minutes=15):
+            continue
+        rec = {"key": f"{h_nl} - {a_nl}", "home_nl": h_nl, "away_nl": a_nl,
+               "home_en": (m["homeTeam"] or {}).get("name"),
+               "away_en": (m["awayTeam"] or {}).get("name"),
+               "tijd": dt.strftime("%H:%M"), "kickoff": m["utcDate"],
+               "groep": stage_or_group(m)}
+        if dt <= today_end:
+            today.append(rec)
+        elif dt <= up_end:
+            rec["dag"] = f"{DAGEN[dt.weekday()]} {dt.day} {MAANDEN[dt.month - 1]}"
+            upcoming.append(rec)
+    today.sort(key=lambda x: x["kickoff"])
+    upcoming.sort(key=lambda x: x["kickoff"])
+    datum = f"{DAGEN[now.weekday()]} {now.day} {MAANDEN[now.month - 1]}"
+    with open("wk_matches.json", "w", encoding="utf-8") as f:
+        json.dump({"datum": datum, "today": today, "upcoming": upcoming},
+                  f, ensure_ascii=False)
+    print(f"wk_matches.json: {len(today)} vandaag, {len(upcoming)} komend")
 
 
 def load_predictions():
@@ -544,6 +566,9 @@ TEMPLATE = """<!DOCTYPE html>
   .bt-sub{font-size:11px;color:var(--ink-soft);}
   .bookie-panel{padding:8px 22px 2px;}
   .bookie-foot{padding:13px 22px 18px;font-size:11px;color:var(--ink-soft);border-top:1px solid var(--line);margin-top:14px;}
+  .bookie-cta{padding:16px 22px 4px;}
+  .bookie-btn{display:inline-block;background:var(--oranje);color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:13px 22px;border-radius:10px;}
+  .bookie-btn:hover{opacity:.92;}
   .bk-load{display:flex;align-items:center;gap:14px;padding:16px 2px;}
   .bk-spin{width:26px;height:26px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--oranje);animation:bkspin .8s linear infinite;flex:none;}
   @keyframes bkspin{to{transform:rotate(360deg);}}
@@ -870,74 +895,7 @@ def build_poule_js():
 
 
 def build_bets_js():
-    if not (SUPABASE_URL and SUPABASE_KEY):
-        return ""
-    return '''<script>
-(function(){
-  const box=document.querySelector('.bookie'); if(!box) return;
-  let CFG={}; try{ CFG=JSON.parse(box.getAttribute('data-aicfg')); }catch(e){ return; }
-  const panel=document.getElementById('bookie-panel');
-  const labels={builder:'🏗️ Bet builder',combi:'🔗 Combi van de dag',longshot:'🎲 Verrassing'};
-  let busy=false, spinTimer=null;
-  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-  function od(n){ return (typeof n==='number')? n.toFixed(2): esc(n); }
-  function legHtml(match, pick, odd){
-    return '<div class="leg">'+(match?('<div class="leg-match">'+esc(match)+'</div>'):'')
-      +'<div class="leg-pick">'+esc(pick)+'</div><div class="leg-od">'+od(odd)+'</div></div>';
-  }
-  function renderBet(t,b){
-    let legs='';
-    if(t==='builder'){ legs=b.selecties.map(s=>legHtml(b.wedstrijd,s.markt,s.odds)).join(''); }
-    else { legs=b.selecties.map(s=>legHtml(s.wedstrijd,s.markt,s.odds)).join(''); }
-    let h='<div class="slip">'
-      +'<div class="slip-top"><span class="slip-type">'+labels[t]+'</span><span class="slip-meta">via '+esc(b.bron||'Unibet')+' · Opus 4.8 live</span></div>'
-      +legs
-      +'<div class="slip-total"><span class="slip-total-lbl">Totale odds</span><span class="slip-bigod">'+od(b.combi_odds)+'</span></div>';
-    if(b.uitleg) h+='<div class="slip-why">'+esc(b.uitleg)+'</div>';
-    h+='<div class="slip-actions"><button class="slip-share" type="button">📋 Deel met de groep</button><button class="slip-again" type="button">↻ Nieuwe zoeken</button></div></div>';
-    panel.innerHTML=h;
-    panel.querySelector('.slip-share').addEventListener('click',(e)=>{
-      navigator.clipboard.writeText(shareText(t,b)).then(
-        ()=>{ e.target.textContent='✓ Gekopieerd'; setTimeout(()=>e.target.textContent='📋 Deel met de groep',1500); },()=>{});
-    });
-    panel.querySelector('.slip-again').addEventListener('click',()=>zoek(t));
-  }
-  function shareText(t,b){
-    let x='🤖 '+labels[t]+' ('+(CFG.datum||'')+')\\n';
-    if(t==='builder'){ x+=b.wedstrijd+'\\n'+b.selecties.map(s=>'• '+s.markt+' @ '+od(s.odds)).join('\\n')+'\\n'; }
-    else { x+=b.selecties.map(s=>'• '+s.wedstrijd+': '+s.markt+' @ '+od(s.odds)).join('\\n')+'\\n'; }
-    x+='Totale odds: '+od(b.combi_odds)+'\\n';
-    if(b.uitleg) x+=b.uitleg+'\\n';
-    x+='(AI-suggestie, geen garantie · '+(b.bron||'Unibet')+')';
-    return x;
-  }
-  const STAPPEN=['Nieuws & vorm checken…','Blessures en opstellingen…','Alle Unibet-markten vergelijken…','Beste waarde zoeken…'];
-  function startLoader(t){
-    let i=0;
-    panel.innerHTML='<div class="bk-load"><span class="bk-spin"></span><div><div class="bk-load-txt">De Bookie analyseert de '+labels[t].replace(/^[^ ]+ /,'')+'…</div><div class="bk-load-sub" id="bk-sub">'+STAPPEN[0]+'</div></div></div>';
-    const sub=document.getElementById('bk-sub');
-    spinTimer=setInterval(()=>{ i=(i+1)%STAPPEN.length; if(sub) sub.textContent=STAPPEN[i]; },2200);
-  }
-  function stopLoader(){ if(spinTimer){ clearInterval(spinTimer); spinTimer=null; } }
-  async function zoek(t){
-    if(busy) return; busy=true;
-    box.querySelectorAll('.bookie-tab').forEach(c=>c.classList.remove('actief'));
-    const tab=box.querySelector('.bookie-tab[data-bt="'+t+'"]'); if(tab) tab.classList.add('actief');
-    panel.hidden=false; startLoader(t);
-    try{
-      const r=await fetch(CFG.url,{method:'POST',headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key,'Content-Type':'application/json'},body:JSON.stringify({type:t,datum:CFG.datum,wedstrijden:CFG.wedstrijden})});
-      const j=await r.json().catch(()=>({error:'Ongeldig antwoord'}));
-      stopLoader();
-      if(!r.ok || j.error || !j.bet){ panel.innerHTML='<div class="bk-err">'+esc(j.error||('Fout '+r.status))+' <button class="slip-again" type="button">↻ Opnieuw</button></div>'; const a=panel.querySelector('.slip-again'); if(a) a.addEventListener('click',()=>zoek(t)); busy=false; return; }
-      renderBet(t,j.bet);
-    }catch(e){ stopLoader(); panel.innerHTML='<div class="bk-err">Kon de AI niet bereiken. Probeer het zo nog eens.</div>'; }
-    busy=false;
-  }
-  box.querySelectorAll('.bookie-tab').forEach(tab=>{
-    tab.addEventListener('click',()=>zoek(tab.getAttribute('data-bt')));
-  });
-})();
-</script>'''
+    return ""
 
 
 TEMPLATE_FOOTER_NOTE = None
@@ -975,6 +933,7 @@ def main():
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
+    write_matches_json(matches)
     print(f"index.html geschreven · {played + ko_played} gespeelde wedstrijden")
 
 
