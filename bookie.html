@@ -323,4 +323,41 @@ function wireSlip(b){
   document.getElementById("newBet").onclick=()=>{S.scope=S.matchKey=S.ticket=S.risk=S.oddRange=S.legs=null;S.matches=[];S.groups=[];STEP=1;render();};
   document.getElementById("seeMine").onclick=()=>{STEP=8;render();};
 }
-function scrResult(){
+function scrResult(){ drawSteps(0); app.innerHTML='<div class="screen on">'+slipHtml(RESULT,false)+'</div>'; wireSlip(RESULT); }
+async function scrMyBets(){
+  drawSteps(0);
+  app.innerHTML='<div class="screen on"><h2 class="q">Mijn WK-bets</h2><div class="q-sub">Opgeslagen op dit apparaat.</div><div id="mbList"><div class="empty">Laden…</div></div><div class="navbar"><button class="btn btn-primary" id="back2">'+ICON.plus+' Nieuwe WK-bet</button></div></div>';
+  document.getElementById("back2").onclick=()=>{ STEP=1; render(); };
+  try{
+    const res=await api({action:"mybets"}); const list=res.bets||[]; const now=Date.now();
+    if(!list.length){ document.getElementById("mbList").innerHTML='<div class="empty">Nog geen bets. Maak je eerste WK-tip!</div>'; return; }
+    document.getElementById("mbList").innerHTML=list.map(b=>{
+      const exp = b.status!=="active" || (b.expires_at && new Date(b.expires_at).getTime()<now);
+      const d=b.created_at?new Date(b.created_at).toLocaleString("nl-NL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
+      return '<div class="mb-row" data-slug="'+esc(b.share_slug)+'"><div><div style="font-weight:700;font-size:14px;">'+esc(b.match_name||b.generated_bet_title||"WK-tip")+'</div><div style="font-size:11.5px;color:var(--ink-soft);margin-top:2px;">'+d+' · '+esc(b.bet_type)+' <span class="mb-status '+(exp?"mb-exp":"mb-active")+'">'+(exp?"verlopen":"actief")+'</span></div></div><div class="mb-od">'+(typeof b.total_odds==="number"?b.total_odds.toFixed(2):b.total_odds)+'</div></div>';
+    }).join("");
+    app.querySelectorAll('[data-slug]').forEach(el=>el.onclick=()=>openSlug(el.getAttribute("data-slug")));
+  }catch(e){ document.getElementById("mbList").innerHTML='<div class="empty">Kon bets niet laden.</div>'; }
+}
+async function openSlug(slug){
+  app.innerHTML='<div class="screen on"><div class="load"><div class="spin"></div><div class="load-sub">Bet laden…</div></div></div>';
+  try{
+    const res=await api({action:"getbet",slug}); const r=res.bet; if(!r){ toast("Bet niet gevonden"); STEP=8; render(); return; }
+    const legs=(r.bet_legs||[]).map(l=>({wedstrijd:"",selection:l.selection,market_name:l.market_name,odds:Number(l.odds),explanation:l.explanation}));
+    const expired = r.status!=="active" || (r.expires_at && new Date(r.expires_at).getTime()<Date.now());
+    const b={title:r.generated_bet_title,match_name:r.match_name,bet_type_label:r.bet_type,risk_label:r.risk_level,total_odds:Number(r.total_odds),legs,reasoning:r.reasoning,bron:(r.unibet_market_snapshot&&r.unibet_market_snapshot.bron)||"Unibet",created_at:r.created_at,share_text:r.share_text,slug:r.share_slug};
+    RESULT=b; drawSteps(0); app.innerHTML='<div class="screen on">'+slipHtml(b,expired)+'</div>'; wireSlip(b);
+  }catch(e){ toast("Fout bij laden"); STEP=8; render(); }
+}
+async function init(){
+  app.innerHTML='<div class="load"><div class="spin"></div><div class="load-sub">WK-wedstrijden laden…</div></div>';
+  try{ DATA = await fetch("./wk_matches.json?t="+Date.now()).then(r=>r.json()); }catch(e){ DATA={today:[],upcoming:[]}; }
+  try{ const m=await api({action:"markets"}); GROUPS=m.groups||[]; }catch(e){ GROUPS=[]; }
+  const shared = new URLSearchParams(location.search).get("bet");
+  if(shared){ openSlug(shared); return; }
+  STEP=1; render();
+}
+init();
+</script>
+</body>
+</html>
