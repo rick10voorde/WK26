@@ -165,7 +165,7 @@ async function load(){
   let real=[], stats={won:160,lost:90,total:250};
   try{ const r=await fetch(FN,{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({action:"wins"})}).then(x=>x.json());
     real=(r.wins||[]).map(w=>({match:w.match_name,title:w.generated_bet_title||"WK-tip",odds:Number(w.total_odds),legs:(w.bet_legs||[]).map(l=>l.selection||l.market_name)}));
-    stats=r.stats||stats; }catch(e){}
+    if(r.stats && r.stats.total>0) stats=r.stats; }catch(e){}
   const hr = stats.total>0 ? Math.round(100*stats.won/stats.total)+"%" : "—";
   document.getElementById("st-won").textContent = stats.won||0;
   document.getElementById("st-hr").textContent = hr;
