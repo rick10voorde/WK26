@@ -144,7 +144,8 @@ def ai_bets_block(today_matches, datum):
 
 def write_matches_json(matches):
     now = datetime.now(TZ)
-    today_end = now + timedelta(hours=30)
+    start_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = start_today + timedelta(hours=32)  # vandaag + vannacht t/m morgen 08:00
     up_end = now + timedelta(days=6)
     today, upcoming = [], []
     for m in matches:
@@ -162,6 +163,7 @@ def write_matches_json(matches):
                "tijd": dt.strftime("%H:%M"), "kickoff": m["utcDate"],
                "groep": stage_or_group(m)}
         if dt <= today_end:
+            rec["wanneer"] = "Vandaag" if dt.date() == now.date() else "Vannacht"
             today.append(rec)
         elif dt <= up_end:
             rec["dag"] = f"{DAGEN[dt.weekday()]} {dt.day} {MAANDEN[dt.month - 1]}"
