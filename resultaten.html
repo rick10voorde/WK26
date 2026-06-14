@@ -38,6 +38,7 @@
   .badge.real{background:rgba(30,122,76,.12);color:var(--groen);border-color:var(--groen);}
   .bet-title{font-family:'Anton',sans-serif;font-size:17px;text-transform:uppercase;line-height:1.05;padding:0 14px;}
   .bet-match{font-size:11.5px;color:var(--ink-soft);padding:3px 14px 0;text-transform:uppercase;letter-spacing:.04em;}
+  .bet-dt{color:var(--oranje);font-weight:700;}
   .bet-legs{list-style:none;padding:8px 14px 2px;}
   .bet-legs li{font-size:13px;padding:4px 0;border-top:1px dashed var(--line);display:flex;gap:6px;}
   .bet-legs li:first-child{border-top:none;}
@@ -137,18 +138,26 @@ const FN = "https://jjdpqzwvckubqqpuneup.supabase.co/functions/v1/community";
 const KEY = "sb_publishable_V5vkJ6vDVjdbekgaVl7Hjg_6zAFXN17";
 const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg>';
 const VOORBEELDEN = [
-  {match:"Bayern München — Atalanta", title:"Beieren walst door", odds:2.10, legs:["Bayern wint","Meer dan 2.5 goals"]},
-  {match:"Combi van de dag", title:"Dubbel raak", odds:3.45, legs:["Spanje wint","Frankrijk wint"]},
-  {match:"Manchester City — Chelsea", title:"Doelpuntenfestijn", odds:1.90, legs:["Beide teams scoren: ja"]},
-  {match:"Nederland — Senegal", title:"Oranje banker", odds:1.55, legs:["Nederland wint of gelijk","Meer dan 1.5 goals"]},
-  {match:"Argentinië — Kroatië", title:"Zuid-Amerikaanse power", odds:2.30, legs:["Beide teams scoren: ja","Meer dan 2.5 goals"]},
-  {match:"Real Madrid — Bayern", title:"Kraker over de lijn", odds:1.80, legs:["Meer dan 2.5 goals"]}
+  {datum:"14 jun", match:"Australië — Turkije", title:"Socceroos counteren", odds:3.10, legs:["Australië wint","Onder 3.5 goals"]},
+  {datum:"14 jun", match:"Brazilië — Marokko", title:"Doelpunten in Groep C", odds:1.95, legs:["Beide teams scoren: ja"]},
+  {datum:"14 jun", match:"Haïti — Schotland", title:"Schotse discipline", odds:1.85, legs:["Schotland wint of gelijk","Onder 2.5 goals"]},
+  {datum:"13 jun", match:"Argentinië — Saoedi-Arabië", title:"Messi-magie", odds:2.45, legs:["Argentinië wint","Messi scoort"]},
+  {datum:"13 jun", match:"Engeland — Iran", title:"Three Lions rollen door", odds:2.70, legs:["Engeland -1.5 handicap","Saka 2+ schoten op doel"]},
+  {datum:"13 jun", match:"Portugal — Ghana", title:"Ronaldo's missie", odds:2.40, legs:["Portugal wint","Ronaldo scoort"]},
+  {datum:"13 jun", match:"Spanje — Uruguay", title:"Tiki-taka tikt door", odds:2.30, legs:["Spanje wint","Beide teams scoren: nee"]},
+  {datum:"12 jun", match:"Frankrijk — Polen", title:"Mbappé aan zet", odds:2.20, legs:["Frankrijk wint","Mbappé scoort"]},
+  {datum:"12 jun", match:"Nederland — Senegal", title:"Oranje opent sterk", odds:2.85, legs:["Nederland wint","Gakpo scoort"]},
+  {datum:"12 jun", match:"Duitsland — Japan", title:"Revanche van 2022", odds:2.55, legs:["Duitsland wint","Over 2.5 goals"]},
+  {datum:"12 jun", match:"België — Egypte", title:"Rode Duivels banker", odds:1.75, legs:["Beide teams scoren: ja","Over 1.5 goals"]},
+  {datum:"11 jun", match:"Mexico — Zuid-Korea", title:"Gastheren knallen los", odds:2.05, legs:["Over 2.5 goals","Beide teams scoren: ja"]},
+  {datum:"11 jun", match:"VS — Wales", title:"Stars & Stripes", odds:1.95, legs:["VS wint of gelijk","Pulisic 1+ schot op doel"]},
+  {datum:"11 jun", match:"Kroatië — Nigeria", title:"Modrić dirigeert", odds:1.90, legs:["Kroatië wint of gelijk","Onder 2.5 goals"]}
 ];
 function esc(s){return (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
 function card(b, real){
   const legs=(b.legs||[]).map(l=>'<li>'+esc(l)+'</li>').join("");
   return '<div class="bet'+(real?' real':'')+'"><div class="bet-top"><span class="won">'+CHECK+' Gewonnen</span><span class="badge'+(real?' real':'')+'">'+(real?'Geverifieerd':'Voorbeeld')+'</span></div>'
-    +'<div class="bet-title">'+esc(b.title)+'</div><div class="bet-match">'+esc(b.match)+'</div>'
+    +'<div class="bet-title">'+esc(b.title)+'</div><div class="bet-match">'+esc(b.match)+(b.datum?'<span class="bet-dt"> · '+esc(b.datum)+'</span>':'')+'</div>'
     +'<ul class="bet-legs">'+legs+'</ul>'
     +'<div class="bet-od"><span>Totale odd</span><b>'+(typeof b.odds==="number"?b.odds.toFixed(2):esc(b.odds))+'</b></div></div>';
 }
