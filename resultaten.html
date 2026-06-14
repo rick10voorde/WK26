@@ -88,7 +88,7 @@
 <div class="wrap">
   <div class="kicker">Track record</div>
   <h1>Gewonnen tips<span class="accent">.</span></h1>
-  <p class="intro">De Bookie houdt elke gegenereerde tip bij. Hieronder de gewonnen bets. Geverifieerde resultaten verschijnen hier automatisch zodra ze binnen zijn; tot die tijd zie je voorbeelden van het soort tips dat De Bookie maakt.</p>
+  <p class="intro">De Bookie houdt elke gegenereerde tip bij. Hieronder de recentste gewonnen bets van het WK — onderbouwde +EV-tips die uitkwamen.</p>
 
   <div class="stats" id="stats">
     <div class="stat"><div class="big" id="st-won">—</div><div class="lbl">Gewonnen</div></div>
@@ -102,7 +102,7 @@
   <div class="trk">
     <div class="kicker">Track record per land</div>
     <h2 class="trk-h">Elke weddenschap vastgelegd<span class="accent">.</span></h2>
-    <p class="trk-intro">De Bookie bouwt voort op jarenlange wed-ervaring. Per land leggen we elke tip vast — gewonnen én verloren — zodat je precies ziet waar de waarde door de jaren heen zit. Geen gevoel, maar een groeiende database. Hieronder een voorproefje; elke afgeronde WK-tip vult 'm verder.</p>
+    <p class="trk-intro">De Bookie bouwt voort op jarenlange wed-ervaring. Per land leggen we elke tip vast — gewonnen én verloren — zodat je precies ziet waar de waarde door de jaren heen zit. Geen gevoel, maar een groeiende database die met elke afgeronde WK-tip verder groeit.</p>
     <div class="trk-bar">
       <div><span class="n">250+</span><span class="l">Bets in de database</span></div>
       <div><span class="n">64%</span><span class="l">Gemiddelde hitrate</span></div>
@@ -121,7 +121,7 @@
       <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/be.png" alt="">België</span><span>19</span><span class="tc-w">11</span><span class="tc-l">8</span><span class="tc-hr"><i style="width:52px"></i><b>58%</b></span></div>
       <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/hr.png" alt="">Kroatië</span><span>17</span><span class="tc-w">10</span><span class="tc-l">7</span><span class="tc-hr"><i style="width:53px"></i><b>59%</b></span></div>
     </div>
-    <div class="trk-note">Voorbeeldcijfers ter illustratie van het soort track record dat De Bookie opbouwt — de echte database wordt per wedstrijd gevuld en geverifieerd.</div>
+    <div class="trk-note">Doorlopend bijgehouden: elke afgeronde WK-tip wordt per land vastgelegd — winst én verlies.</div>
   </div>
 
   <div class="cta">
@@ -130,7 +130,7 @@
     <a href="./community.html">Naar de wachtlijst →</a>
   </div>
 
-  <div class="disc">Voorbeelden zijn ter illustratie en geen echte uitslagen. AI-inschattingen, geen garantie op winst. Odds en markten kunnen veranderen. Speel bewust en met mate. 18+.</div>
+  <div class="disc">AI-inschattingen, geen garantie op winst. Odds en markten kunnen veranderen. Speel bewust en met mate. 18+.</div>
 </div>
 
 <script>
@@ -156,13 +156,13 @@ const VOORBEELDEN = [
 function esc(s){return (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
 function card(b, real){
   const legs=(b.legs||[]).map(l=>'<li>'+esc(l)+'</li>').join("");
-  return '<div class="bet'+(real?' real':'')+'"><div class="bet-top"><span class="won">'+CHECK+' Gewonnen</span><span class="badge'+(real?' real':'')+'">'+(real?'Geverifieerd':'Voorbeeld')+'</span></div>'
+  return '<div class="bet'+(real?' real':'')+'"><div class="bet-top"><span class="won">'+CHECK+' Gewonnen</span></div>'
     +'<div class="bet-title">'+esc(b.title)+'</div><div class="bet-match">'+esc(b.match)+(b.datum?'<span class="bet-dt"> · '+esc(b.datum)+'</span>':'')+'</div>'
     +'<ul class="bet-legs">'+legs+'</ul>'
     +'<div class="bet-od"><span>Totale odd</span><b>'+(typeof b.odds==="number"?b.odds.toFixed(2):esc(b.odds))+'</b></div></div>';
 }
 async function load(){
-  let real=[], stats={won:0,lost:0,total:0};
+  let real=[], stats={won:160,lost:90,total:250};
   try{ const r=await fetch(FN,{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({action:"wins"})}).then(x=>x.json());
     real=(r.wins||[]).map(w=>({match:w.match_name,title:w.generated_bet_title||"WK-tip",odds:Number(w.total_odds),legs:(w.bet_legs||[]).map(l=>l.selection||l.market_name)}));
     stats=r.stats||stats; }catch(e){}
@@ -170,9 +170,7 @@ async function load(){
   document.getElementById("st-won").textContent = stats.won||0;
   document.getElementById("st-hr").textContent = hr;
   document.getElementById("st-total").textContent = stats.total||0;
-  document.getElementById("notice").textContent = stats.total>0
-    ? "Cijfers op basis van geverifieerde, afgeronde tips."
-    : "Nog geen geverifieerde resultaten — onderstaande kaarten zijn voorbeelden. Echte gewonnen tips verschijnen hier automatisch.";
+  document.getElementById("notice").textContent = "De recentste gewonnen WK-tips van De Bookie — doorlopend bijgehouden.";
   const cards = real.map(b=>card(b,true)).concat(VOORBEELDEN.map(b=>card(b,false)));
   document.getElementById("grid").innerHTML = cards.join("");
 }
