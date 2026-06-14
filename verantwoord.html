@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verantwoord spelen &middot; De Bookie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#F4F6F2;--card:#FFF;--ink:#14201A;--ink-soft:#5C6A61;--line:#DDE3DA;--oranje:#F05A1A;--pen:#2244C8;--groen:#1E7A4C;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;}
+  .topnav{position:sticky;top:0;z-index:60;background:rgba(244,246,242,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;flex-wrap:wrap;}
+  .nav-brand{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;text-decoration:none;color:var(--ink);}
+  .nav-brand .accent{color:var(--oranje);}
+  .nav-links{display:flex;gap:3px;flex-wrap:wrap;}
+  .nav-links a{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-decoration:none;padding:7px 11px;border-radius:8px;}
+  .nav-links a:hover{color:var(--ink);background:var(--card);}
+  .nav-links a.active{color:#fff;background:var(--ink);}
+  @media(max-width:430px){.nav-brand{font-size:17px;}.nav-links a{padding:6px 8px;font-size:12px;}}
+  .wrap.doc{max-width:760px;margin:0 auto;padding:28px 16px 12px;}
+  .kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--oranje);font-weight:700;margin-bottom:8px;}
+  .doc h1{font-family:'Anton',sans-serif;font-size:clamp(30px,6vw,50px);text-transform:uppercase;line-height:.97;}
+  .doc h1 .accent{color:var(--oranje);}
+  .doc h2{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;margin:26px 0 7px;letter-spacing:.01em;}
+  .doc p,.doc li{font-size:14.5px;line-height:1.65;color:#26332B;}
+  .doc p{margin:8px 0;}
+  .doc ul{margin:8px 0 10px 18px;display:flex;flex-direction:column;gap:5px;}
+  .doc a{color:var(--pen);}
+  .doc .intro{font-size:15px;color:var(--ink-soft);margin-top:10px;line-height:1.55;}
+  .doc .updated{font-size:12px;color:var(--ink-soft);margin-top:8px;}
+  .callout{background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:14px 16px;margin:16px 0;font-size:13.5px;line-height:1.6;color:#26332B;}
+  .callout.warn{border-color:var(--oranje);background:rgba(240,90,26,.06);}
+  .ph{color:var(--oranje);font-weight:700;}
+  .cform{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px;margin-top:18px;max-width:560px;}
+  .cform label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin:10px 0 5px;}
+  .cform input,.cform textarea{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:11px 13px;font-family:inherit;font-size:14.5px;background:var(--paper);color:var(--ink);box-sizing:border-box;}
+  .cform textarea{resize:vertical;min-height:120px;}
+  .cform input:focus,.cform textarea:focus{outline:2px solid var(--oranje);border-color:transparent;}
+  .cform button{margin-top:14px;background:var(--oranje);color:#fff;border:none;border-radius:9px;padding:13px 22px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .cform button:disabled{opacity:.6;cursor:not-allowed;}
+  .msg{font-size:13px;margin-top:12px;min-height:18px;font-weight:600;}
+  .msg.ok{color:var(--groen);}
+  .msg.err{color:#C0492F;}
+  .site-foot{background:var(--ink);color:#E7ECE6;margin-top:52px;}
+  .foot-wrap{max-width:1180px;margin:0 auto;padding:38px 16px 26px;}
+  .foot-main{display:flex;flex-wrap:wrap;gap:28px 40px;justify-content:space-between;}
+  .foot-logo{font-family:'Anton',sans-serif;font-size:26px;text-transform:uppercase;text-decoration:none;color:#fff;}
+  .foot-logo .accent{color:var(--oranje);}
+  .foot-tag{font-size:13px;color:rgba(231,236,230,.6);margin-top:10px;max-width:300px;line-height:1.55;}
+  .foot-cols{display:flex;flex-wrap:wrap;gap:26px 44px;}
+  .foot-col{display:flex;flex-direction:column;gap:8px;min-width:135px;}
+  .foot-col h4{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(231,236,230,.45);margin-bottom:3px;font-weight:700;}
+  .foot-col a{font-size:13.5px;color:#E7ECE6;text-decoration:none;}
+  .foot-col a:hover{color:var(--oranje);}
+  .foot-muted{font-size:12px;color:rgba(231,236,230,.5);line-height:1.55;}
+  .foot-resp{display:flex;gap:13px;align-items:flex-start;margin-top:30px;padding-top:20px;border-top:1px solid rgba(231,236,230,.14);}
+  .foot-18{flex:none;font-family:'Anton',sans-serif;font-size:15px;background:var(--oranje);color:#fff;border-radius:7px;padding:6px 9px;line-height:1;}
+  .foot-resp p{font-size:11.5px;color:rgba(231,236,230,.62);line-height:1.6;}
+  .foot-resp a{color:#fff;text-decoration:underline;}
+  .foot-bottom{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;margin-top:22px;font-size:11px;color:rgba(231,236,230,.4);}
+  @media(max-width:560px){.foot-main{flex-direction:column;gap:22px;}}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="nav-brand" href="./index.html">De Bookie<span class="accent">.</span></a>
+  <div class="nav-links">
+    <a href="./index.html">Schema</a>
+    <a href="./bookie.html">Tipmachine</a>
+    <a href="./resultaten.html">Resultaten</a>
+    <a href="./community.html">Word lid</a>
+  </div>
+</nav>
+<div class="wrap doc">
+  <div class="kicker">18+ &middot; speel bewust</div>
+  <h1>Verantwoord <span class="accent">spelen.</span></h1>
+  <p class="intro">Wedden moet leuk blijven. De Bookie helpt je onderbouwde keuzes maken, maar gokken brengt altijd risico met zich mee. Hier lees je hoe je bewust speelt en waar je terechtkunt voor hulp.</p>
+
+  <div class="callout warn"><b>18+ &middot; Wat kost gokken jou?</b> Gokken is alleen voor volwassenen en is geen manier om geld te verdienen. Stop op tijd.</div>
+
+  <h2>Speel bewust</h2>
+  <ul>
+    <li>Bepaal vooraf een bedrag dat je kunt missen &mdash; en houd je daaraan.</li>
+    <li>Probeer verlies nooit terug te winnen met hogere inzetten.</li>
+    <li>Wed niet onder invloed of bij stress of somberheid.</li>
+    <li>Zie inzetten als uitgave voor vermaak, niet als inkomstenbron.</li>
+    <li>Neem regelmatig pauze en stel jezelf limieten in bij je aanbieder.</li>
+  </ul>
+
+  <h2>Signalen dat het te ver gaat</h2>
+  <ul>
+    <li>Je gokt meer of vaker dan je van plan was.</li>
+    <li>Je leent geld of gokt met geld dat voor andere dingen bedoeld is.</li>
+    <li>Je verzwijgt voor anderen hoeveel je gokt.</li>
+    <li>Gokken gaat ten koste van werk, studie, slaap of relaties.</li>
+  </ul>
+
+  <h2>Hulp en zelfuitsluiting</h2>
+  <ul>
+    <li><b><a href="https://www.loketkansspel.nl" target="_blank" rel="noopener">Loket Kansspel</a></b> &mdash; gratis en anonieme hulp en informatie, 24/7 bereikbaar via telefoon en chat.</li>
+    <li><b><a href="https://www.cruks.nl" target="_blank" rel="noopener">Cruks</a></b> &mdash; het Centraal Register Uitsluiting Kansspelen. Sluit jezelf (tijdelijk) uit van alle legale online en fysieke kansspelen in Nederland.</li>
+    <li><b><a href="https://www.agog.nl" target="_blank" rel="noopener">AGOG</a></b> &mdash; lotgenotengroepen voor gokkers en hun omgeving.</li>
+    <li><b><a href="https://www.jellinek.nl" target="_blank" rel="noopener">Jellinek</a></b> &mdash; verslavingszorg met behandeling bij gokproblemen.</li>
+  </ul>
+
+  <p>De Bookie is een informatieve dienst en geen kansspelaanbieder. Twijfel je over je speelgedrag? Wacht niet en zoek hulp &mdash; het is gratis en vertrouwelijk.</p>
+</div>
+<footer class="site-foot">
+  <div class="foot-wrap">
+    <div class="foot-main">
+      <div class="foot-brand">
+        <a class="foot-logo" href="./index.html">De Bookie<span class="accent">.</span></a>
+        <p class="foot-tag">AI-onderbouwde WK-wedtips op basis van Expected Value. Geen gevoel, wel transparantie.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h4>Navigatie</h4>
+          <a href="./index.html">Schema &amp; uitslagen</a>
+          <a href="./bookie.html">Tipmachine</a>
+          <a href="./resultaten.html">Resultaten</a>
+          <a href="./community.html">Word lid</a>
+        </div>
+        <div class="foot-col">
+          <h4>Info &amp; juridisch</h4>
+          <a href="./verantwoord.html">Verantwoord spelen</a>
+          <a href="./privacy.html">Privacybeleid</a>
+          <a href="./voorwaarden.html">Voorwaarden &amp; disclaimer</a>
+          <a href="./contact.html">Contact</a>
+        </div>
+        <div class="foot-col">
+          <h4>Contact</h4>
+          <a href="mailto:info@debookie.io">info@debookie.io</a>
+          <span class="foot-muted">De Bookie <span class="ph">[handelsnaam invullen]</span><br>KvK <span class="ph">[nummer]</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="foot-resp">
+      <span class="foot-18">18+</span>
+      <p>Speel bewust en met mate &mdash; gokken is geen manier om geld te verdienen. De Bookie is g&eacute;&eacute;n kansspelaanbieder en biedt zelf geen weddenschappen aan; odds en markten zijn van Unibet. AI-inschattingen zijn informatief en geven geen garantie op winst. Hulp nodig bij gokken? Neem (gratis, 24/7) contact op met <a href="https://www.loketkansspel.nl" target="_blank" rel="noopener">Loket Kansspel</a> of sluit jezelf uit via <a href="https://www.cruks.nl" target="_blank" rel="noopener">Cruks</a>.</p>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 De Bookie. Alle rechten voorbehouden.</span>
+      <span>Teksten, data en logo zijn auteursrechtelijk beschermd.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

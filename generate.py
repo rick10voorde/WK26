@@ -689,6 +689,24 @@ TEMPLATE = """<!DOCTYPE html>
   .ko-final h3{color:var(--oranje);border-color:var(--oranje);}
   footer{margin-top:50px;padding-top:16px;border-top:1.5px solid var(--line);font-size:12px;color:var(--ink-soft);}
   @media (max-width:420px){.match{grid-template-columns:64px 1fr 48px;}}
+  .site-foot{background:var(--ink);color:#E7ECE6;margin-top:52px;}
+  .foot-wrap{max-width:1180px;margin:0 auto;padding:38px 16px 26px;}
+  .foot-main{display:flex;flex-wrap:wrap;gap:28px 40px;justify-content:space-between;}
+  .foot-logo{font-family:'Anton',sans-serif;font-size:26px;text-transform:uppercase;text-decoration:none;color:#fff;}
+  .foot-logo .accent{color:var(--oranje);}
+  .foot-tag{font-size:13px;color:rgba(231,236,230,.6);margin-top:10px;max-width:300px;line-height:1.55;}
+  .foot-cols{display:flex;flex-wrap:wrap;gap:26px 44px;}
+  .foot-col{display:flex;flex-direction:column;gap:8px;min-width:135px;}
+  .foot-col h4{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(231,236,230,.45);margin-bottom:3px;font-weight:700;}
+  .foot-col a{font-size:13.5px;color:#E7ECE6;text-decoration:none;}
+  .foot-col a:hover{color:var(--oranje);}
+  .foot-muted{font-size:12px;color:rgba(231,236,230,.5);line-height:1.55;}
+  .foot-resp{display:flex;gap:13px;align-items:flex-start;margin-top:30px;padding-top:20px;border-top:1px solid rgba(231,236,230,.14);}
+  .foot-18{flex:none;font-family:'Anton',sans-serif;font-size:15px;background:var(--oranje);color:#fff;border-radius:7px;padding:6px 9px;line-height:1;}
+  .foot-resp p{font-size:11.5px;color:rgba(231,236,230,.62);line-height:1.6;}
+  .foot-resp a{color:#fff;text-decoration:underline;}
+  .foot-bottom{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;margin-top:22px;font-size:11px;color:rgba(231,236,230,.4);}
+  @media(max-width:560px){.foot-main{flex-direction:column;gap:22px;}}
 </style>
 </head>
 <body>
@@ -737,6 +755,45 @@ TEMPLATE = """<!DOCTYPE html>
 
 __POULE_JS__
 __BETS_JS__
+<footer class="site-foot">
+  <div class="foot-wrap">
+    <div class="foot-main">
+      <div class="foot-brand">
+        <a class="foot-logo" href="./index.html">De Bookie<span class="accent">.</span></a>
+        <p class="foot-tag">AI-onderbouwde WK-wedtips op basis van Expected Value. Geen gevoel, wel transparantie.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h4>Navigatie</h4>
+          <a href="./index.html">Schema &amp; uitslagen</a>
+          <a href="./bookie.html">Tipmachine</a>
+          <a href="./resultaten.html">Resultaten</a>
+          <a href="./community.html">Word lid</a>
+        </div>
+        <div class="foot-col">
+          <h4>Info &amp; juridisch</h4>
+          <a href="./verantwoord.html">Verantwoord spelen</a>
+          <a href="./privacy.html">Privacybeleid</a>
+          <a href="./voorwaarden.html">Voorwaarden &amp; disclaimer</a>
+          <a href="./contact.html">Contact</a>
+        </div>
+        <div class="foot-col">
+          <h4>Contact</h4>
+          <a href="mailto:info@debookie.io">info@debookie.io</a>
+          <span class="foot-muted">De Bookie <span class="ph">[handelsnaam invullen]</span><br>KvK <span class="ph">[nummer]</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="foot-resp">
+      <span class="foot-18">18+</span>
+      <p>Speel bewust en met mate &mdash; gokken is geen manier om geld te verdienen. De Bookie is g&eacute;&eacute;n kansspelaanbieder en biedt zelf geen weddenschappen aan; odds en markten zijn van Unibet. AI-inschattingen zijn informatief en geven geen garantie op winst. Hulp nodig bij gokken? Neem (gratis, 24/7) contact op met <a href="https://www.loketkansspel.nl" target="_blank" rel="noopener">Loket Kansspel</a> of sluit jezelf uit via <a href="https://www.cruks.nl" target="_blank" rel="noopener">Cruks</a>.</p>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 De Bookie. Alle rechten voorbehouden.</span>
+      <span>Teksten, data en logo zijn auteursrechtelijk beschermd.</span>
+    </div>
+  </div>
+</footer>
 </body>
 </html>
 """

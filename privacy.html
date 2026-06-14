@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacybeleid &middot; De Bookie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#F4F6F2;--card:#FFF;--ink:#14201A;--ink-soft:#5C6A61;--line:#DDE3DA;--oranje:#F05A1A;--pen:#2244C8;--groen:#1E7A4C;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;}
+  .topnav{position:sticky;top:0;z-index:60;background:rgba(244,246,242,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;flex-wrap:wrap;}
+  .nav-brand{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;text-decoration:none;color:var(--ink);}
+  .nav-brand .accent{color:var(--oranje);}
+  .nav-links{display:flex;gap:3px;flex-wrap:wrap;}
+  .nav-links a{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-decoration:none;padding:7px 11px;border-radius:8px;}
+  .nav-links a:hover{color:var(--ink);background:var(--card);}
+  .nav-links a.active{color:#fff;background:var(--ink);}
+  @media(max-width:430px){.nav-brand{font-size:17px;}.nav-links a{padding:6px 8px;font-size:12px;}}
+  .wrap.doc{max-width:760px;margin:0 auto;padding:28px 16px 12px;}
+  .kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--oranje);font-weight:700;margin-bottom:8px;}
+  .doc h1{font-family:'Anton',sans-serif;font-size:clamp(30px,6vw,50px);text-transform:uppercase;line-height:.97;}
+  .doc h1 .accent{color:var(--oranje);}
+  .doc h2{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;margin:26px 0 7px;letter-spacing:.01em;}
+  .doc p,.doc li{font-size:14.5px;line-height:1.65;color:#26332B;}
+  .doc p{margin:8px 0;}
+  .doc ul{margin:8px 0 10px 18px;display:flex;flex-direction:column;gap:5px;}
+  .doc a{color:var(--pen);}
+  .doc .intro{font-size:15px;color:var(--ink-soft);margin-top:10px;line-height:1.55;}
+  .doc .updated{font-size:12px;color:var(--ink-soft);margin-top:8px;}
+  .callout{background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:14px 16px;margin:16px 0;font-size:13.5px;line-height:1.6;color:#26332B;}
+  .callout.warn{border-color:var(--oranje);background:rgba(240,90,26,.06);}
+  .ph{color:var(--oranje);font-weight:700;}
+  .cform{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px;margin-top:18px;max-width:560px;}
+  .cform label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin:10px 0 5px;}
+  .cform input,.cform textarea{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:11px 13px;font-family:inherit;font-size:14.5px;background:var(--paper);color:var(--ink);box-sizing:border-box;}
+  .cform textarea{resize:vertical;min-height:120px;}
+  .cform input:focus,.cform textarea:focus{outline:2px solid var(--oranje);border-color:transparent;}
+  .cform button{margin-top:14px;background:var(--oranje);color:#fff;border:none;border-radius:9px;padding:13px 22px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .cform button:disabled{opacity:.6;cursor:not-allowed;}
+  .msg{font-size:13px;margin-top:12px;min-height:18px;font-weight:600;}
+  .msg.ok{color:var(--groen);}
+  .msg.err{color:#C0492F;}
+  .site-foot{background:var(--ink);color:#E7ECE6;margin-top:52px;}
+  .foot-wrap{max-width:1180px;margin:0 auto;padding:38px 16px 26px;}
+  .foot-main{display:flex;flex-wrap:wrap;gap:28px 40px;justify-content:space-between;}
+  .foot-logo{font-family:'Anton',sans-serif;font-size:26px;text-transform:uppercase;text-decoration:none;color:#fff;}
+  .foot-logo .accent{color:var(--oranje);}
+  .foot-tag{font-size:13px;color:rgba(231,236,230,.6);margin-top:10px;max-width:300px;line-height:1.55;}
+  .foot-cols{display:flex;flex-wrap:wrap;gap:26px 44px;}
+  .foot-col{display:flex;flex-direction:column;gap:8px;min-width:135px;}
+  .foot-col h4{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(231,236,230,.45);margin-bottom:3px;font-weight:700;}
+  .foot-col a{font-size:13.5px;color:#E7ECE6;text-decoration:none;}
+  .foot-col a:hover{color:var(--oranje);}
+  .foot-muted{font-size:12px;color:rgba(231,236,230,.5);line-height:1.55;}
+  .foot-resp{display:flex;gap:13px;align-items:flex-start;margin-top:30px;padding-top:20px;border-top:1px solid rgba(231,236,230,.14);}
+  .foot-18{flex:none;font-family:'Anton',sans-serif;font-size:15px;background:var(--oranje);color:#fff;border-radius:7px;padding:6px 9px;line-height:1;}
+  .foot-resp p{font-size:11.5px;color:rgba(231,236,230,.62);line-height:1.6;}
+  .foot-resp a{color:#fff;text-decoration:underline;}
+  .foot-bottom{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;margin-top:22px;font-size:11px;color:rgba(231,236,230,.4);}
+  @media(max-width:560px){.foot-main{flex-direction:column;gap:22px;}}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="nav-brand" href="./index.html">De Bookie<span class="accent">.</span></a>
+  <div class="nav-links">
+    <a href="./index.html">Schema</a>
+    <a href="./bookie.html">Tipmachine</a>
+    <a href="./resultaten.html">Resultaten</a>
+    <a href="./community.html">Word lid</a>
+  </div>
+</nav>
+<div class="wrap doc">
+  <div class="kicker">Juridisch</div>
+  <h1>Privacy<span class="accent">beleid.</span></h1>
+  <p class="intro">Dit privacybeleid legt uit welke persoonsgegevens De Bookie verwerkt, waarom, en welke rechten je hebt. We gaan zorgvuldig met je gegevens om en houden ons aan de AVG.</p>
+  <p class="updated">Laatst bijgewerkt: 14 juni 2026.</p>
+
+  <h2>Wie zijn wij</h2>
+  <p>De Bookie is een handelsnaam van <span class="ph">[handelsnaam invullen]</span>, ingeschreven bij de KvK onder nummer <span class="ph">[KvK-nummer]</span>, gevestigd te <span class="ph">[plaats]</span>. Voor privacyvragen: <a href="mailto:info@debookie.io">info@debookie.io</a>. Wij zijn de verwerkingsverantwoordelijke voor de hieronder beschreven gegevens.</p>
+
+  <h2>Welke gegevens we verwerken</h2>
+  <ul>
+    <li><b>Wachtlijst:</b> je e-mailadres, als je je inschrijft voor de community.</li>
+    <li><b>Contactformulier:</b> je naam (optioneel), e-mailadres (optioneel) en je bericht.</li>
+    <li><b>Tipmachine:</b> een willekeurig, anoniem apparaat-ID dat lokaal in je browser wordt aangemaakt, plus de door jou gegenereerde tips en het aantal analyses per dag (voor de daglimiet). Hieraan koppelen we geen naam of e-mailadres.</li>
+    <li><b>Technisch:</b> standaard logboekgegevens van onze hostingpartijen (zoals IP-adres en tijdstip), nodig voor beveiliging en het functioneren van de site.</li>
+  </ul>
+
+  <h2>Waarvoor en op welke grondslag</h2>
+  <ul>
+    <li>Je op de hoogte houden van de community &mdash; grondslag: jouw <b>toestemming</b> (wachtlijst).</li>
+    <li>Reageren op je bericht &mdash; grondslag: <b>uitvoering/gerechtvaardigd belang</b>.</li>
+    <li>De tipmachine laten werken en misbruik/overbelasting voorkomen (daglimiet) &mdash; grondslag: <b>gerechtvaardigd belang</b>.</li>
+  </ul>
+
+  <h2>Cookies en lokale opslag</h2>
+  <p>We gebruiken geen tracking- of advertentiecookies. Wel slaan we in je browser (localStorage) een anoniem apparaat-ID en je voorkeuren op, zodat de tipmachine werkt en je je eigen tips terugziet. Deze informatie blijft op je apparaat en wordt niet voor profilering gebruikt.</p>
+
+  <h2>Delen met derden (verwerkers)</h2>
+  <p>We verkopen je gegevens nooit. We schakelen dienstverleners in die namens ons gegevens verwerken:</p>
+  <ul>
+    <li><b>Supabase</b> &mdash; database en hosting van formulieren/inschrijvingen.</li>
+    <li><b>The Odds API</b> &mdash; ophalen van wedstrijd- en oddsgegevens (hierbij worden geen persoonsgegevens van jou gedeeld).</li>
+    <li><b>Anthropic (Claude)</b> &mdash; het genereren van de AI-analyse. Hierbij wordt alleen wedstrijd- en marktinformatie verstuurd, geen persoonsgegevens.</li>
+    <li><b>GitHub Pages</b> &mdash; hosting van de website.</li>
+  </ul>
+
+  <h2>Bewaartermijn</h2>
+  <p>We bewaren je gegevens niet langer dan nodig. Wachtlijst-inschrijvingen bewaren we tot je je uitschrijft of de community stopt. Contactberichten bewaren we tot je vraag is afgehandeld en daarna een redelijke periode voor administratie.</p>
+
+  <h2>Je rechten</h2>
+  <p>Je hebt het recht op inzage, correctie, verwijdering, beperking en bezwaar, en het recht je toestemming in te trekken. Stuur je verzoek naar <a href="mailto:info@debookie.io">info@debookie.io</a>. Ben je het niet eens met hoe wij met je gegevens omgaan, dan kun je een klacht indienen bij de <a href="https://autoriteitpersoonsgegevens.nl" target="_blank" rel="noopener">Autoriteit Persoonsgegevens</a>.</p>
+
+  <div class="callout">Dit privacybeleid is een nette basis. Laat het v&oacute;&oacute;r de lancering van een betaalde community juridisch controleren, en vul de bedrijfsgegevens in.</div>
+</div>
+<footer class="site-foot">
+  <div class="foot-wrap">
+    <div class="foot-main">
+      <div class="foot-brand">
+        <a class="foot-logo" href="./index.html">De Bookie<span class="accent">.</span></a>
+        <p class="foot-tag">AI-onderbouwde WK-wedtips op basis van Expected Value. Geen gevoel, wel transparantie.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h4>Navigatie</h4>
+          <a href="./index.html">Schema &amp; uitslagen</a>
+          <a href="./bookie.html">Tipmachine</a>
+          <a href="./resultaten.html">Resultaten</a>
+          <a href="./community.html">Word lid</a>
+        </div>
+        <div class="foot-col">
+          <h4>Info &amp; juridisch</h4>
+          <a href="./verantwoord.html">Verantwoord spelen</a>
+          <a href="./privacy.html">Privacybeleid</a>
+          <a href="./voorwaarden.html">Voorwaarden &amp; disclaimer</a>
+          <a href="./contact.html">Contact</a>
+        </div>
+        <div class="foot-col">
+          <h4>Contact</h4>
+          <a href="mailto:info@debookie.io">info@debookie.io</a>
+          <span class="foot-muted">De Bookie <span class="ph">[handelsnaam invullen]</span><br>KvK <span class="ph">[nummer]</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="foot-resp">
+      <span class="foot-18">18+</span>
+      <p>Speel bewust en met mate &mdash; gokken is geen manier om geld te verdienen. De Bookie is g&eacute;&eacute;n kansspelaanbieder en biedt zelf geen weddenschappen aan; odds en markten zijn van Unibet. AI-inschattingen zijn informatief en geven geen garantie op winst. Hulp nodig bij gokken? Neem (gratis, 24/7) contact op met <a href="https://www.loketkansspel.nl" target="_blank" rel="noopener">Loket Kansspel</a> of sluit jezelf uit via <a href="https://www.cruks.nl" target="_blank" rel="noopener">Cruks</a>.</p>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 De Bookie. Alle rechten voorbehouden.</span>
+      <span>Teksten, data en logo zijn auteursrechtelijk beschermd.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
