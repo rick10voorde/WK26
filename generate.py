@@ -98,34 +98,42 @@ SUPABASE_URL = ""
 SUPABASE_KEY = ""
 SPELERS = ["Rick", "Rean", "Tung"]
 
-AI_ANALYSE = {}   # {"Thuis - Uit": {preview, score, kansen, markt, lean, vertrouwen, odds}}
+AI_BETS = {}   # {datum, bron, wedstrijden, bets:{banker,builder,combi,longshot}}
 
 
-def load_ai_analyse():
-    """Leest ai_analyse.json (door ai_bets.py geschreven). Ontbreekt het, dan
-    blijft AI_ANALYSE leeg en verschijnen er simpelweg geen AI-bet knoppen."""
-    global AI_ANALYSE
-    if not os.path.exists("ai_analyse.json"):
+def load_ai_bets():
+    """Leest ai_bets.json (door ai_bets.py geschreven). Ontbreekt het of is het leeg,
+    dan verschijnt het AI-bets-blok simpelweg niet."""
+    global AI_BETS
+    if not os.path.exists("ai_bets.json"):
         return
     try:
-        with open("ai_analyse.json", encoding="utf-8") as f:
-            AI_ANALYSE = json.load(f) or {}
-        print(f"AI-analyses geladen: {len(AI_ANALYSE)}")
+        with open("ai_bets.json", encoding="utf-8") as f:
+            AI_BETS = json.load(f) or {}
+        print(f"AI-bets geladen: {list((AI_BETS.get('bets') or {}).keys())}")
     except Exception as e:
-        print("ai_analyse.json kon niet worden gelezen:", e)
-        AI_ANALYSE = {}
+        print("ai_bets.json kon niet worden gelezen:", e)
+        AI_BETS = {}
 
 
-def ai_bet_block(key):
-    """Knop + (verborgen) paneel met de AI-analyse voor deze wedstrijd."""
-    a = AI_ANALYSE.get(key)
-    if not a:
+def ai_bets_block():
+    """Knop + keuzemenu voor de AI-bets, onderin het Vandaag-blok."""
+    if not AI_BETS or not AI_BETS.get("bets"):
         return ""
-    payload = json.dumps(a, ensure_ascii=False).replace('"', "&quot;")
-    return (f'<button class="bet-btn" type="button" data-bet="{key}">'
-            f'🤖 AI-bet</button>'
-            f'<div class="bet-panel" data-betpanel="{key}" '
-            f'data-analyse="{payload}" hidden></div>')
+    data = json.dumps(AI_BETS, ensure_ascii=False).replace('"', "&quot;")
+    bron = AI_BETS.get("bron", "Unibet")
+    return f'''
+    <div class="ai-bets" data-aibets="{data}">
+      <div class="ai-bets-head">🤖 AI-bets <span class="ai-bets-sub">· kies een soort</span></div>
+      <div class="ai-bets-menu">
+        <button class="ai-chip" type="button" data-bt="banker">🛡️ Veilige tip</button>
+        <button class="ai-chip" type="button" data-bt="builder">🏗️ Bet builder</button>
+        <button class="ai-chip" type="button" data-bt="combi">🔗 Combi van de dag</button>
+        <button class="ai-chip" type="button" data-bt="longshot">🎲 Verrassing</button>
+      </div>
+      <div class="ai-bets-panel" id="ai-bets-panel" hidden></div>
+      <div class="ai-bets-disc">AI-suggesties met {bron}-odds · geen garantie, wed met mate</div>
+    </div>'''
 
 
 def load_predictions():
@@ -204,11 +212,10 @@ def match_row(m, highlight_nl=True):
         res_attr = f' data-th="{ft["home"]}" data-tu="{ft["away"]}"'
     data = f' data-key="{key}" data-ts="{ts}"{res_attr}' if key else ""
     chips = f'<div class="chips" data-chips="{key}"></div>' if key else ""
-    bet = ai_bet_block(key) if (key and not played) else ""
 
     return f'''<div class="match {"played" if played else ""}"{data}>
       <div class="m-when"><b>{datum}</b>{tijd}</div>
-      <div class="m-teams">{flag(home)} {nm(home_lbl)}<br>{flag(away)} {nm(away_lbl)}{chips}{bet}</div>
+      <div class="m-teams">{flag(home)} {nm(home_lbl)}<br>{flag(away)} {nm(away_lbl)}{chips}</div>
       {score}
     </div>'''
 
@@ -384,6 +391,7 @@ def build_today(matches):
       <span class="today-date">{header_date} · {len(todays)} wedstrijden</span>
     </div>
     {"".join(rows)}
+    {ai_bets_block()}
   </div>'''
 
 
@@ -475,6 +483,32 @@ TEMPLATE = """<!DOCTYPE html>
   .mday:first-child{margin-top:0;}
   .toon-alle{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:12px;color:var(--ink-soft);cursor:pointer;}
   .modal-leeg{padding:16px 0;font-size:13px;color:var(--ink-soft);text-align:center;}
+  .ai-bets{margin-top:16px;border-top:1.5px solid rgba(244,246,242,.25);padding-top:14px;}
+  .ai-bets-head{font-family:'Anton',sans-serif;font-size:17px;letter-spacing:.02em;text-transform:uppercase;color:#F4F6F2;margin-bottom:10px;}
+  .ai-bets-sub{font-family:'Archivo',sans-serif;font-size:11px;font-weight:500;letter-spacing:.04em;color:rgba(244,246,242,.55);text-transform:none;}
+  .ai-bets-menu{display:flex;flex-wrap:wrap;gap:8px;}
+  .ai-chip{font-size:13px;font-weight:600;padding:9px 15px;border-radius:22px;border:1.5px solid rgba(244,246,242,.4);background:transparent;color:#F4F6F2;cursor:pointer;}
+  .ai-chip:hover{border-color:#FFB385;color:#FFB385;}
+  .ai-chip.actief{background:#FFB385;border-color:#FFB385;color:#14201A;}
+  .ai-bets-panel{margin-top:12px;background:#FFF;color:#14201A;border-radius:10px;padding:14px 16px;}
+  .ab-title{font-weight:700;font-size:15px;margin-bottom:8px;}
+  .ab-match{font-size:13px;color:#5C6A61;margin-bottom:8px;}
+  .ab-pick{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#F0F4F0;border-left:3px solid var(--groen);border-radius:8px;padding:10px 12px;}
+  .ab-markt{font-weight:700;color:var(--groen);font-size:15px;}
+  .ab-bigod{font-family:'Caveat',cursive;font-size:30px;font-weight:700;color:var(--pen);}
+  .ab-sels{list-style:none;margin:4px 0 0;padding:0;}
+  .ab-sels li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  .ab-sels li:last-child{border-bottom:none;}
+  .ab-od{font-variant-numeric:tabular-nums;font-weight:700;color:var(--pen);}
+  .ab-total{margin-top:8px;text-align:right;font-size:14px;}
+  .ab-total b{font-family:'Caveat',cursive;font-size:26px;color:var(--pen);}
+  .ab-line{font-size:12.5px;color:#5C6A61;margin-top:6px;}
+  .ab-why{margin-top:10px;font-size:12.5px;line-height:1.45;color:#14201A;background:#F7F5EF;border-radius:7px;padding:8px 10px;}
+  .ab-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+  .ab-bron{font-size:11px;color:#5C6A61;}
+  .ab-share{font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--groen);background:#fff;color:var(--groen);cursor:pointer;}
+  .ab-share:hover{background:var(--groen);color:#fff;}
+  .ab-empty{font-size:13px;color:#5C6A61;padding:6px 0;}
   /* ── mobiel ── */
   @media (max-width:560px){
     .wrap{padding:18px 12px 48px;}
@@ -776,66 +810,62 @@ def build_poule_js():
 
 
 def build_bets_js():
-    if not AI_ANALYSE:
+    if not AI_BETS or not AI_BETS.get("bets"):
         return ""
     return '''<script>
 (function(){
-  function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-  function oddsLine(o){
-    if(!o) return '';
-    const p=[];
-    if(o.thuis!=null) p.push('1 '+o.thuis);
-    if(o.gelijk!=null) p.push('X '+o.gelijk);
-    if(o.uit!=null) p.push('2 '+o.uit);
-    let s=p.join('   ');
-    if(o.over25!=null||o.under25!=null){ s+=(s?'   |   ':'')+'o2.5 '+(o.over25!=null?o.over25:'-')+'  u2.5 '+(o.under25!=null?o.under25:'-'); }
-    const bron=o.bron?' ('+esc(o.bron)+')':'';
-    return s?('<div class="bp-line"><span class="bp-k">Odds</span><span class="bp-odds">'+s+bron+'</span></div>'):'';
+  const box=document.querySelector('.ai-bets'); if(!box) return;
+  let DATA={}; try{ DATA=JSON.parse(box.getAttribute('data-aibets')); }catch(e){ return; }
+  const bets=DATA.bets||{};
+  const panel=document.getElementById('ai-bets-panel');
+  const labels={banker:'🛡️ Veilige tip',builder:'🏗️ Bet builder',combi:'🔗 Combi van de dag',longshot:'🎲 Verrassing'};
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+  function od(n){ return (typeof n==='number')? n.toFixed(2): esc(n); }
+  function selList(items, withMatch){
+    return '<ul class="ab-sels">'+items.map(s=>'<li><span>'
+      +(withMatch?('<b>'+esc(s.wedstrijd)+'</b> — '):'')+esc(s.markt)
+      +'</span><span class="ab-od">'+od(s.odds)+'</span></li>').join('')+'</ul>';
   }
-  function render(a,key){
-    const k=a.kansen||{};
-    const kans=(k.thuis!=null)?(k.thuis+'% / '+k.gelijk+'% / '+k.uit+'%'):'';
-    let h='';
-    if(a.preview) h+='<div class="bp-preview">'+esc(a.preview)+'</div>';
-    if(a.markt) h+='<div class="bp-line"><span class="bp-k">Bet-idee</span><span class="bp-markt">'+esc(a.markt)+'</span></div>';
-    if(a.score) h+='<div class="bp-line"><span class="bp-k">Verwacht</span><span>'+esc(a.score)+'</span></div>';
-    if(kans) h+='<div class="bp-line"><span class="bp-k">Kans 1/X/2</span><span>'+kans+'</span></div>';
-    h+=oddsLine(a.odds);
-    if(a.lean) h+='<div class="bp-line"><span class="bp-k">Waarom</span><span>'+esc(a.lean)+'</span></div>';
-    if(a.vertrouwen) h+='<div class="bp-line"><span class="bp-k">Vertrouwen</span><span class="bp-conf">'+esc(a.vertrouwen)+'</span></div>';
-    h+='<button class="bp-share" type="button">📋 Deel met de groep</button>';
-    h+='<div class="bp-disc">AI-inschatting, geen garantie. Wed met mate.</div>';
-    return h;
+  function render(t){
+    const b=bets[t];
+    if(!b){ panel.innerHTML='<div class="ab-empty">Geen '+labels[t].replace(/^[^ ]+ /,'').toLowerCase()+' voor vandaag.</div>'; panel.hidden=false; return; }
+    let h='<div class="ab-title">'+labels[t]+'</div>';
+    if(t==='banker'){
+      h+='<div class="ab-match">'+esc(b.wedstrijd)+'</div>';
+      h+='<div class="ab-pick"><span class="ab-markt">'+esc(b.markt)+'</span><span class="ab-bigod">'+od(b.odds)+'</span></div>';
+      if(b.kans) h+='<div class="ab-line">Geschatte kans: '+esc(b.kans)+'</div>';
+    } else if(t==='builder'){
+      h+='<div class="ab-match">'+esc(b.wedstrijd)+'</div>';
+      h+=selList(b.selecties,false);
+      h+='<div class="ab-total">Samen <b>'+od(b.combi_odds)+'</b></div>';
+    } else {
+      h+=selList(b.selecties,true);
+      h+='<div class="ab-total">Samen <b>'+od(b.combi_odds)+'</b></div>';
+    }
+    if(b.uitleg) h+='<div class="ab-why">'+esc(b.uitleg)+'</div>';
+    h+='<div class="ab-foot"><span class="ab-bron">via '+esc(b.bron||'Unibet')+'</span><button class="ab-share" type="button">📋 Deel</button></div>';
+    panel.innerHTML=h; panel.hidden=false;
+    const sb=panel.querySelector('.ab-share');
+    if(sb) sb.addEventListener('click',()=>{
+      navigator.clipboard.writeText(shareText(t,b)).then(
+        ()=>{ sb.textContent='✓ Gekopieerd'; setTimeout(()=>sb.textContent='📋 Deel',1500); },
+        ()=>{ sb.textContent='Mislukt'; });
+    });
   }
-  function shareText(a,key){
-    let t='🤖 '+key+'\\n';
-    if(a.markt) t+='Bet-idee: '+a.markt+'\\n';
-    if(a.score) t+='Verwacht: '+a.score+'\\n';
-    if(a.odds){ const o=a.odds,p=[]; if(o.thuis!=null)p.push('1 '+o.thuis); if(o.gelijk!=null)p.push('X '+o.gelijk); if(o.uit!=null)p.push('2 '+o.uit); if(p.length) t+='Odds'+(o.bron?' ('+o.bron+')':'')+': '+p.join('  ')+'\\n'; }
-    if(a.lean) t+=a.lean+'\\n';
-    t+='(AI-inschatting, geen garantie)';
-    return t;
+  function shareText(t,b){
+    let x='🤖 '+labels[t]+' ('+(DATA.datum||'')+')\\n';
+    if(t==='banker'){ x+=b.wedstrijd+'\\n'+b.markt+' @ '+od(b.odds)+'\\n'; }
+    else if(t==='builder'){ x+=b.wedstrijd+'\\n'+b.selecties.map(s=>'• '+s.markt+' @ '+od(s.odds)).join('\\n')+'\\nSamen @ '+od(b.combi_odds)+'\\n'; }
+    else { x+=b.selecties.map(s=>'• '+s.wedstrijd+': '+s.markt+' @ '+od(s.odds)).join('\\n')+'\\nSamen @ '+od(b.combi_odds)+'\\n'; }
+    if(b.uitleg) x+=b.uitleg+'\\n';
+    x+='(AI-suggestie, geen garantie · '+(b.bron||'Unibet')+')';
+    return x;
   }
-  document.querySelectorAll('.bet-btn[data-bet]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const key=btn.getAttribute('data-bet');
-      const panel=document.querySelector('.bet-panel[data-betpanel="'+CSS.escape(key)+'"]');
-      if(!panel) return;
-      if(panel.hidden){
-        if(!panel.dataset.rendered){
-          let a={}; try{ a=JSON.parse(panel.getAttribute('data-analyse')); }catch(e){}
-          panel.innerHTML=render(a,key);
-          panel.dataset.rendered='1';
-          const sb=panel.querySelector('.bp-share');
-          if(sb) sb.addEventListener('click', ()=>{
-            let a2={}; try{ a2=JSON.parse(panel.getAttribute('data-analyse')); }catch(e){}
-            navigator.clipboard.writeText(shareText(a2,key)).then(
-              ()=>{ sb.textContent='✓ Gekopieerd'; setTimeout(()=>sb.textContent='📋 Deel met de groep',1500); },
-              ()=>{ sb.textContent='Kopiëren mislukt'; });
-          });
-        }
-        panel.hidden=false; btn.classList.add('open');
-      } else { panel.hidden=true; btn.classList.remove('open'); }
+  box.querySelectorAll('.ai-chip').forEach(ch=>{
+    ch.addEventListener('click',()=>{
+      box.querySelectorAll('.ai-chip').forEach(c=>c.classList.remove('actief'));
+      ch.classList.add('actief');
+      render(ch.getAttribute('data-bt'));
     });
   });
 })();
@@ -851,7 +881,7 @@ def main():
         sys.exit(1)
 
     load_predictions()
-    load_ai_analyse()
+    load_ai_bets()
     matches = fetch("/matches")["matches"]
     standings = fetch("/standings")
 

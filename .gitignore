@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 # Runtime-artefact, wordt door de Action gegenereerd; nooit committen (geen mock live)
 ai_analyse.json
+
+# AI-bets runtime-artefact
+ai_bets.json
