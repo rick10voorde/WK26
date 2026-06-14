@@ -413,7 +413,7 @@ def build_today(matches):
         elif status in ("IN_PLAY", "PAUSED") and ft.get("home") is not None:
             score = f'<span class="t-score t-live">{ft["home"]}–{ft["away"]} ●</span>'
         else:
-            score = f'<span class="t-time">{tijd}</span>'
+            score = '<span class="t-tbd">— : —</span>'
         nl_cls = " t-nl" if "Nederland" in (home, away) else ""
         rows.append(f'''
       <div class="today-row{nl_cls}">
@@ -445,6 +445,14 @@ TEMPLATE = """<!DOCTYPE html>
   :root{--paper:#F4F6F2;--card:#FFF;--ink:#14201A;--ink-soft:#5C6A61;--line:#DDE3DA;--oranje:#F05A1A;--pen:#2244C8;--groen:#1E7A4C;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;}
+  .topnav{position:sticky;top:0;z-index:60;background:rgba(244,246,242,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;flex-wrap:wrap;}
+  .nav-brand{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;text-decoration:none;color:var(--ink);}
+  .nav-brand .accent{color:var(--oranje);}
+  .nav-links{display:flex;gap:3px;flex-wrap:wrap;}
+  .nav-links a{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-decoration:none;padding:7px 11px;border-radius:8px;}
+  .nav-links a:hover{color:var(--ink);background:var(--card);}
+  .nav-links a.active{color:#fff;background:var(--ink);}
+  @media(max-width:430px){.nav-brand{font-size:17px;}.nav-links a{padding:6px 8px;font-size:12px;}}
   .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 60px;}
   header{border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:10px;}
   .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:6px;}
@@ -488,13 +496,14 @@ TEMPLATE = """<!DOCTYPE html>
   .today-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;border-bottom:1.5px solid rgba(244,246,242,.25);padding-bottom:10px;margin-bottom:4px;}
   .today-title{font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.02em;}
   .today-date{font-size:12px;color:rgba(244,246,242,.65);}
-  .today-row{display:grid;grid-template-columns:52px 1fr auto 58px;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed rgba(244,246,242,.18);font-size:14px;}
+  .today-row{display:grid;grid-template-columns:56px 1fr 78px 56px;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed rgba(244,246,242,.18);font-size:14px;}
   .today-row:first-of-type{border-top:none;}
   .today-row.t-nl{color:#FFB385;font-weight:600;}
   .t-when{font-variant-numeric:tabular-nums;color:rgba(244,246,242,.75);font-size:12.5px;}
   .t-night{display:block;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:#FFB385;margin-top:1px;}
   .t-teams{line-height:1.35;}
-  .t-meta{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,246,242,.5);}
+  .t-meta{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,246,242,.5);text-align:right;white-space:nowrap;}
+  .t-tbd{font-size:12px;color:rgba(244,246,242,.4);text-align:right;letter-spacing:.05em;}
   .t-score{font-family:'Caveat',cursive;font-size:26px;font-weight:700;color:#FFB385;text-align:right;}
   .t-live{color:#6FDF9B;}
   .t-time{font-size:12.5px;color:rgba(244,246,242,.55);text-align:right;}
@@ -664,6 +673,15 @@ TEMPLATE = """<!DOCTYPE html>
 </style>
 </head>
 <body>
+<nav class="topnav">
+  <a class="nav-brand" href="./index.html">De Bookie<span class="accent">.</span></a>
+  <div class="nav-links">
+    <a href="./index.html" class="active">Schema</a>
+    <a href="./bookie.html">Tipmachine</a>
+    <a href="./resultaten.html">Resultaten</a>
+    <a href="./community.html">Word lid</a>
+  </div>
+</nav>
 <div class="wrap">
   <header>
     <div class="eyebrow">FIFA World Cup · Verenigde Staten — Canada — Mexico</div>

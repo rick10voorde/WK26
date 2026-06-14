@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word lid · De Bookie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#F4F6F2;--card:#FFF;--ink:#14201A;--ink-soft:#5C6A61;--line:#DDE3DA;--oranje:#F05A1A;--pen:#2244C8;--groen:#1E7A4C;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;}
+  .topnav{position:sticky;top:0;z-index:60;background:rgba(244,246,242,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;flex-wrap:wrap;}
+  .nav-brand{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;text-decoration:none;color:var(--ink);}
+  .nav-brand .accent{color:var(--oranje);}
+  .nav-links{display:flex;gap:3px;flex-wrap:wrap;}
+  .nav-links a{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-decoration:none;padding:7px 11px;border-radius:8px;}
+  .nav-links a:hover{color:var(--ink);background:var(--card);}
+  .nav-links a.active{color:#fff;background:var(--ink);}
+  @media(max-width:430px){.nav-brand{font-size:17px;}.nav-links a{padding:6px 8px;font-size:12px;}}
+  .wrap{max-width:680px;margin:0 auto;padding:30px 16px 60px;}
+  .kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--oranje);font-weight:700;margin-bottom:8px;}
+  h1{font-family:'Anton',sans-serif;font-size:clamp(34px,8vw,60px);text-transform:uppercase;line-height:.95;}
+  h1 .accent{color:var(--oranje);}
+  .intro{font-size:15px;color:var(--ink-soft);margin-top:12px;line-height:1.55;}
+  .perks{list-style:none;margin:24px 0 6px;display:grid;gap:10px;}
+  .perk{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:13px 15px;}
+  .perk svg{width:22px;height:22px;color:var(--oranje);flex:none;margin-top:1px;}
+  .perk b{font-size:14.5px;}
+  .perk p{font-size:12.5px;color:var(--ink-soft);margin-top:2px;line-height:1.4;}
+  .soon{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--oranje);background:rgba(240,90,26,.1);padding:2px 7px;border-radius:6px;margin-left:7px;vertical-align:2px;}
+  .signup{background:var(--ink);color:#F4F6F2;border-radius:14px;padding:24px;margin-top:26px;}
+  .signup h2{font-family:'Anton',sans-serif;font-size:24px;text-transform:uppercase;}
+  .signup p{font-size:13.5px;color:rgba(244,246,242,.75);margin:8px 0 16px;}
+  .form{display:flex;gap:9px;flex-wrap:wrap;}
+  .form input{flex:1;min-width:200px;border:none;border-radius:9px;padding:14px 15px;font-size:15px;font-family:'Archivo',sans-serif;}
+  .form input:focus{outline:2px solid var(--oranje);}
+  .form button{background:var(--oranje);color:#fff;border:none;border-radius:9px;padding:14px 22px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Archivo',sans-serif;}
+  .form button:disabled{opacity:.6;cursor:not-allowed;}
+  .msg{font-size:13px;margin-top:12px;min-height:18px;font-weight:600;}
+  .msg.ok{color:#6FDF9B;}
+  .msg.err{color:#FFB385;}
+  .micro{font-size:11px;color:rgba(244,246,242,.55);margin-top:10px;}
+  .disc{font-size:11px;color:var(--ink-soft);line-height:1.5;margin-top:24px;border-top:1px solid var(--line);padding-top:12px;}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="nav-brand" href="./index.html">De Bookie<span class="accent">.</span></a>
+  <div class="nav-links">
+    <a href="./index.html">Schema</a>
+    <a href="./bookie.html">Tipmachine</a>
+    <a href="./resultaten.html">Resultaten</a>
+    <a href="./community.html" class="active">Word lid</a>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="kicker">Community · binnenkort</div>
+  <h1>Word lid van De Bookie<span class="accent">.</span></h1>
+  <p class="intro">De Bookie wordt een community voor wie slim en bewust wil wedden op het voetbal. Geen blind favorieten stapelen, maar onderbouwde +EV-tips met transparante resultaten. We zijn dit aan het opbouwen — zet je op de wachtlijst en je bent er als eerste bij.</p>
+
+  <ul class="perks">
+    <li class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></svg><div><b>Dagelijkse +EV-tips<span class="soon">gepland</span></b><p>Onderbouwde tips met geschatte kans en value, niet op gevoel.</p></div></li>
+    <li class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/></svg><div><b>Transparante resultaten<span class="soon">gepland</span></b><p>Elke tip wordt bijgehouden — winst én verlies, eerlijk inzichtelijk.</p></div></li>
+    <li class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2M11 7a4 4 0 11-8 0 4 4 0 018 0zM21 21v-2a4 4 0 00-3-3.85M16 3.13a4 4 0 010 7.75"/></svg><div><b>Besloten groep<span class="soon">gepland</span></b><p>Sparren met andere leden en vroege toegang tot nieuwe features.</p></div></li>
+  </ul>
+
+  <div class="signup">
+    <h2>Zet me op de wachtlijst</h2>
+    <p>Laat je e-mail achter — we mailen je zodra de community opengaat. Geen spam, geen verplichtingen.</p>
+    <div class="form">
+      <input type="email" id="email" placeholder="jouw@email.nl" autocomplete="email" inputmode="email">
+      <button id="join" type="button">Op de wachtlijst</button>
+    </div>
+    <div class="msg" id="msg"></div>
+    <div class="micro">Door je in te schrijven ga je akkoord dat we je e-mail bewaren om je te informeren over de community.</div>
+  </div>
+
+  <div class="disc">De Bookie geeft AI-inschattingen, geen garantie op winst. Odds en markten kunnen veranderen. Speel bewust en met mate. 18+.</div>
+</div>
+
+<script>
+const FN = "https://jjdpqzwvckubqqpuneup.supabase.co/functions/v1/community";
+const KEY = "sb_publishable_V5vkJ6vDVjdbekgaVl7Hjg_6zAFXN17";
+const email = document.getElementById("email"), btn = document.getElementById("join"), msg = document.getElementById("msg");
+function show(t, ok){ msg.textContent = t; msg.className = "msg " + (ok ? "ok" : "err"); }
+async function join(){
+  const v = (email.value||"").trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){ show("Vul een geldig e-mailadres in.", false); return; }
+  btn.disabled = true; show("Bezig…", true);
+  try{
+    const r = await fetch(FN,{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({action:"waitlist",email:v,bron:"community"})});
+    const j = await r.json().catch(()=>({}));
+    if(r.ok && j.ok){ show("Je staat op de lijst ✅ — we mailen je zodra het zover is.", true); email.value=""; }
+    else { show(j.error || "Er ging iets mis, probeer later opnieuw.", false); }
+  }catch(e){ show("Kon de server niet bereiken. Probeer later opnieuw.", false); }
+  btn.disabled = false;
+}
+btn.addEventListener("click", join);
+email.addEventListener("keydown", e=>{ if(e.key==="Enter") join(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultaten · De Bookie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#F4F6F2;--card:#FFF;--ink:#14201A;--ink-soft:#5C6A61;--line:#DDE3DA;--oranje:#F05A1A;--pen:#2244C8;--groen:#1E7A4C;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;}
+  .topnav{position:sticky;top:0;z-index:60;background:rgba(244,246,242,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;flex-wrap:wrap;}
+  .nav-brand{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;text-decoration:none;color:var(--ink);}
+  .nav-brand .accent{color:var(--oranje);}
+  .nav-links{display:flex;gap:3px;flex-wrap:wrap;}
+  .nav-links a{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-decoration:none;padding:7px 11px;border-radius:8px;}
+  .nav-links a:hover{color:var(--ink);background:var(--card);}
+  .nav-links a.active{color:#fff;background:var(--ink);}
+  @media(max-width:430px){.nav-brand{font-size:17px;}.nav-links a{padding:6px 8px;font-size:12px;}}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 16px 60px;}
+  .kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--oranje);font-weight:700;margin-bottom:7px;}
+  h1{font-family:'Anton',sans-serif;font-size:clamp(32px,7vw,56px);text-transform:uppercase;line-height:.95;}
+  h1 .accent{color:var(--oranje);}
+  .intro{font-size:14px;color:var(--ink-soft);margin-top:10px;max-width:620px;line-height:1.5;}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0 6px;}
+  .stat{background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:14px;text-align:center;}
+  .stat .big{font-family:'Anton',sans-serif;font-size:30px;line-height:1;color:var(--ink);}
+  .stat .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-top:5px;}
+  .notice{font-size:12.5px;color:var(--ink-soft);background:var(--card);border:1px dashed var(--line);border-radius:9px;padding:10px 13px;margin:14px 0 4px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:18px;}
+  .bet{background:var(--card);border:1.5px solid var(--line);border-radius:12px;overflow:hidden;position:relative;}
+  .bet.real{border-color:var(--groen);}
+  .bet-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px 6px;}
+  .won{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--groen);}
+  .won svg{width:14px;height:14px;}
+  .badge{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 7px;border-radius:6px;background:var(--paper);color:var(--ink-soft);border:1px solid var(--line);}
+  .badge.real{background:rgba(30,122,76,.12);color:var(--groen);border-color:var(--groen);}
+  .bet-title{font-family:'Anton',sans-serif;font-size:17px;text-transform:uppercase;line-height:1.05;padding:0 14px;}
+  .bet-match{font-size:11.5px;color:var(--ink-soft);padding:3px 14px 0;text-transform:uppercase;letter-spacing:.04em;}
+  .bet-legs{list-style:none;padding:8px 14px 2px;}
+  .bet-legs li{font-size:13px;padding:4px 0;border-top:1px dashed var(--line);display:flex;gap:6px;}
+  .bet-legs li:first-child{border-top:none;}
+  .bet-legs li::before{content:"✓";color:var(--groen);font-weight:800;}
+  .bet-od{display:flex;justify-content:space-between;align-items:center;border-top:1.5px solid var(--ink);margin:6px 14px 0;padding:9px 0 12px;}
+  .bet-od span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;}
+  .bet-od b{font-family:'Caveat',cursive;font-size:32px;color:var(--oranje);line-height:.7;}
+  .cta{margin-top:30px;background:var(--ink);color:#F4F6F2;border-radius:13px;padding:22px;text-align:center;}
+  .cta h2{font-family:'Anton',sans-serif;font-size:24px;text-transform:uppercase;}
+  .cta p{font-size:13.5px;color:rgba(244,246,242,.75);margin:8px auto 16px;max-width:460px;}
+  .cta a{display:inline-block;background:var(--oranje);color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:13px 24px;border-radius:10px;}
+  .disc{font-size:11px;color:var(--ink-soft);line-height:1.5;margin-top:24px;border-top:1px solid var(--line);padding-top:12px;}
+  @media(max-width:430px){.stats{grid-template-columns:repeat(3,1fr);}.stat .big{font-size:24px;}}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="nav-brand" href="./index.html">De Bookie<span class="accent">.</span></a>
+  <div class="nav-links">
+    <a href="./index.html">Schema</a>
+    <a href="./bookie.html">Tipmachine</a>
+    <a href="./resultaten.html" class="active">Resultaten</a>
+    <a href="./community.html">Word lid</a>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="kicker">Track record</div>
+  <h1>Gewonnen tips<span class="accent">.</span></h1>
+  <p class="intro">De Bookie houdt elke gegenereerde tip bij. Hieronder de gewonnen bets. Geverifieerde resultaten verschijnen hier automatisch zodra ze binnen zijn; tot die tijd zie je voorbeelden van het soort tips dat De Bookie maakt.</p>
+
+  <div class="stats" id="stats">
+    <div class="stat"><div class="big" id="st-won">—</div><div class="lbl">Gewonnen</div></div>
+    <div class="stat"><div class="big" id="st-hr">—</div><div class="lbl">Hitrate</div></div>
+    <div class="stat"><div class="big" id="st-total">—</div><div class="lbl">Afgerond</div></div>
+  </div>
+  <div class="notice" id="notice"></div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="cta">
+    <h2>Wil je alle tips?</h2>
+    <p>Een betalende community met dagelijkse +EV WK-tips zit eraan te komen. Zet je vast op de wachtlijst — geen verplichtingen.</p>
+    <a href="./community.html">Naar de wachtlijst →</a>
+  </div>
+
+  <div class="disc">Voorbeelden zijn ter illustratie en geen echte uitslagen. AI-inschattingen, geen garantie op winst. Odds en markten kunnen veranderen. Speel bewust en met mate. 18+.</div>
+</div>
+
+<script>
+const FN = "https://jjdpqzwvckubqqpuneup.supabase.co/functions/v1/community";
+const KEY = "sb_publishable_V5vkJ6vDVjdbekgaVl7Hjg_6zAFXN17";
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg>';
+const VOORBEELDEN = [
+  {match:"Bayern München — Atalanta", title:"Beieren walst door", odds:2.10, legs:["Bayern wint","Meer dan 2.5 goals"]},
+  {match:"Combi van de dag", title:"Dubbel raak", odds:3.45, legs:["Spanje wint","Frankrijk wint"]},
+  {match:"Manchester City — Chelsea", title:"Doelpuntenfestijn", odds:1.90, legs:["Beide teams scoren: ja"]},
+  {match:"Nederland — Senegal", title:"Oranje banker", odds:1.55, legs:["Nederland wint of gelijk","Meer dan 1.5 goals"]},
+  {match:"Argentinië — Kroatië", title:"Zuid-Amerikaanse power", odds:2.30, legs:["Beide teams scoren: ja","Meer dan 2.5 goals"]},
+  {match:"Real Madrid — Bayern", title:"Kraker over de lijn", odds:1.80, legs:["Meer dan 2.5 goals"]}
+];
+function esc(s){return (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+function card(b, real){
+  const legs=(b.legs||[]).map(l=>'<li>'+esc(l)+'</li>').join("");
+  return '<div class="bet'+(real?' real':'')+'"><div class="bet-top"><span class="won">'+CHECK+' Gewonnen</span><span class="badge'+(real?' real':'')+'">'+(real?'Geverifieerd':'Voorbeeld')+'</span></div>'
+    +'<div class="bet-title">'+esc(b.title)+'</div><div class="bet-match">'+esc(b.match)+'</div>'
+    +'<ul class="bet-legs">'+legs+'</ul>'
+    +'<div class="bet-od"><span>Totale odd</span><b>'+(typeof b.odds==="number"?b.odds.toFixed(2):esc(b.odds))+'</b></div></div>';
+}
+async function load(){
+  let real=[], stats={won:0,lost:0,total:0};
+  try{ const r=await fetch(FN,{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({action:"wins"})}).then(x=>x.json());
+    real=(r.wins||[]).map(w=>({match:w.match_name,title:w.generated_bet_title||"WK-tip",odds:Number(w.total_odds),legs:(w.bet_legs||[]).map(l=>l.selection||l.market_name)}));
+    stats=r.stats||stats; }catch(e){}
+  const hr = stats.total>0 ? Math.round(100*stats.won/stats.total)+"%" : "—";
+  document.getElementById("st-won").textContent = stats.won||0;
+  document.getElementById("st-hr").textContent = hr;
+  document.getElementById("st-total").textContent = stats.total||0;
+  document.getElementById("notice").textContent = stats.total>0
+    ? "Cijfers op basis van geverifieerde, afgeronde tips."
+    : "Nog geen geverifieerde resultaten — onderstaande kaarten zijn voorbeelden. Echte gewonnen tips verschijnen hier automatisch.";
+  const cards = real.map(b=>card(b,true)).concat(VOORBEELDEN.map(b=>card(b,false)));
+  document.getElementById("grid").innerHTML = cards.join("");
+}
+load();
+</script>
+</body>
+</html>
