@@ -246,7 +246,7 @@ def match_row(m, highlight_nl=True):
     if played:
         res_attr = f' data-th="{ft["home"]}" data-tu="{ft["away"]}"'
     data = f' data-key="{key}" data-ts="{ts}"{res_attr}' if key else ""
-    chips = f'<div class="chips" data-chips="{key}"></div>' if key else ""
+    chips = ""
 
     return f'''<div class="match {"played" if played else ""}"{data}>
       <div class="m-when"><b>{datum}</b>{tijd}</div>
@@ -912,9 +912,9 @@ def main():
 
     groups_html, played = build_groups(matches, standings)
     ko_html, ko_played = build_knockout(matches)
-    poule_html = build_poule(matches)
+    poule_html = ""
     today_html = build_today(matches)
-    poule_js = build_poule_js()
+    poule_js = ""
     bets_js = build_bets_js()
     bet_matches, bet_datum = bets_today(matches)
     bets_html = ai_bets_block(bet_matches, bet_datum)
