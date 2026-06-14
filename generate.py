@@ -418,7 +418,7 @@ def build_today(matches):
         rows.append(f'''
       <div class="today-row{nl_cls}">
         <div class="t-when">{when}</div>
-        <div class="t-teams">{flag(home)} {home_lbl} — {away_lbl} {flag(away)}</div>
+        <div class="t-teams"><span class="t-home">{home_lbl} {flag(home)}</span><span class="t-vs">—</span><span class="t-away">{flag(away)} {away_lbl}</span></div>
         <div class="t-meta">{stage_or_group(m)}</div>
         {score}
       </div>''')
@@ -501,14 +501,19 @@ TEMPLATE = """<!DOCTYPE html>
   .today-row.t-nl{color:#FFB385;font-weight:600;}
   .t-when{font-variant-numeric:tabular-nums;color:rgba(244,246,242,.75);font-size:12.5px;}
   .t-night{display:block;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:#FFB385;margin-top:1px;}
-  .t-teams{line-height:1.35;}
+  .t-teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;line-height:1.3;}
+  .t-home{text-align:right;min-width:0;}
+  .t-away{text-align:left;min-width:0;}
+  .t-vs{color:rgba(244,246,242,.4);font-size:12px;}
+  .t-home .fl{margin-right:0;margin-left:6px;}
+  .t-away .fl{margin-right:6px;}
   .t-meta{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,246,242,.5);text-align:right;white-space:nowrap;}
   .t-tbd{font-size:12px;color:rgba(244,246,242,.4);text-align:right;letter-spacing:.05em;}
   .t-score{font-family:'Caveat',cursive;font-size:26px;font-weight:700;color:#FFB385;text-align:right;}
   .t-live{color:#6FDF9B;}
   .t-time{font-size:12.5px;color:rgba(244,246,242,.55);text-align:right;}
   .today-empty{padding:12px 0 4px;font-size:13.5px;color:rgba(244,246,242,.75);}
-  @media (max-width:480px){.t-meta{display:none;}.today-row{grid-template-columns:46px 1fr 56px;}}
+  @media (max-width:480px){.t-meta{display:none;}.today-row{grid-template-columns:44px 1fr 50px;}.t-teams{font-size:13px;gap:5px;}}
   .chips{margin-top:3px;display:flex;flex-wrap:wrap;gap:4px;}
   .chip{font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:9px;border:1.2px solid var(--pc);color:var(--pc);background:#fff;font-variant-numeric:tabular-nums;}
   .chip.exact{background:var(--pc);color:#fff;}
