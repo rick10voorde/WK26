@@ -21,6 +21,10 @@
   .steps i{flex:1;height:4px;border-radius:3px;background:var(--line);transition:background .2s;}
   .steps i.done{background:var(--oranje);}
   .steps i.now{background:var(--ink);}
+  .usage{align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink-soft);background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:6px 13px;margin:0 0 14px;}
+  .usage b{color:var(--ink);}
+  .usage.full{border-color:var(--oranje);color:var(--oranje);background:rgba(240,90,26,.06);}
+  .usage svg{width:14px;height:14px;flex:none;}
   .screen{display:none;}
   .screen.on{display:block;animation:fade .25s;}
   @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
@@ -109,6 +113,7 @@
     <a class="top-link" href="./index.html">← Overzicht</a>
   </header>
   <div class="steps" id="steps"></div>
+  <div id="usage" class="usage" style="display:none"></div>
   <div id="app"></div>
   <div class="disc">De Bookie geeft AI-inschattingen op basis van beschikbare informatie. Odds en markten kunnen veranderen. Geen garantie op winst. Speel bewust en met mate. 18+.</div>
 </div>
@@ -154,6 +159,7 @@ function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;
 function api(body){ return fetch(CFG.fn,{method:"POST",headers:{apikey:CFG.key,Authorization:"Bearer "+CFG.key,"Content-Type":"application/json"},body:JSON.stringify({...body,anonymous_id:ANON})}).then(r=>r.json()); }
 function toast(m){ const t=document.getElementById("toast"); t.innerHTML=ICON.check+"<span>"+esc(m)+"</span>"; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
 function drawSteps(n){ stepsEl.innerHTML=[1,2,3,4,5].map(i=>'<i class="'+(i<n?"done":i===n?"now":"")+'"></i>').join(""); stepsEl.style.display=(n>=1&&n<=5)?"flex":"none"; }
+function renderUsage(u){ const el=document.getElementById("usage"); if(!el||!u||u.limit==null) return; const rem=(u.remaining!=null)?u.remaining:Math.max(0,u.limit-(u.used||0)); el.innerHTML=ICON.bolt+'<span>AI-tips vandaag: <b>'+(u.used||0)+'/'+u.limit+'</b> · '+(rem<=0?'limiet bereikt':'nog '+rem)+'</span>'; el.className='usage'+(rem<=0?' full':''); el.style.display='inline-flex'; }
 
 const TICKETS = [
   {id:"single",ic:"target",t:"Single bet",s:"Eén sterke selectie"},
@@ -293,6 +299,7 @@ async function analyze(){
   try{
     const res = await api({action:"analyze", selection:{ticket_type:S.ticket, risk:S.risk, market_groups:S.groups, odd_range:rangeParam(), legs:legsParam()}, matches:matchesParam()});
     clearInterval(window._lt);
+    if(res.usage) renderUsage(res.usage);
     if(res.error || !res.bet){ app.innerHTML='<div class="screen on"><div class="empty">'+esc(res.error||"Er ging iets mis.")+'</div><div class="navbar"><button class="btn btn-primary" onclick="STEP=5;render()">← Pas keuzes aan</button></div></div>'; drawSteps(0); return; }
     RESULT=res.bet; STEP=7; render();
   }catch(e){ clearInterval(window._lt); app.innerHTML='<div class="screen on"><div class="empty">Kon De Bookie niet bereiken. Probeer opnieuw.</div><div class="navbar"><button class="btn btn-primary" onclick="STEP=5;render()">← Terug</button></div></div>'; }
@@ -353,6 +360,7 @@ async function init(){
   app.innerHTML='<div class="load"><div class="spin"></div><div class="load-sub">WK-wedstrijden laden…</div></div>';
   try{ DATA = await fetch("./wk_matches.json?t="+Date.now()).then(r=>r.json()); }catch(e){ DATA={today:[],upcoming:[]}; }
   try{ const m=await api({action:"markets"}); GROUPS=m.groups||[]; }catch(e){ GROUPS=[]; }
+  try{ renderUsage(await api({action:"usage"})); }catch(e){}
   const shared = new URLSearchParams(location.search).get("bet");
   if(shared){ openSlug(shared); return; }
   STEP=1; render();
