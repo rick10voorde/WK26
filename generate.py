@@ -98,33 +98,20 @@ SUPABASE_URL = ""
 SUPABASE_KEY = ""
 SPELERS = ["Rick", "Rean", "Tung"]
 
-AI_BETS = {}   # {datum, bron, wedstrijden, bets:{banker,builder,combi,longshot}}
-
-
-def load_ai_bets():
-    """Leest ai_bets.json (door ai_bets.py geschreven). Ontbreekt het of is het leeg,
-    dan verschijnt het AI-bets-blok simpelweg niet."""
-    global AI_BETS
-    if not os.path.exists("ai_bets.json"):
-        return
-    try:
-        with open("ai_bets.json", encoding="utf-8") as f:
-            AI_BETS = json.load(f) or {}
-        print(f"AI-bets geladen: {list((AI_BETS.get('bets') or {}).keys())}")
-    except Exception as e:
-        print("ai_bets.json kon niet worden gelezen:", e)
-        AI_BETS = {}
-
-
-def ai_bets_block():
-    """Knop + keuzemenu voor de AI-bets, onderin het Vandaag-blok."""
-    if not AI_BETS or not AI_BETS.get("bets"):
+def ai_bets_block(today_matches, datum):
+    """Live AI-bets: per type een zoek-knop die de Supabase Edge Function aanroept."""
+    if not (SUPABASE_URL and SUPABASE_KEY) or not today_matches:
         return ""
-    data = json.dumps(AI_BETS, ensure_ascii=False).replace('"', "&quot;")
-    bron = AI_BETS.get("bron", "Unibet")
+    cfg = {
+        "url": SUPABASE_URL + "/functions/v1/ai-bet",
+        "key": SUPABASE_KEY,
+        "datum": datum,
+        "wedstrijden": today_matches,
+    }
+    data = json.dumps(cfg, ensure_ascii=False).replace('"', "&quot;")
     return f'''
-    <div class="ai-bets" data-aibets="{data}">
-      <div class="ai-bets-head">🤖 AI-bets <span class="ai-bets-sub">· kies een soort</span></div>
+    <div class="ai-bets" data-aicfg="{data}">
+      <div class="ai-bets-head">🤖 AI-bets <span class="ai-bets-sub">· live analyse op aanvraag</span></div>
       <div class="ai-bets-menu">
         <button class="ai-chip" type="button" data-bt="banker">🛡️ Veilige tip</button>
         <button class="ai-chip" type="button" data-bt="builder">🏗️ Bet builder</button>
@@ -132,7 +119,7 @@ def ai_bets_block():
         <button class="ai-chip" type="button" data-bt="longshot">🎲 Verrassing</button>
       </div>
       <div class="ai-bets-panel" id="ai-bets-panel" hidden></div>
-      <div class="ai-bets-disc">AI-suggesties met {bron}-odds · geen garantie, wed met mate</div>
+      <div class="ai-bets-disc">Opus 4.8 zoekt live vorm, nieuws &amp; odds (~20s) · geen garantie, wed met mate</div>
     </div>'''
 
 
@@ -384,6 +371,19 @@ def build_today(matches):
         {score}
       </div>''')
 
+    bet_matches = []
+    for mm in todays:
+        if mm["status"] in ("FINISHED", "IN_PLAY", "PAUSED"):
+            continue
+        h_nl, a_nl = nl_name(mm["homeTeam"]), nl_name(mm["awayTeam"])
+        if not h_nl or not a_nl:
+            continue
+        bet_matches.append({
+            "key": f"{h_nl} - {a_nl}", "home_nl": h_nl, "away_nl": a_nl,
+            "home_en": (mm["homeTeam"] or {}).get("name"),
+            "away_en": (mm["awayTeam"] or {}).get("name"),
+            "tijd": local_dt(mm).strftime("%H:%M"),
+        })
     return f'''
   <div class="today">
     <div class="today-head">
@@ -391,7 +391,7 @@ def build_today(matches):
       <span class="today-date">{header_date} · {len(todays)} wedstrijden</span>
     </div>
     {"".join(rows)}
-    {ai_bets_block()}
+    {ai_bets_block(bet_matches, header_date)}
   </div>'''
 
 
@@ -509,6 +509,10 @@ TEMPLATE = """<!DOCTYPE html>
   .ab-share{font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--groen);background:#fff;color:var(--groen);cursor:pointer;}
   .ab-share:hover{background:var(--groen);color:#fff;}
   .ab-empty{font-size:13px;color:#5C6A61;padding:6px 0;}
+  .ab-loading{display:flex;align-items:center;gap:12px;padding:10px 2px;font-size:13px;color:#5C6A61;}
+  .ab-loading small{color:#8a968d;}
+  .ab-spin{width:20px;height:20px;border-radius:50%;border:3px solid #E2EAE2;border-top-color:var(--groen);animation:abspin .8s linear infinite;flex:none;}
+  @keyframes abspin{to{transform:rotate(360deg);}}
   /* ── mobiel ── */
   @media (max-width:560px){
     .wrap{padding:18px 12px 48px;}
@@ -810,15 +814,15 @@ def build_poule_js():
 
 
 def build_bets_js():
-    if not AI_BETS or not AI_BETS.get("bets"):
+    if not (SUPABASE_URL and SUPABASE_KEY):
         return ""
     return '''<script>
 (function(){
   const box=document.querySelector('.ai-bets'); if(!box) return;
-  let DATA={}; try{ DATA=JSON.parse(box.getAttribute('data-aibets')); }catch(e){ return; }
-  const bets=DATA.bets||{};
+  let CFG={}; try{ CFG=JSON.parse(box.getAttribute('data-aicfg')); }catch(e){ return; }
   const panel=document.getElementById('ai-bets-panel');
   const labels={banker:'🛡️ Veilige tip',builder:'🏗️ Bet builder',combi:'🔗 Combi van de dag',longshot:'🎲 Verrassing'};
+  let busy=false;
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
   function od(n){ return (typeof n==='number')? n.toFixed(2): esc(n); }
   function selList(items, withMatch){
@@ -826,9 +830,7 @@ def build_bets_js():
       +(withMatch?('<b>'+esc(s.wedstrijd)+'</b> — '):'')+esc(s.markt)
       +'</span><span class="ab-od">'+od(s.odds)+'</span></li>').join('')+'</ul>';
   }
-  function render(t){
-    const b=bets[t];
-    if(!b){ panel.innerHTML='<div class="ab-empty">Geen '+labels[t].replace(/^[^ ]+ /,'').toLowerCase()+' voor vandaag.</div>'; panel.hidden=false; return; }
+  function renderBet(t,b){
     let h='<div class="ab-title">'+labels[t]+'</div>';
     if(t==='banker'){
       h+='<div class="ab-match">'+esc(b.wedstrijd)+'</div>';
@@ -843,8 +845,8 @@ def build_bets_js():
       h+='<div class="ab-total">Samen <b>'+od(b.combi_odds)+'</b></div>';
     }
     if(b.uitleg) h+='<div class="ab-why">'+esc(b.uitleg)+'</div>';
-    h+='<div class="ab-foot"><span class="ab-bron">via '+esc(b.bron||'Unibet')+'</span><button class="ab-share" type="button">📋 Deel</button></div>';
-    panel.innerHTML=h; panel.hidden=false;
+    h+='<div class="ab-foot"><span class="ab-bron">via '+esc(b.bron||'Unibet')+' · Opus 4.8 live</span><button class="ab-share" type="button">📋 Deel</button></div>';
+    panel.innerHTML=h;
     const sb=panel.querySelector('.ab-share');
     if(sb) sb.addEventListener('click',()=>{
       navigator.clipboard.writeText(shareText(t,b)).then(
@@ -853,7 +855,7 @@ def build_bets_js():
     });
   }
   function shareText(t,b){
-    let x='🤖 '+labels[t]+' ('+(DATA.datum||'')+')\\n';
+    let x='🤖 '+labels[t]+' ('+(CFG.datum||'')+')\\n';
     if(t==='banker'){ x+=b.wedstrijd+'\\n'+b.markt+' @ '+od(b.odds)+'\\n'; }
     else if(t==='builder'){ x+=b.wedstrijd+'\\n'+b.selecties.map(s=>'• '+s.markt+' @ '+od(s.odds)).join('\\n')+'\\nSamen @ '+od(b.combi_odds)+'\\n'; }
     else { x+=b.selecties.map(s=>'• '+s.wedstrijd+': '+s.markt+' @ '+od(s.odds)).join('\\n')+'\\nSamen @ '+od(b.combi_odds)+'\\n'; }
@@ -861,12 +863,22 @@ def build_bets_js():
     x+='(AI-suggestie, geen garantie · '+(b.bron||'Unibet')+')';
     return x;
   }
+  async function zoek(t){
+    if(busy) return; busy=true;
+    box.querySelectorAll('.ai-chip').forEach(c=>c.classList.remove('actief'));
+    const chip=box.querySelector('.ai-chip[data-bt="'+t+'"]'); if(chip) chip.classList.add('actief');
+    panel.hidden=false;
+    panel.innerHTML='<div class="ab-loading"><span class="ab-spin"></span><div>Opus 4.8 zoekt live vorm, nieuws &amp; odds…<br><small>dit kan ~20 seconden duren</small></div></div>';
+    try{
+      const r=await fetch(CFG.url,{method:'POST',headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key,'Content-Type':'application/json'},body:JSON.stringify({type:t,datum:CFG.datum,wedstrijden:CFG.wedstrijden})});
+      const j=await r.json().catch(()=>({error:'Ongeldig antwoord'}));
+      if(!r.ok || j.error || !j.bet){ panel.innerHTML='<div class="ab-empty">'+esc(j.error||('Fout '+r.status))+'</div>'; busy=false; return; }
+      renderBet(t,j.bet);
+    }catch(e){ panel.innerHTML='<div class="ab-empty">Kon de AI niet bereiken. Probeer het zo nog eens.</div>'; }
+    busy=false;
+  }
   box.querySelectorAll('.ai-chip').forEach(ch=>{
-    ch.addEventListener('click',()=>{
-      box.querySelectorAll('.ai-chip').forEach(c=>c.classList.remove('actief'));
-      ch.classList.add('actief');
-      render(ch.getAttribute('data-bt'));
-    });
+    ch.addEventListener('click',()=>zoek(ch.getAttribute('data-bt')));
   });
 })();
 </script>'''
@@ -881,7 +893,6 @@ def main():
         sys.exit(1)
 
     load_predictions()
-    load_ai_bets()
     matches = fetch("/matches")["matches"]
     standings = fetch("/standings")
 
