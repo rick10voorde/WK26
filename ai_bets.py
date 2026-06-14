@@ -60,9 +60,10 @@ def fetch_odds():
 
 
 def pick_bookmaker(ev):
+    # the-odds-api gebruikt regio-specifieke keys: unibet_eu / unibet_uk / unibet_nl.
     bks = ev.get("bookmakers", [])
     for b in bks:
-        if b.get("key") == "unibet":
+        if "unibet" in (b.get("key", "").lower()):
             return b
     return bks[0] if bks else None
 
