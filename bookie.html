@@ -26,40 +26,42 @@
   @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
   h2.q{font-family:'Anton',sans-serif;font-size:clamp(22px,5vw,28px);text-transform:uppercase;line-height:1.05;margin-bottom:4px;}
   .q-sub{font-size:13px;color:var(--ink-soft);margin-bottom:16px;}
-  .opt{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:14px 15px;margin-bottom:10px;cursor:pointer;transition:border-color .15s,transform .1s;}
+  .opt{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:14px 15px;margin-bottom:10px;cursor:pointer;transition:border-color .15s,transform .1s;}
   .opt:hover{border-color:var(--oranje);}
   .opt:active{transform:scale(.995);}
   .opt.sel{border-color:var(--ink);background:var(--ink);color:#F4F6F2;}
   .opt.sel .opt-sub{color:rgba(244,246,242,.7);}
+  .opt.sel .opt-ico{color:#FFB385;}
   .opt.disabled{opacity:.5;cursor:not-allowed;border-style:dashed;}
   .opt.disabled:hover{border-color:var(--line);}
-  .opt-ico{font-size:22px;line-height:1.1;flex:none;}
-  .opt-main{flex:1;}
+  .opt-ico{color:var(--ink);flex:none;display:flex;align-items:center;}
+  .opt-ico svg{width:24px;height:24px;}
+  .opt-main{flex:1;min-width:0;}
   .opt-title{font-weight:700;font-size:15px;}
   .opt-sub{font-size:12px;color:var(--ink-soft);margin-top:2px;}
-  .opt-check{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;}
+  .opt-check{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;color:#fff;}
+  .opt-check.sq{border-radius:6px;}
+  .opt-check svg{width:13px;height:13px;}
   .opt.sel .opt-check{background:var(--oranje);border-color:var(--oranje);}
-  .opt .opt-na{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--oranje);background:rgba(240,90,26,.1);padding:3px 7px;border-radius:6px;align-self:center;}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  .grid2 .opt{margin-bottom:0;}
+  .opt .opt-na{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--oranje);background:rgba(240,90,26,.1);padding:3px 7px;border-radius:6px;align-self:center;flex:none;}
   .chips{display:flex;flex-wrap:wrap;gap:8px;}
   .chip{border:1.5px solid var(--line);background:var(--card);border-radius:22px;padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer;}
   .chip:hover{border-color:var(--oranje);}
   .chip.sel{background:var(--oranje);border-color:var(--oranje);color:#fff;}
   .navbar{display:flex;gap:10px;margin-top:20px;}
-  .btn{border:none;border-radius:9px;padding:13px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Archivo',sans-serif;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:9px;padding:13px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Archivo',sans-serif;}
+  .btn svg{width:17px;height:17px;}
   .btn-primary{background:var(--oranje);color:#fff;flex:1;}
   .btn-primary:disabled{opacity:.45;cursor:not-allowed;}
   .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink-soft);}
   .btn-ghost:hover{border-color:var(--ink);color:var(--ink);}
-  .note{font-size:12px;color:var(--oranje);margin-top:8px;font-weight:600;}
-  /* loading */
+  .note{font-size:12.5px;color:var(--oranje);margin-top:10px;font-weight:600;}
+  .seclabel{font-weight:700;font-size:13px;margin:4px 0 8px;}
   .load{text-align:center;padding:40px 10px;}
   .load .spin{width:42px;height:42px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--oranje);margin:0 auto 18px;animation:sp .8s linear infinite;}
   @keyframes sp{to{transform:rotate(360deg);}}
   .load-txt{font-family:'Anton',sans-serif;font-size:20px;text-transform:uppercase;margin-bottom:8px;}
   .load-sub{font-size:13.5px;color:var(--ink-soft);min-height:18px;}
-  /* result card */
   .slip{background:var(--card);border:1.5px solid var(--line);border-radius:13px;overflow:hidden;position:relative;}
   .slip::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--oranje),var(--pen));}
   .slip-h{padding:18px 18px 4px;}
@@ -83,60 +85,84 @@
   .btn-line{background:var(--ink);color:#fff;}
   .btn-wide{grid-column:1 / -1;}
   .disc{font-size:11px;color:var(--ink-soft);line-height:1.5;margin-top:18px;border-top:1px solid var(--line);padding-top:12px;}
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:600;opacity:0;transition:.25s;z-index:50;pointer-events:none;}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:600;opacity:0;transition:.25s;z-index:50;pointer-events:none;display:flex;align-items:center;gap:8px;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast svg{width:16px;height:16px;}
   .expired{background:rgba(240,90,26,.1);border:1px solid var(--oranje);color:var(--oranje);font-size:12.5px;font-weight:600;border-radius:9px;padding:10px 12px;margin:0 18px 12px;}
-  /* mybets */
-  .mb-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:9px;}
+  .mb-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:9px;cursor:pointer;}
+  .mb-row:hover{border-color:var(--oranje);}
   .mb-row .mb-od{font-family:'Caveat',cursive;font-size:26px;color:var(--pen);font-weight:700;}
   .mb-status{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:6px;}
   .mb-active{background:rgba(30,122,76,.12);color:var(--groen);}
   .mb-exp{background:rgba(240,90,26,.12);color:var(--oranje);}
   .empty{text-align:center;color:var(--ink-soft);font-size:13.5px;padding:30px 10px;}
-  @media(max-width:480px){.grid2{grid-template-columns:1fr;}.leg-od{font-size:26px;}.slip-bigod{font-size:38px;}}
+  .mybets-link{text-align:center;margin-top:14px;}
+  .mybets-link a{font-size:12.5px;color:var(--ink-soft);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+  .mybets-link a svg{width:15px;height:15px;}
+  @media(max-width:480px){.leg-od{font-size:26px;}.slip-bigod{font-size:38px;}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="brand">De Bookie<span class="accent">.</span><small>WK 2026 · AI-tipmachine</small></div>
+    <div class="brand">De Bookie<span class="accent">.</span><small>WK 2026 · AI-TIPMACHINE</small></div>
     <a class="top-link" href="./index.html">← Overzicht</a>
   </header>
   <div class="steps" id="steps"></div>
   <div id="app"></div>
-
   <div class="disc">De Bookie geeft AI-inschattingen op basis van beschikbare informatie. Odds en markten kunnen veranderen. Geen garantie op winst. Speel bewust en met mate. 18+.</div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-const CFG = {
-  fn: "https://jjdpqzwvckubqqpuneup.supabase.co/functions/v1/bookie",
-  key: "sb_publishable_V5vkJ6vDVjdbekgaVl7Hjg_6zAFXN17"
-};
-// anoniem id
+const CFG = { fn:"https://jjdpqzwvckubqqpuneup.supabase.co/functions/v1/bookie", key:"sb_publishable_V5vkJ6vDVjdbekgaVl7Hjg_6zAFXN17" };
 let ANON = localStorage.getItem("bookie-anon");
 if(!ANON){ ANON = (crypto.randomUUID ? crypto.randomUUID() : "a"+Date.now()+Math.random().toString(36).slice(2)); localStorage.setItem("bookie-anon", ANON); }
 
+// ── inline SVG vectoriconen (stroke = currentColor) ──
+const SVG = s => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+s+'</svg>';
+const ICON = {
+  globe: SVG('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 16 0 18M12 3c-2.5 2.5-2.5 16 0 18"/>'),
+  ball: SVG('<circle cx="12" cy="12" r="9"/><path d="M12 7.5l4 3-1.5 4.5h-5L8 10.5z"/><path d="M12 3v4.5M19.5 9.5l-3.5 1M16.5 18l-2-3M9.5 15l-2 3M4.5 9.5l3.5 1"/>'),
+  cal: SVG('<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>'),
+  target: SVG('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/>'),
+  layers: SVG('<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>'),
+  link: SVG('<path d="M9.5 14.5l5-5"/><path d="M8 11l-2 2a3.5 3.5 0 005 5l2-2"/><path d="M16 13l2-2a3.5 3.5 0 00-5-5l-2 2"/>'),
+  gem: SVG('<path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18M9 3l-3 6 6 12 6-12-3-6"/>'),
+  shield: SVG('<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>'),
+  dice: SVG('<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.1" fill="currentColor"/><circle cx="15" cy="15" r="1.1" fill="currentColor"/><circle cx="15" cy="9" r="1.1" fill="currentColor"/><circle cx="9" cy="15" r="1.1" fill="currentColor"/>'),
+  spark: SVG('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>'),
+  bolt: SVG('<path d="M13 3L5 13h6l-1 8 8-10h-6z"/>'),
+  chat: SVG('<path d="M21 12a8 8 0 01-11.5 7.2L4 21l1.8-5.5A8 8 0 1121 12z"/>'),
+  share: SVG('<path d="M21 3L11 13"/><path d="M21 3l-6.5 18-3.5-8-8-3.5z"/>'),
+  link2: SVG('<path d="M10 13a4 4 0 005.6.2l3-3a4 4 0 00-5.6-5.6L11 6"/><path d="M14 11a4 4 0 00-5.6-.2l-3 3a4 4 0 005.6 5.6L13 18"/>'),
+  plus: SVG('<path d="M12 5v14M5 12h14"/>'),
+  folder: SVG('<path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>'),
+  refresh: SVG('<path d="M20 11a8 8 0 10-2.3 6.5M20 20v-5h-5"/>'),
+  check: SVG('<path d="M5 12l4 4 10-10"/>'),
+  ban: SVG('<circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/>'),
+  pricetag: SVG('<path d="M3 12l9-9h8v8l-9 9z"/><circle cx="16" cy="8" r="1.4"/>')
+};
+
 const app = document.getElementById("app");
 const stepsEl = document.getElementById("steps");
-let DATA = null, GROUPS = [], STEP = 1, RESULT = null;
-const S = { scope:null, matchKey:null, ticket:null, groups:[], risk:null, oddRange:null, legs:null };
+let DATA=null, GROUPS=[], STEP=1, RESULT=null;
+const S = { scope:null, matches:[], matchKey:null, ticket:null, groups:[], risk:null, oddRange:null, legs:null };
 const SINGLE = t => t==="single" || t==="builder";
 
 function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
 function api(body){ return fetch(CFG.fn,{method:"POST",headers:{apikey:CFG.key,Authorization:"Bearer "+CFG.key,"Content-Type":"application/json"},body:JSON.stringify({...body,anonymous_id:ANON})}).then(r=>r.json()); }
-function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
+function toast(m){ const t=document.getElementById("toast"); t.innerHTML=ICON.check+"<span>"+esc(m)+"</span>"; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
 function drawSteps(n){ stepsEl.innerHTML=[1,2,3,4,5].map(i=>'<i class="'+(i<n?"done":i===n?"now":"")+'"></i>').join(""); stepsEl.style.display=(n>=1&&n<=5)?"flex":"none"; }
 
 const TICKETS = [
-  {id:"single",ico:"🎯",t:"Single bet",s:"Eén sterke selectie"},
-  {id:"builder",ico:"🏗️",t:"Bet Builder",s:"Meerdere markten in één wedstrijd"},
-  {id:"combi",ico:"🔗",t:"Combi van de dag",s:"2–4 WK-wedstrijden samen"},
-  {id:"value",ico:"💎",t:"Value bet",s:"Odd interessant t.o.v. de kans"},
-  {id:"safe",ico:"🛡️",t:"Veilige WK-bet",s:"Lagere odd, lager risico"},
-  {id:"surprise",ico:"🎲",t:"Verrassende hoge odd",s:"Meer risico, met onderbouwing"},
-  {id:"ai",ico:"🤖",t:"AI kiest voor mij",s:"De Bookie kiest het beste type"}
+  {id:"single",ic:"target",t:"Single bet",s:"Eén sterke selectie"},
+  {id:"builder",ic:"layers",t:"Bet Builder",s:"Meerdere markten in één wedstrijd"},
+  {id:"combi",ic:"link",t:"Combi van de dag",s:"2–4 WK-wedstrijden samen"},
+  {id:"value",ic:"gem",t:"Value bet",s:"Odd interessant t.o.v. de kans"},
+  {id:"safe",ic:"shield",t:"Veilige WK-bet",s:"Lagere odd, lager risico"},
+  {id:"surprise",ic:"dice",t:"Verrassende hoge odd",s:"Meer risico, met onderbouwing"},
+  {id:"ai",ic:"spark",t:"AI kiest voor mij",s:"De Bookie kiest het beste type"}
 ];
 const RISKS = [
   {id:"voorzichtig",t:"Voorzichtig",s:"Lage odd, min risico"},
@@ -145,19 +171,27 @@ const RISKS = [
   {id:"durf",t:"Durf-bet",s:"Hoge odd, kleine kans"}
 ];
 const RANGES = ["1.30 – 1.70","1.70 – 2.20","2.20 – 3.50","3.50+","AI kiest beste value"];
+const GICON = {uitslag:"target",goals:"ball",team:"shield",spelers:"ban",corners:"ban",kaarten:"ban",specials:"ban"};
 
-function optHtml(sel, ico, title, sub, dis, na){
-  return '<div class="opt'+(sel?" sel":"")+(dis?" disabled":"")+'" '+(dis?"":"data-pick=\"1\"")+'>'
-    +(ico?'<div class="opt-ico">'+ico+'</div>':'')
+function optHtml(opts){
+  const {sel,icon,title,sub,dis,na,multi,attrs} = opts;
+  return '<div class="opt'+(sel?" sel":"")+(dis?" disabled":"")+'" '+(dis?"":(attrs||"data-pick"))+'>'
+    +(icon?'<div class="opt-ico">'+icon+'</div>':'')
     +'<div class="opt-main"><div class="opt-title">'+esc(title)+'</div>'+(sub?'<div class="opt-sub">'+esc(sub)+'</div>':'')+'</div>'
-    +(na?'<div class="opt-na">'+esc(na)+'</div>':'<div class="opt-check">'+(sel?"✓":"")+'</div>')+'</div>';
+    +(na?'<div class="opt-na">'+esc(na)+'</div>':'<div class="opt-check'+(multi?" sq":"")+'">'+(sel?ICON.check:"")+'</div>')+'</div>';
 }
+function navBar(back,label,on){
+  return '<div class="navbar">'+(back!=null?'<button class="btn btn-ghost" id="nbBack">← Terug</button>':'')
+    +'<button class="btn btn-primary" id="nbNext" '+(on?"":"disabled")+'>'+esc(label)+'</button></div>'
+    +'<div class="mybets-link"><a href="#" id="mybetsLink">'+ICON.folder+' Mijn WK-bets</a></div>';
+}
+function wireMyBets(){ const m=document.getElementById("mybetsLink"); if(m) m.onclick=e=>{e.preventDefault();STEP=8;render();}; }
 
 function render(){
   drawSteps(STEP);
   if(STEP===1) return scrMatch();
   if(STEP===2) return scrTicket();
-  if(STEP===2.5) return scrPickMatch();
+  if(STEP===2.5) return scrPickOne();
   if(STEP===3) return scrGroups();
   if(STEP===4) return scrRisk();
   if(STEP===5) return scrFinal();
@@ -166,78 +200,74 @@ function render(){
   if(STEP===8) return scrMyBets();
 }
 
-function nav(back, nextLabel, nextFn, nextOn){
-  return '<div class="navbar">'
-    +(back!=null?'<button class="btn btn-ghost" id="nbBack">← Terug</button>':'')
-    +'<button class="btn btn-primary" id="nbNext" '+(nextOn?"":"disabled")+'>'+esc(nextLabel)+'</button></div>'
-    +'<div style="text-align:center;margin-top:14px;"><a href="#" id="mybetsLink" style="font-size:12.5px;color:var(--ink-soft);font-weight:600;">📁 Mijn WK-bets</a></div>';
-}
-function wireNav(back, nextFn){
-  const b=document.getElementById("nbBack"); if(b) b.onclick=()=>{STEP=back;render();};
-  const n=document.getElementById("nbNext"); if(n) n.onclick=nextFn;
-  const m=document.getElementById("mybetsLink"); if(m) m.onclick=(e)=>{e.preventDefault();STEP=8;render();};
-}
-
 function scrMatch(){
-  const today = (DATA&&DATA.today)||[], up=(DATA&&DATA.upcoming)||[];
-  let h='<div class="screen on"><h2 class="q">Kies je WK-wedstrijd</h2><div class="q-sub">Voor Bet Builder & Single kies je één wedstrijd. Voor een combi kan "alle wedstrijden" prima.</div>';
-  h+=optHtml(S.scope==="alle","🌐","Alle WK-wedstrijden vandaag", today.length+" wedstrijden vandaag", today.length===0, today.length===0?"Geen vandaag":null).replace('data-pick="1"','data-pick="1" data-scope="alle"');
-  today.forEach(m=>{ h+=optHtml(S.scope==="match"&&S.matchKey===m.key,"⚽",m.key, "Vandaag "+m.tijd+(m.groep?" · "+m.groep:""), false).replace('data-pick="1"','data-pick="1" data-scope="match" data-key="'+esc(m.key)+'"'); });
+  const today=(DATA&&DATA.today)||[], up=(DATA&&DATA.upcoming)||[];
+  let h='<div class="screen on"><h2 class="q">Kies je WK-wedstrijd</h2><div class="q-sub">Vink één wedstrijd aan voor een single/builder, of meerdere voor een combi. Of pak gewoon "Alle wedstrijden vandaag".</div>';
+  h+=optHtml({sel:S.scope==="alle",icon:ICON.globe,title:"Alle WK-wedstrijden vandaag",sub:today.length+" wedstrijden vandaag",dis:today.length===0,na:today.length===0?"Geen vandaag":null,attrs:'data-alle'});
+  today.forEach(m=>{ h+=optHtml({sel:S.scope==="matches"&&S.matches.includes(m.key),icon:ICON.ball,title:m.key,sub:"Vandaag "+m.tijd+(m.groep?" · "+m.groep:""),multi:true,attrs:'data-match data-key="'+esc(m.key)+'"'}); });
   if(up.length){ h+='<div class="q-sub" style="margin-top:14px;">Komende WK-wedstrijden</div>';
-    up.slice(0,8).forEach(m=>{ h+=optHtml(S.scope==="match"&&S.matchKey===m.key,"📅",m.key,(m.dag||"")+" "+m.tijd+(m.groep?" · "+m.groep:""),false).replace('data-pick="1"','data-pick="1" data-scope="match" data-key="'+esc(m.key)+'"'); }); }
-  h+=nav(null,"Volgende →",null,!!S.scope)+'</div>';
+    up.slice(0,8).forEach(m=>{ h+=optHtml({sel:S.scope==="matches"&&S.matches.includes(m.key),icon:ICON.cal,title:m.key,sub:(m.dag||"")+" "+m.tijd+(m.groep?" · "+m.groep:""),multi:true,attrs:'data-match data-key="'+esc(m.key)+'"'}); }); }
+  const on = S.scope==="alle" || (S.scope==="matches"&&S.matches.length>=1);
+  if(S.scope==="matches"&&S.matches.length>1) h+='<div class="note">'+S.matches.length+' wedstrijden geselecteerd — ideaal voor een combi.</div>';
+  h+=navBar(null,"Volgende →",on)+'</div>';
   app.innerHTML=h;
-  app.querySelectorAll('[data-scope]').forEach(el=>el.onclick=()=>{ S.scope=el.getAttribute("data-scope"); S.matchKey=el.getAttribute("data-key")||null; render(); });
-  wireNav(null); document.getElementById("nbNext").onclick=()=>{STEP=2;render();};
+  const alle=app.querySelector('[data-alle]'); if(alle) alle.onclick=()=>{ S.scope="alle"; S.matches=[]; render(); };
+  app.querySelectorAll('[data-match]').forEach(el=>el.onclick=()=>{ if(S.scope!=="matches"){S.scope="matches";S.matches=[];} const k=el.getAttribute("data-key"); const i=S.matches.indexOf(k); if(i>=0)S.matches.splice(i,1); else S.matches.push(k); if(!S.matches.length)S.scope=null; render(); });
+  document.getElementById("nbNext").onclick=()=>{STEP=2;render();}; wireMyBets();
 }
 function scrTicket(){
   let h='<div class="screen on"><h2 class="q">Wat wil je maken?</h2><div class="q-sub">Kies het soort ticket. De Bookie stelt het daarna samen.</div>';
-  TICKETS.forEach(t=>{ h+=optHtml(S.ticket===t.id,t.ico,t.t,t.s,false).replace('data-pick="1"','data-pick="1" data-t="'+t.id+'"'); });
-  h+=nav(1,"Volgende →",null,!!S.ticket)+'</div>';
+  TICKETS.forEach(t=>{ h+=optHtml({sel:S.ticket===t.id,icon:ICON[t.ic],title:t.t,sub:t.s,attrs:'data-t="'+t.id+'"'}); });
+  let warn="";
+  if(S.ticket==="combi" && S.scope==="matches" && S.matches.length<2) warn='<div class="note">Voor een combi: vink minstens 2 wedstrijden aan (terug naar stap 1), of kies "Alle wedstrijden vandaag".</div>';
+  h+=warn+navBar(1,"Volgende →",!!S.ticket)+'</div>';
   app.innerHTML=h;
   app.querySelectorAll('[data-t]').forEach(el=>el.onclick=()=>{ S.ticket=el.getAttribute("data-t"); render(); });
-  wireNav(1); document.getElementById("nbNext").onclick=()=>{
-    if(SINGLE(S.ticket) && S.scope!=="match"){ STEP=2.5; render(); return; }
+  document.getElementById("nbBack").onclick=()=>{STEP=1;render();};
+  document.getElementById("nbNext").onclick=()=>{
+    if(SINGLE(S.ticket)){ if(S.scope==="matches"&&S.matches.length===1){ S.matchKey=S.matches[0]; STEP=3; } else { STEP=2.5; } render(); return; }
+    if(S.ticket==="combi" && S.scope==="matches" && S.matches.length<2){ return; }
     STEP=3; render();
   };
+  wireMyBets();
 }
-function scrPickMatch(){
-  const today=(DATA&&DATA.today)||[];
+function scrPickOne(){
+  const today=(DATA&&DATA.today)||[], up=(DATA&&DATA.upcoming)||[];
   let h='<div class="screen on"><h2 class="q">Voor welke wedstrijd?</h2><div class="q-sub">Een '+(S.ticket==="builder"?"bet builder":"single")+' werkt op één wedstrijd.</div>';
-  today.forEach(m=>{ h+=optHtml(S.matchKey===m.key,"⚽",m.key,"Vandaag "+m.tijd,false).replace('data-pick="1"','data-pick="1" data-key="'+esc(m.key)+'"'); });
-  if(!today.length) h+='<div class="empty">Geen wedstrijden vandaag.</div>';
-  h+=nav(2,"Volgende →",null,!!S.matchKey)+'</div>';
+  [...today,...up.slice(0,8)].forEach(m=>{ h+=optHtml({sel:S.matchKey===m.key,icon:ICON.ball,title:m.key,sub:(m.dag?m.dag+" ":"Vandaag ")+m.tijd,attrs:'data-key="'+esc(m.key)+'"'}); });
+  h+=navBar(2,"Volgende →",!!S.matchKey)+'</div>';
   app.innerHTML=h;
-  app.querySelectorAll('[data-key]').forEach(el=>el.onclick=()=>{ S.scope="match"; S.matchKey=el.getAttribute("data-key"); render(); });
-  wireNav(2); document.getElementById("nbNext").onclick=()=>{STEP=3;render();};
+  app.querySelectorAll('[data-key]').forEach(el=>el.onclick=()=>{ S.matchKey=el.getAttribute("data-key"); S.scope="matches"; S.matches=[S.matchKey]; render(); });
+  document.getElementById("nbBack").onclick=()=>{STEP=2;render();};
+  document.getElementById("nbNext").onclick=()=>{STEP=3;render();}; wireMyBets();
 }
 function scrGroups(){
   let h='<div class="screen on"><h2 class="q">Welke markten mag De Bookie gebruiken?</h2><div class="q-sub">Alleen markten die beschikbaar zijn bij Unibet NL. Niets aanvinken = De Bookie kiest zelf.</div>';
-  GROUPS.forEach(g=>{ const sel=S.groups.includes(g.id); h+=optHtml(sel,g.beschikbaar?"✅":"🚫",g.label,g.sub,!g.beschikbaar,g.beschikbaar?null:"Niet bij Unibet NL").replace('data-pick="1"','data-pick="1" data-g="'+g.id+'"'); });
-  h+=nav(SINGLE(S.ticket)&&S.scope!=="match"?2.5:2,"Volgende →",null,true)+'</div>';
+  GROUPS.forEach(g=>{ h+=optHtml({sel:S.groups.includes(g.id),icon:ICON[GICON[g.id]||"target"],title:g.label,sub:g.sub,dis:!g.beschikbaar,na:g.beschikbaar?null:"Niet bij Unibet NL",multi:true,attrs:'data-g="'+g.id+'"'}); });
+  h+=navBar(SINGLE(S.ticket)?(S.matches.length===1?2:2.5):2,"Volgende →",true)+'</div>';
   app.innerHTML=h;
   app.querySelectorAll('[data-g]').forEach(el=>el.onclick=()=>{ const id=el.getAttribute("data-g"); const i=S.groups.indexOf(id); if(i>=0)S.groups.splice(i,1); else S.groups.push(id); render(); });
-  wireNav(2); document.getElementById("nbNext").onclick=()=>{STEP=4;render();};
+  document.getElementById("nbBack").onclick=()=>{ STEP = SINGLE(S.ticket) ? (S.matches.length===1?2:2.5) : 2; render(); };
+  document.getElementById("nbNext").onclick=()=>{STEP=4;render();}; wireMyBets();
 }
 function scrRisk(){
   let h='<div class="screen on"><h2 class="q">Hoeveel risico wil je nemen?</h2><div class="q-sub">Bepaalt hoe scherp of gewaagd De Bookie kiest.</div>';
-  RISKS.forEach(r=>{ h+=optHtml(S.risk===r.id,"",r.t,r.s,false).replace('data-pick="1"','data-pick="1" data-r="'+r.id+'"'); });
-  h+=nav(3,"Volgende →",null,!!S.risk)+'</div>';
+  RISKS.forEach(r=>{ h+=optHtml({sel:S.risk===r.id,title:r.t,sub:r.s,attrs:'data-r="'+r.id+'"'}); });
+  h+=navBar(3,"Volgende →",!!S.risk)+'</div>';
   app.innerHTML=h;
   app.querySelectorAll('[data-r]').forEach(el=>el.onclick=()=>{ S.risk=el.getAttribute("data-r"); render(); });
-  wireNav(3); document.getElementById("nbNext").onclick=()=>{STEP=5;render();};
+  document.getElementById("nbBack").onclick=()=>{STEP=3;render();};
+  document.getElementById("nbNext").onclick=()=>{STEP=5;render();}; wireMyBets();
 }
 function scrFinal(){
   const legOpts = S.ticket==="single" ? ["1 selectie"] : (SINGLE(S.ticket)?["2 legs","3 legs","4 legs","AI kiest"]:["2 wedstrijden","3 wedstrijden","4 wedstrijden","AI kiest"]);
-  if(S.ticket==="single") S.legs="1";
+  if(S.ticket==="single") S.legs="1 selectie";
   let h='<div class="screen on"><h2 class="q">Odd-range & aantal</h2><div class="q-sub">Laatste verfijning. Dan analyseert De Bookie.</div>';
-  h+='<div style="font-weight:700;font-size:13px;margin:4px 0 8px;">Gewenste totale odd</div><div class="chips" id="rng">';
+  h+='<div class="seclabel">Gewenste totale odd</div><div class="chips" id="rng">';
   RANGES.forEach(r=>{ h+='<button class="chip'+(S.oddRange===r?" sel":"")+'" data-rng="'+esc(r)+'">'+esc(r)+'</button>'; });
-  h+='</div>';
-  h+='<div style="font-weight:700;font-size:13px;margin:18px 0 8px;">Aantal selecties</div><div class="chips" id="lgs">';
+  h+='</div><div class="seclabel" style="margin-top:18px;">Aantal selecties</div><div class="chips" id="lgs">';
   legOpts.forEach(l=>{ h+='<button class="chip'+(S.legs===l?" sel":"")+'" data-lg="'+esc(l)+'">'+esc(l)+'</button>'; });
-  h+='</div>';
-  h+='<div class="navbar"><button class="btn btn-ghost" id="nbBack">← Terug</button><button class="btn btn-primary" id="go">⚡ Analyseer mijn WK-bet</button></div></div>';
+  h+='</div><div class="navbar"><button class="btn btn-ghost" id="nbBack">← Terug</button><button class="btn btn-primary" id="go">'+ICON.bolt+' Analyseer mijn WK-bet</button></div></div>';
   app.innerHTML=h;
   app.querySelectorAll('[data-rng]').forEach(el=>el.onclick=()=>{S.oddRange=el.getAttribute("data-rng");render();});
   app.querySelectorAll('[data-lg]').forEach(el=>el.onclick=()=>{S.legs=el.getAttribute("data-lg");render();});
@@ -250,11 +280,12 @@ function scrLoading(){
   app.innerHTML='<div class="screen on"><div class="load"><div class="spin"></div><div class="load-txt">De Bookie denkt na</div><div class="load-sub" id="lsub">'+LOAD_MSG[0]+'</div></div></div>';
   window._lt=setInterval(()=>{i=(i+1)%LOAD_MSG.length;const e=document.getElementById("lsub");if(e)e.textContent=LOAD_MSG[i];},2400);
 }
-function legsParam(){ if(!S.legs||S.legs==="AI kiest")return "ai"; const m=S.legs.match(/\d+/); return m?m[0]:"ai"; }
+function legsParam(){ if(!S.legs||S.legs.indexOf("AI")>=0)return "ai"; const m=S.legs.match(/\d+/); return m?m[0]:"ai"; }
 function rangeParam(){ if(!S.oddRange||S.oddRange.startsWith("AI"))return "ai"; return S.oddRange.replace(/\s/g,""); }
 function matchesParam(){
-  const today=(DATA&&DATA.today)||[], up=(DATA&&DATA.upcoming)||[];
-  if(S.scope==="match"){ const m=[...today,...up].find(x=>x.key===S.matchKey); return m?[m]:[]; }
+  const today=(DATA&&DATA.today)||[], up=(DATA&&DATA.upcoming)||[], all=[...today,...up];
+  if(SINGLE(S.ticket)) return all.filter(m=>m.key===S.matchKey);
+  if(S.scope==="matches" && S.matches.length) return all.filter(m=>S.matches.includes(m.key));
   return today;
 }
 async function analyze(){
@@ -266,7 +297,7 @@ async function analyze(){
     RESULT=res.bet; STEP=7; render();
   }catch(e){ clearInterval(window._lt); app.innerHTML='<div class="screen on"><div class="empty">Kon De Bookie niet bereiken. Probeer opnieuw.</div><div class="navbar"><button class="btn btn-primary" onclick="STEP=5;render()">← Terug</button></div></div>'; }
 }
-function slipHtml(b, expired){
+function slipHtml(b,expired){
   const legs=(b.legs||[]).map(l=>'<div class="leg"><div class="leg-match">'+esc(l.wedstrijd||"")+'</div><div class="leg-pick">'+esc(l.selection||l.market_name)+'</div>'+(l.explanation?'<div class="leg-why">'+esc(l.explanation)+'</div>':'')+'<div class="leg-od">'+(typeof l.odds==="number"?l.odds.toFixed(2):esc(l.odds))+'</div></div>').join("");
   const created=b.created_at?new Date(b.created_at).toLocaleString("nl-NL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
   return '<div class="slip"><div class="slip-h"><div class="slip-title">'+esc(b.title||b.generated_bet_title||"WK-tip")+'</div>'
@@ -277,68 +308,19 @@ function slipHtml(b, expired){
     +(b.reasoning?'<div class="slip-why">'+esc(b.reasoning)+'</div>':'')
     +'<div class="slip-meta"><span>via '+esc(b.bron||"Unibet")+'</span><span>'+created+'</span></div>'
     +'<div class="slip-actions">'
-    +'<button class="btn btn-wa" id="waCopy">📋 Kopieer WhatsApp</button>'
-    +'<button class="btn btn-line" id="waShare">Deel via WhatsApp</button>'
-    +'<button class="btn btn-ghost" id="cpLink">🔗 Kopieer link</button>'
-    +'<button class="btn btn-ghost" id="newBet">＋ Nieuwe WK-bet</button>'
-    +'<button class="btn btn-ghost btn-wide" id="seeMine">📁 Mijn eerdere bets</button>'
+    +'<button class="btn btn-wa" id="waCopy">'+ICON.chat+' Kopieer WhatsApp</button>'
+    +'<button class="btn btn-line" id="waShare">'+ICON.share+' Deel via WhatsApp</button>'
+    +'<button class="btn btn-ghost" id="cpLink">'+ICON.link2+' Kopieer link</button>'
+    +'<button class="btn btn-ghost" id="newBet">'+ICON.plus+' Nieuwe WK-bet</button>'
+    +'<button class="btn btn-ghost btn-wide" id="seeMine">'+ICON.folder+' Mijn eerdere bets</button>'
     +'</div></div>';
 }
-function scrResult(){
-  drawSteps(0);
-  const b=RESULT;
-  app.innerHTML='<div class="screen on">'+slipHtml(b,false)+'</div>';
+function wireSlip(b){
   const wa=b.share_text||"";
-  document.getElementById("waCopy").onclick=()=>{ navigator.clipboard.writeText(wa).then(()=>toast("WhatsApp-bericht gekopieerd ✅")); };
-  document.getElementById("waShare").onclick=()=>{ window.open("https://wa.me/?text="+encodeURIComponent(wa),"_blank"); };
-  document.getElementById("cpLink").onclick=()=>{ const url=location.origin+location.pathname+"?bet="+(b.slug||""); navigator.clipboard.writeText(url).then(()=>toast("Link gekopieerd ✅")); };
-  document.getElementById("newBet").onclick=()=>{ S.scope=S.matchKey=S.ticket=S.risk=S.oddRange=S.legs=null; S.groups=[]; STEP=1; render(); };
-  document.getElementById("seeMine").onclick=()=>{ STEP=8; render(); };
+  document.getElementById("waCopy").onclick=()=>navigator.clipboard.writeText(wa).then(()=>toast("WhatsApp-bericht gekopieerd"));
+  document.getElementById("waShare").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent(wa),"_blank");
+  document.getElementById("cpLink").onclick=()=>{const url=location.origin+location.pathname+"?bet="+(b.slug||"");navigator.clipboard.writeText(url).then(()=>toast("Link gekopieerd"));};
+  document.getElementById("newBet").onclick=()=>{S.scope=S.matchKey=S.ticket=S.risk=S.oddRange=S.legs=null;S.matches=[];S.groups=[];STEP=1;render();};
+  document.getElementById("seeMine").onclick=()=>{STEP=8;render();};
 }
-async function scrMyBets(){
-  drawSteps(0);
-  app.innerHTML='<div class="screen on"><h2 class="q">Mijn WK-bets</h2><div class="q-sub">Opgeslagen op dit apparaat.</div><div id="mbList"><div class="empty">Laden…</div></div><div class="navbar"><button class="btn btn-primary" id="back2">＋ Nieuwe WK-bet</button></div></div>';
-  document.getElementById("back2").onclick=()=>{ STEP=1; render(); };
-  try{
-    const res=await api({action:"mybets"});
-    const list=(res.bets||[]);
-    const now=Date.now();
-    if(!list.length){ document.getElementById("mbList").innerHTML='<div class="empty">Nog geen bets. Maak je eerste WK-tip!</div>'; return; }
-    document.getElementById("mbList").innerHTML=list.map(b=>{
-      const exp = b.status!=="active" || (b.expires_at && new Date(b.expires_at).getTime()<now);
-      const d=b.created_at?new Date(b.created_at).toLocaleString("nl-NL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
-      return '<div class="mb-row" data-slug="'+esc(b.share_slug)+'"><div><div style="font-weight:700;font-size:14px;">'+esc(b.match_name||b.generated_bet_title||"WK-tip")+'</div><div style="font-size:11.5px;color:var(--ink-soft);margin-top:2px;">'+d+' · '+esc(b.bet_type)+' <span class="mb-status '+(exp?"mb-exp":"mb-active")+'">'+(exp?"verlopen":"actief")+'</span></div></div><div class="mb-od">'+(typeof b.total_odds==="number"?b.total_odds.toFixed(2):b.total_odds)+'</div></div>';
-    }).join("");
-    app.querySelectorAll('[data-slug]').forEach(el=>el.onclick=()=>openSlug(el.getAttribute("data-slug")));
-  }catch(e){ document.getElementById("mbList").innerHTML='<div class="empty">Kon bets niet laden.</div>'; }
-}
-async function openSlug(slug){
-  app.innerHTML='<div class="screen on"><div class="load"><div class="spin"></div><div class="load-sub">Bet laden…</div></div></div>';
-  try{
-    const res=await api({action:"getbet",slug});
-    const r=res.bet; if(!r){ toast("Bet niet gevonden"); STEP=8; render(); return; }
-    const legs=(r.bet_legs||[]).map(l=>({wedstrijd:"",selection:l.selection,market_name:l.market_name,odds:Number(l.odds),explanation:l.explanation}));
-    const expired = r.status!=="active" || (r.expires_at && new Date(r.expires_at).getTime()<Date.now());
-    const b={title:r.generated_bet_title,match_name:r.match_name,bet_type_label:r.bet_type,risk_label:r.risk_level,total_odds:Number(r.total_odds),legs,reasoning:r.reasoning,bron:(r.unibet_market_snapshot&&r.unibet_market_snapshot.bron)||"Unibet",created_at:r.created_at,share_text:r.share_text,slug:r.share_slug};
-    RESULT=b; app.innerHTML='<div class="screen on">'+slipHtml(b,expired)+'</div>';
-    const wa=b.share_text||"";
-    document.getElementById("waCopy").onclick=()=>navigator.clipboard.writeText(wa).then(()=>toast("WhatsApp-bericht gekopieerd ✅"));
-    document.getElementById("waShare").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent(wa),"_blank");
-    document.getElementById("cpLink").onclick=()=>{const url=location.origin+location.pathname+"?bet="+(b.slug||"");navigator.clipboard.writeText(url).then(()=>toast("Link gekopieerd ✅"));};
-    document.getElementById("newBet").onclick=()=>{S.scope=S.matchKey=S.ticket=S.risk=S.oddRange=S.legs=null;S.groups=[];STEP=1;render();};
-    document.getElementById("seeMine").onclick=()=>{STEP=8;render();};
-  }catch(e){ toast("Fout bij laden"); STEP=8; render(); }
-}
-
-async function init(){
-  app.innerHTML='<div class="load"><div class="spin"></div><div class="load-sub">WK-wedstrijden laden…</div></div>';
-  try{ DATA = await fetch("./wk_matches.json?t="+Date.now()).then(r=>r.json()); }catch(e){ DATA={today:[],upcoming:[]}; }
-  try{ const m=await api({action:"markets"}); GROUPS=m.groups||[]; }catch(e){ GROUPS=[]; }
-  const sharedSlug = new URLSearchParams(location.search).get("bet");
-  if(sharedSlug){ openSlug(sharedSlug); return; }
-  STEP=1; render();
-}
-init();
-</script>
-</body>
-</html>
+function scrResult(){
