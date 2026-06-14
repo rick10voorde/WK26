@@ -45,18 +45,18 @@ NL = {
 }
 
 FLAGS = {
-    "Mexico": "🇲🇽", "Zuid-Afrika": "🇿🇦", "Zuid-Korea": "🇰🇷", "Tsjechië": "🇨🇿",
-    "Canada": "🇨🇦", "Bosnië-Herzegovina": "🇧🇦", "Qatar": "🇶🇦", "Zwitserland": "🇨🇭",
-    "Brazilië": "🇧🇷", "Marokko": "🇲🇦", "Haïti": "🇭🇹", "Schotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-    "Verenigde Staten": "🇺🇸", "Paraguay": "🇵🇾", "Australië": "🇦🇺", "Turkije": "🇹🇷",
-    "Duitsland": "🇩🇪", "Curaçao": "🇨🇼", "Ivoorkust": "🇨🇮", "Ecuador": "🇪🇨",
-    "Nederland": "🇳🇱", "Japan": "🇯🇵", "Zweden": "🇸🇪", "Tunesië": "🇹🇳",
-    "België": "🇧🇪", "Egypte": "🇪🇬", "Iran": "🇮🇷", "Nieuw-Zeeland": "🇳🇿",
-    "Spanje": "🇪🇸", "Kaapverdië": "🇨🇻", "Saoedi-Arabië": "🇸🇦", "Uruguay": "🇺🇾",
-    "Frankrijk": "🇫🇷", "Senegal": "🇸🇳", "Noorwegen": "🇳🇴", "Irak": "🇮🇶",
-    "Argentinië": "🇦🇷", "Algerije": "🇩🇿", "Oostenrijk": "🇦🇹", "Jordanië": "🇯🇴",
-    "Portugal": "🇵🇹", "Oezbekistan": "🇺🇿", "Colombia": "🇨🇴", "DR Congo": "🇨🇩",
-    "Engeland": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "Kroatië": "🇭🇷", "Ghana": "🇬🇭", "Panama": "🇵🇦",
+    "Mexico": "mx", "Zuid-Afrika": "za", "Zuid-Korea": "kr", "Tsjechië": "cz",
+    "Canada": "ca", "Bosnië-Herzegovina": "ba", "Qatar": "qa", "Zwitserland": "ch",
+    "Brazilië": "br", "Marokko": "ma", "Haïti": "ht", "Schotland": "gb-sct",
+    "Verenigde Staten": "us", "Paraguay": "py", "Australië": "au", "Turkije": "tr",
+    "Duitsland": "de", "Curaçao": "cw", "Ivoorkust": "ci", "Ecuador": "ec",
+    "Nederland": "nl", "Japan": "jp", "Zweden": "se", "Tunesië": "tn",
+    "België": "be", "Egypte": "eg", "Iran": "ir", "Nieuw-Zeeland": "nz",
+    "Spanje": "es", "Kaapverdië": "cv", "Saoedi-Arabië": "sa", "Uruguay": "uy",
+    "Frankrijk": "fr", "Senegal": "sn", "Noorwegen": "no", "Irak": "iq",
+    "Argentinië": "ar", "Algerije": "dz", "Oostenrijk": "at", "Jordanië": "jo",
+    "Portugal": "pt", "Oezbekistan": "uz", "Colombia": "co", "DR Congo": "cd",
+    "Engeland": "gb-eng", "Kroatië": "hr", "Ghana": "gh", "Panama": "pa",
 }
 
 STAGES = [
@@ -79,7 +79,11 @@ def nl_name(team):
 
 
 def flag(name):
-    return FLAGS.get(name, "")
+    code = FLAGS.get(name)
+    if not code:
+        return ""
+    return (f'<img class="fl" loading="lazy" width="20" height="15" alt="" '
+            f'src="https://flagcdn.com/w40/{code}.png">')
 
 
 def fetch(path):
@@ -467,7 +471,8 @@ TEMPLATE = """<!DOCTYPE html>
   table.stand td.team{text-align:left;font-weight:500;}
   table.stand td.pts{font-weight:700;}
   table.stand tr.nl-team td.team{color:var(--oranje);font-weight:700;}
-  .flag{margin-right:6px;}
+  .flag{margin-right:0;}
+  .fl{display:inline-block;width:20px;height:15px;border-radius:2px;margin-right:5px;vertical-align:-3px;object-fit:cover;box-shadow:0 0 0 .5px rgba(0,0,0,.18);}
   .matches{font-size:13.5px;}
   .match{display:grid;grid-template-columns:74px 1fr 56px;align-items:center;gap:6px;padding:6px 0;border-top:1px dashed var(--line);}
   .match:first-child{border-top:none;}
