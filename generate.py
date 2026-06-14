@@ -272,8 +272,20 @@ def build_groups(matches, standings):
         if g:
             group_matches.setdefault(g, []).append(m)
 
+    def _nl_in_group(g):
+        for e in tables.get(g, []):
+            if nl_name(e["team"]) == "Nederland":
+                return True
+        for m in group_matches[g]:
+            if nl_name(m.get("homeTeam")) == "Nederland" or nl_name(m.get("awayTeam")) == "Nederland":
+                return True
+        return False
+
+    # Groep van Nederland bovenaan, rest alfabetisch
+    ordered = sorted(group_matches, key=lambda g: (not _nl_in_group(g), g))
+
     html, played_count = [], 0
-    for g in sorted(group_matches):
+    for g in ordered:
         letter = g.replace("GROUP_", "")
         ms = sorted(group_matches[g], key=lambda x: x["utcDate"])
         played_count += sum(
@@ -438,7 +450,7 @@ TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WK 2026 · Speelschema & Uitslagen</title>
+<title>De Bookie · WK 2026 schema, uitslagen & wedtips</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -689,8 +701,8 @@ TEMPLATE = """<!DOCTYPE html>
 </nav>
 <div class="wrap">
   <header>
-    <div class="eyebrow">FIFA World Cup · Verenigde Staten — Canada — Mexico</div>
-    <h1>WK 2026<span class="accent">.</span> Speelschema &amp; uitslagen</h1>
+    <div class="eyebrow">De Bookie · AI-wedtips · WK 2026 · VS — Canada — Mexico</div>
+    <h1>WK 2026<span class="accent">.</span> Schema, uitslagen &amp; wedtips</h1>
     <div class="statusline">
       <span><span class="dot"></span><b>Toernooi loopt</b> · 11 juni — 19 juli</span>
       <span>Bijgewerkt: <b>__UPDATED__</b></span>
