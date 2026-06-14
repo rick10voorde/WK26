@@ -709,12 +709,6 @@ TEMPLATE = """<!DOCTYPE html>
       <span>Gespeeld: <b>__PLAYED__</b> van 104 wedstrijden</span>
     </div>
   </header>
-  <div class="legend">
-    <span><span class="pen-demo">2–0</span>&nbsp; uitslag (gespeeld)</span>
-    <span><b style="color:#B6BFB6;font-weight:600;">— : —</b>&nbsp; nog te spelen</span>
-    <span><span class="nl-demo">Nederland</span>&nbsp; wedstrijden van Oranje</span>
-    <span>Alle tijden zijn Nederlandse tijd</span>
-  </div>
   __TODAY__
   __BETS__
   __POULE__
