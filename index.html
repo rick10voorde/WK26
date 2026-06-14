@@ -10,7 +10,8 @@
   :root{--paper:#F4F6F2;--card:#FFF;--ink:#14201A;--ink-soft:#5C6A61;--line:#DDE3DA;--oranje:#F05A1A;--pen:#2244C8;--groen:#1E7A4C;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;}
-  .topnav{position:sticky;top:0;z-index:60;background:rgba(244,246,242,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;flex-wrap:wrap;}
+  .topnav{position:sticky;top:0;z-index:60;background:rgba(244,246,242,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--line);padding:10px 16px;}
+  .nav-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
   .nav-brand{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;text-decoration:none;color:var(--ink);}
   .nav-brand .accent{color:var(--oranje);}
   .nav-links{display:flex;gap:3px;flex-wrap:wrap;}
@@ -261,7 +262,7 @@
 </style>
 </head>
 <body>
-<nav class="topnav">
+<nav class="topnav"><div class="nav-inner">
   <a class="nav-brand" href="./index.html">De Bookie<span class="accent">.</span></a>
   <div class="nav-links">
     <a href="./index.html" class="active">Schema</a>
@@ -269,14 +270,14 @@
     <a href="./resultaten.html">Resultaten</a>
     <a href="./community.html">Word lid</a>
   </div>
-</nav>
+</div></nav>
 <div class="wrap">
   <header>
     <div class="eyebrow">De Bookie · AI-wedtips · WK 2026 · VS — Canada — Mexico</div>
     <h1>WK 2026<span class="accent">.</span> Schema, uitslagen &amp; wedtips</h1>
     <div class="statusline">
       <span><span class="dot"></span><b>Toernooi loopt</b> · 11 juni — 19 juli</span>
-      <span>Bijgewerkt: <b>14-06-2026 18:43</b></span>
+      <span>Bijgewerkt: <b>14-06-2026 20:02</b></span>
       <span>Gespeeld: <b>8</b> van 104 wedstrijden</span>
     </div>
   </header>
@@ -309,7 +310,7 @@
         <div class="t-when">19:00</div>
         <div class="t-teams"><span class="t-home">Duitsland <img class="fl" loading="lazy" width="20" height="15" alt="" src="https://flagcdn.com/w40/de.png"></span><span class="t-vs">—</span><span class="t-away"><img class="fl" loading="lazy" width="20" height="15" alt="" src="https://flagcdn.com/w40/cw.png"> Curaçao</span></div>
         <div class="t-meta">Groep E</div>
-        <span class="t-tbd">— : —</span>
+        <span class="t-score t-live">3–1 ●</span>
       </div>
       <div class="today-row t-nl">
         <div class="t-when">22:00</div>
@@ -531,7 +532,7 @@
       <div class="matches"><div class="match " data-key="Duitsland - Curaçao" data-ts="1781456400000">
       <div class="m-when"><b>14 jun</b>19:00</div>
       <div class="m-teams"><img class="fl" loading="lazy" width="20" height="15" alt="" src="https://flagcdn.com/w40/de.png"> Duitsland<br><img class="fl" loading="lazy" width="20" height="15" alt="" src="https://flagcdn.com/w40/cw.png"> Curaçao</div>
-      <div class="m-score tbd">— : —</div>
+      <div class="m-score live">3–1</div>
     </div><div class="match " data-key="Ivoorkust - Ecuador" data-ts="1781478000000">
       <div class="m-when"><b>15 jun</b>01:00</div>
       <div class="m-teams"><img class="fl" loading="lazy" width="20" height="15" alt="" src="https://flagcdn.com/w40/ci.png"> Ivoorkust<br><img class="fl" loading="lazy" width="20" height="15" alt="" src="https://flagcdn.com/w40/ec.png"> Ecuador</div>
