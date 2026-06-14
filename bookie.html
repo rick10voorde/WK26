@@ -233,11 +233,14 @@ function scrMatch(){
   const today=(DATA&&DATA.today)||[], up=(DATA&&DATA.upcoming)||[];
   const ODDS_H=48; // bookmakers zetten WK-markten ~1-2 dagen voor de aftrap online
   const hasOdds=(m)=>{ if(!m.kickoff) return true; return (new Date(m.kickoff).getTime()-Date.now())/3600000 <= ODDS_H; };
+  const byTime=(a,b)=>String(a.kickoff||"").localeCompare(String(b.kickoff||""));
+  const dayLbl=(m)=>{ const hh=parseInt(String(m.tijd||"").slice(0,2),10); return (hh<7?"Vannacht ":"Vandaag ")+(m.tijd||""); };
+  const todayS=today.slice().sort(byTime), upS=up.slice().sort(byTime);
   let h='<div class="screen on"><h2 class="q">Kies je WK-wedstrijd</h2><div class="q-sub">Vink één wedstrijd aan voor een single/builder, of meerdere voor een combi. Of pak gewoon "Alle wedstrijden vandaag".</div>';
   h+=optHtml({sel:S.scope==="alle",icon:ICON.globe,title:"Alle WK-wedstrijden vandaag",sub:today.length+" wedstrijden vandaag",dis:today.length===0,na:today.length===0?"Geen vandaag":null,attrs:'data-alle'});
-  today.forEach(m=>{ const av=hasOdds(m); h+=optHtml({sel:S.scope==="matches"&&S.matches.includes(m.key),icon:ICON.ball,title:m.key,sub:"Vandaag "+m.tijd+(m.groep?" · "+m.groep:""),dis:!av,na:av?null:"Odds binnenkort",multi:true,attrs:'data-match data-key="'+esc(m.key)+'"'}); });
+  todayS.forEach(m=>{ const av=hasOdds(m); h+=optHtml({sel:S.scope==="matches"&&S.matches.includes(m.key),icon:ICON.ball,title:m.key,sub:dayLbl(m)+(m.groep?" · "+m.groep:""),dis:!av,na:av?null:"Odds binnenkort",multi:true,attrs:'data-match data-key="'+esc(m.key)+'"'}); });
   if(up.length){ h+='<div class="q-sub" style="margin-top:14px;">Komende WK-wedstrijden <span style="opacity:.7;">· odds openen meestal 1-2 dagen voor de aftrap</span></div>';
-    up.slice(0,8).forEach(m=>{ const av=hasOdds(m); h+=optHtml({sel:S.scope==="matches"&&S.matches.includes(m.key),icon:ICON.cal,title:m.key,sub:(m.dag||"")+" "+m.tijd+(m.groep?" · "+m.groep:""),dis:!av,na:av?null:"Odds binnenkort",multi:true,attrs:'data-match data-key="'+esc(m.key)+'"'}); }); }
+    upS.slice(0,8).forEach(m=>{ const av=hasOdds(m); h+=optHtml({sel:S.scope==="matches"&&S.matches.includes(m.key),icon:ICON.cal,title:m.key,sub:(m.dag||"")+" "+m.tijd+(m.groep?" · "+m.groep:""),dis:!av,na:av?null:"Odds binnenkort",multi:true,attrs:'data-match data-key="'+esc(m.key)+'"'}); }); }
   const on = S.scope==="alle" || (S.scope==="matches"&&S.matches.length>=1);
   if(S.scope==="matches"&&S.matches.length>1) h+='<div class="note">'+S.matches.length+' wedstrijden geselecteerd — ideaal voor een combi.</div>';
   h+=navBar(null,"Volgende →",on)+'</div>';
