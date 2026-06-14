@@ -331,7 +331,7 @@ function slipHtml(b,expired){
   const legs=(b.legs||[]).map(l=>'<div class="leg"><div class="leg-match">'+esc(l.wedstrijd||"")+'</div><div class="leg-pick">'+esc(l.selection||l.market_name)+'</div>'+(l.explanation?'<div class="leg-why">'+esc(l.explanation)+'</div>':'')+(l.kans!=null?'<div class="leg-ev '+(l.ev>=0?'ev-pos':'ev-neg')+'">kans ~'+esc(l.kans)+'% · waarde '+(l.ev>=0?'+':'')+esc(l.ev)+'%</div>':'')+'<div class="leg-od">'+(typeof l.odds==="number"?l.odds.toFixed(2):esc(l.odds))+'</div></div>').join("");
   const created=b.created_at?new Date(b.created_at).toLocaleString("nl-NL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
   return '<div class="slip"><div class="slip-h"><div class="slip-title">'+esc(b.title||b.generated_bet_title||"WK-tip")+'</div>'
-    +'<div class="slip-tags"><span class="tag">'+esc(b.match_name)+'</span><span class="tag">'+esc(b.bet_type_label||b.bet_type)+'</span><span class="tag">'+esc(b.risk_label||b.risk_level)+'</span><span class="tag live">Opus 4.8 live</span></div></div>'
+    +'<div class="slip-tags"><span class="tag">'+esc(b.match_name)+'</span><span class="tag">'+esc(b.bet_type_label||b.bet_type)+'</span><span class="tag">'+esc(b.risk_label||b.risk_level)+'</span><span class="tag live">Live-analyse</span></div></div>'
     +(expired?'<div class="expired">Deze bet is verlopen. Odds en markten kunnen gewijzigd zijn.</div>':'')
     +legs
     +'<div class="slip-total"><b>Totale odd</b><span class="slip-bigod">'+(typeof b.total_odds==="number"?b.total_odds.toFixed(2):esc(b.total_odds))+'</span></div>'

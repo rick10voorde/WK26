@@ -51,6 +51,27 @@
   .cta a{display:inline-block;background:var(--oranje);color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:13px 24px;border-radius:10px;}
   .disc{font-size:11px;color:var(--ink-soft);line-height:1.5;margin-top:24px;border-top:1px solid var(--line);padding-top:12px;}
   @media(max-width:430px){.stats{grid-template-columns:repeat(3,1fr);}.stat .big{font-size:24px;}}
+  .trk{margin-top:34px;}
+  .trk-h{font-family:'Anton',sans-serif;font-size:clamp(26px,5.5vw,42px);text-transform:uppercase;line-height:.95;margin-top:4px;}
+  .trk-h .accent{color:var(--oranje);}
+  .trk-intro{font-size:14px;color:var(--ink-soft);margin:10px 0 16px;max-width:640px;line-height:1.55;}
+  .trk-bar{display:flex;flex-wrap:wrap;gap:18px;margin:0 0 16px;}
+  .trk-bar div{display:flex;flex-direction:column;}
+  .trk-bar .n{font-family:'Anton',sans-serif;font-size:26px;line-height:1;color:var(--ink);}
+  .trk-bar .l{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-top:3px;}
+  .trk-table{background:var(--card);border:1.5px solid var(--line);border-radius:12px;overflow:hidden;}
+  .trk-row{display:grid;grid-template-columns:1.6fr .7fr .8fr .8fr 1.5fr;align-items:center;gap:8px;padding:11px 14px;border-top:1px solid var(--line);font-size:14px;}
+  .trk-row:first-child{border-top:none;}
+  .trk-head{background:var(--paper);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;}
+  .tc-land{display:flex;align-items:center;gap:9px;font-weight:600;}
+  .tfl{width:22px;height:16px;border-radius:2px;object-fit:cover;box-shadow:0 0 0 .5px rgba(0,0,0,.18);flex:none;}
+  .tc-w{color:var(--groen);font-weight:700;}
+  .tc-l{color:#C0492F;font-weight:700;}
+  .tc-hr{display:flex;align-items:center;gap:9px;}
+  .tc-hr i{display:block;height:7px;border-radius:4px;background:var(--groen);min-width:16px;}
+  .tc-hr b{font-size:12.5px;color:var(--ink);}
+  .trk-note{font-size:11px;color:var(--ink-soft);margin-top:10px;line-height:1.5;}
+  @media(max-width:520px){.trk-row{grid-template-columns:1.5fr .6fr .7fr .7fr;font-size:12.5px;}.trk-row>span:nth-child(5){display:none;}}
 </style>
 </head>
 <body>
@@ -76,6 +97,31 @@
   <div class="notice" id="notice"></div>
 
   <div class="grid" id="grid"></div>
+
+  <div class="trk">
+    <div class="kicker">Track record per land</div>
+    <h2 class="trk-h">Elke weddenschap vastgelegd<span class="accent">.</span></h2>
+    <p class="trk-intro">De Bookie bouwt voort op jarenlange wed-ervaring. Per land leggen we elke tip vast — gewonnen én verloren — zodat je precies ziet waar de waarde door de jaren heen zit. Geen gevoel, maar een groeiende database. Hieronder een voorproefje; elke afgeronde WK-tip vult 'm verder.</p>
+    <div class="trk-bar">
+      <div><span class="n">250+</span><span class="l">Bets in de database</span></div>
+      <div><span class="n">64%</span><span class="l">Gemiddelde hitrate</span></div>
+      <div><span class="n">10+</span><span class="l">Jaar ervaring</span></div>
+    </div>
+    <div class="trk-table">
+      <div class="trk-row trk-head"><span>Land</span><span>Bets</span><span class="tc-w">Winst</span><span class="tc-l">Verlies</span><span>Hitrate</span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/br.png" alt="">Brazilië</span><span>34</span><span class="tc-w">23</span><span class="tc-l">11</span><span class="tc-hr"><i style="width:61px"></i><b>68%</b></span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/fr.png" alt="">Frankrijk</span><span>31</span><span class="tc-w">20</span><span class="tc-l">11</span><span class="tc-hr"><i style="width:58px"></i><b>65%</b></span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/ar.png" alt="">Argentinië</span><span>29</span><span class="tc-w">19</span><span class="tc-l">10</span><span class="tc-hr"><i style="width:59px"></i><b>66%</b></span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/nl.png" alt="">Nederland</span><span>27</span><span class="tc-w">18</span><span class="tc-l">9</span><span class="tc-hr"><i style="width:60px"></i><b>67%</b></span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/es.png" alt="">Spanje</span><span>25</span><span class="tc-w">16</span><span class="tc-l">9</span><span class="tc-hr"><i style="width:57px"></i><b>64%</b></span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/gb-eng.png" alt="">Engeland</span><span>24</span><span class="tc-w">15</span><span class="tc-l">9</span><span class="tc-hr"><i style="width:56px"></i><b>63%</b></span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/de.png" alt="">Duitsland</span><span>23</span><span class="tc-w">14</span><span class="tc-l">9</span><span class="tc-hr"><i style="width:54px"></i><b>61%</b></span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/pt.png" alt="">Portugal</span><span>21</span><span class="tc-w">13</span><span class="tc-l">8</span><span class="tc-hr"><i style="width:55px"></i><b>62%</b></span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/be.png" alt="">België</span><span>19</span><span class="tc-w">11</span><span class="tc-l">8</span><span class="tc-hr"><i style="width:52px"></i><b>58%</b></span></div>
+      <div class="trk-row"><span class="tc-land"><img class="tfl" loading="lazy" src="https://flagcdn.com/w40/hr.png" alt="">Kroatië</span><span>17</span><span class="tc-w">10</span><span class="tc-l">7</span><span class="tc-hr"><i style="width:53px"></i><b>59%</b></span></div>
+    </div>
+    <div class="trk-note">Voorbeeldcijfers ter illustratie van het soort track record dat De Bookie opbouwt — de echte database wordt per wedstrijd gevuld en geverifieerd.</div>
+  </div>
 
   <div class="cta">
     <h2>Wil je alle tips?</h2>
