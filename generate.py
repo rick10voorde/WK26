@@ -132,7 +132,7 @@ def ai_bets_block(today_matches, datum):
       <p class="bookie-intro">Laat De Bookie een WK-wedtip samenstellen. Kies via duidelijke stappen je wedstrijd, tickettype, markten en risico — Opus 4.8 zoekt live vorm, nieuws &amp; Unibet-markten en bouwt je bet. Met WhatsApp-deelknop en je eigen bet-historie.</p>
     </div>
     <div class="bookie-cta">
-      <a class="bookie-btn" href="./bookie.html">⚡ Open de WK-tipmachine →</a>
+      <a class="bookie-btn" href="./bookie.html">Open de WK-tipmachine →</a>
     </div>
     <div class="bookie-foot">Alle odds via Unibet · AI-inschatting, geen garantie · speel met mate · 18+</div>
   </section>'''
