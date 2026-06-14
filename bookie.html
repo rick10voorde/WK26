@@ -10,7 +10,8 @@
   :root{--paper:#F4F6F2;--card:#FFF;--ink:#14201A;--ink-soft:#5C6A61;--line:#DDE3DA;--oranje:#F05A1A;--pen:#2244C8;--groen:#1E7A4C;}
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   body{background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;}
-  .topnav{position:sticky;top:0;z-index:60;background:rgba(244,246,242,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;flex-wrap:wrap;}
+  .topnav{position:sticky;top:0;z-index:60;background:rgba(244,246,242,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--line);padding:10px 16px;}
+  .nav-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
   .nav-brand{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;text-decoration:none;color:var(--ink);}
   .nav-brand .accent{color:var(--oranje);}
   .nav-links{display:flex;gap:3px;flex-wrap:wrap;}
@@ -146,7 +147,7 @@
 </style>
 </head>
 <body>
-<nav class="topnav">
+<nav class="topnav"><div class="nav-inner">
   <a class="nav-brand" href="./index.html">De Bookie<span class="accent">.</span></a>
   <div class="nav-links">
     <a href="./index.html">Schema</a>
@@ -154,7 +155,7 @@
     <a href="./resultaten.html">Resultaten</a>
     <a href="./community.html">Word lid</a>
   </div>
-</nav>
+</div></nav>
 <div class="wrap">
   <header>
     <div class="brand">De Bookie<span class="accent">.</span><small>WK 2026 · AI-TIPMACHINE</small></div>
