@@ -118,6 +118,13 @@
   .mybets-link a{font-size:12.5px;color:var(--ink-soft);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
   .mybets-link a svg{width:15px;height:15px;}
   @media(max-width:480px){.leg-od{font-size:26px;}.slip-bigod{font-size:38px;}}
+  .notes{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px;line-height:1.4;resize:vertical;background:var(--card);color:var(--ink);box-sizing:border-box;}
+  .notes:focus{outline:2px solid var(--oranje);border-color:transparent;}
+  .optl{opacity:.6;font-weight:400;}
+  .optwrap{margin-bottom:20px;}
+  .optlabel{display:flex;align-items:center;gap:9px;margin:2px 2px 9px;}
+  .optnum{font-family:'Anton',sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);}
+  .optsub{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--oranje);background:rgba(240,90,26,.1);padding:3px 8px;border-radius:6px;}
 </style>
 </head>
 <body>
@@ -175,7 +182,7 @@ const ICON = {
 const app = document.getElementById("app");
 const stepsEl = document.getElementById("steps");
 let DATA=null, GROUPS=[], STEP=1, RESULT=null;
-const S = { scope:null, matches:[], matchKey:null, ticket:null, groups:[], risk:null, oddRange:null, legs:null };
+const S = { scope:null, matches:[], matchKey:null, ticket:null, groups:[], risk:null, oddRange:null, legs:null, notes:"" };
 const SINGLE = t => t==="single" || t==="builder";
 
 function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
@@ -301,14 +308,15 @@ function scrFinal(){
   RANGES.forEach(r=>{ h+='<button class="chip'+(S.oddRange===r?" sel":"")+'" data-rng="'+esc(r)+'">'+esc(r)+'</button>'; });
   h+='</div><div class="seclabel" style="margin-top:18px;">Aantal selecties</div><div class="chips" id="lgs">';
   legOpts.forEach(l=>{ h+='<button class="chip'+(S.legs===l?" sel":"")+'" data-lg="'+esc(l)+'">'+esc(l)+'</button>'; });
-  h+='</div><div class="navbar"><button class="btn btn-ghost" id="nbBack">← Terug</button><button class="btn btn-primary" id="go">'+ICON.bolt+' Analyseer mijn WK-bet</button></div></div>';
+  h+='</div><div class="seclabel" style="margin-top:18px;">Extra wensen <span class="optl">(optioneel)</span></div><textarea id="notes" class="notes" rows="2" placeholder="Bijv. veel goals verwacht, focus op de favoriet, of liever geen spelersmarkten">'+esc(S.notes||"")+'</textarea><div class="navbar"><button class="btn btn-ghost" id="nbBack">← Terug</button><button class="btn btn-primary" id="go">'+ICON.bolt+' Analyseer mijn WK-bet</button></div></div>';
   app.innerHTML=h;
   app.querySelectorAll('[data-rng]').forEach(el=>el.onclick=()=>{S.oddRange=el.getAttribute("data-rng");render();});
   app.querySelectorAll('[data-lg]').forEach(el=>el.onclick=()=>{S.legs=el.getAttribute("data-lg");render();});
   document.getElementById("nbBack").onclick=()=>{STEP=4;render();};
   document.getElementById("go").onclick=analyze;
+  var _nt=document.getElementById("notes"); if(_nt) _nt.oninput=function(){S.notes=_nt.value;};
 }
-const LOAD_MSG=["De Bookie analyseert de WK-wedstrijden…","Beschikbare Unibet NL-markten worden gecontroleerd…","Vorm, blessures, opstellingen en odds worden meegenomen…","Beste bet wordt samengesteld…"];
+const LOAD_MSG=["De Bookie analyseert de WK-wedstrijden…","Beschikbare Unibet NL-markten worden gecontroleerd…","Vorm, blessures, opstellingen en odds worden meegenomen…","Drie sterke opties worden samengesteld…"];
 function scrLoading(){
   let i=0;
   app.innerHTML='<div class="screen on"><div class="load"><div class="spin"></div><div class="load-txt">De Bookie denkt na</div><div class="load-sub" id="lsub">'+LOAD_MSG[0]+'</div></div></div>';
@@ -325,14 +333,14 @@ function matchesParam(){
 async function analyze(){
   STEP=6; render();
   try{
-    const res = await api({action:"analyze", selection:{ticket_type:S.ticket, risk:S.risk, market_groups:S.groups, odd_range:rangeParam(), legs:legsParam()}, matches:matchesParam()});
+    const res = await api({action:"analyze", selection:{ticket_type:S.ticket, risk:S.risk, market_groups:S.groups, odd_range:rangeParam(), legs:legsParam(), notes:S.notes||""}, matches:matchesParam()});
     clearInterval(window._lt);
     if(res.usage) renderUsage(res.usage);
-    if(res.error || !res.bet){ app.innerHTML='<div class="screen on"><div class="empty">'+esc(res.error||"Er ging iets mis — probeer een andere wedstrijd of markt.")+'</div><div class="navbar"><button class="btn btn-primary" onclick="STEP=1;render()">← Andere wedstrijd kiezen</button></div></div>'; drawSteps(0); return; }
-    RESULT=res.bet; STEP=7; render();
+    if(res.error || !(res.bets&&res.bets.length)){ app.innerHTML='<div class="screen on"><div class="empty">'+esc(res.error||"Er ging iets mis — probeer een andere wedstrijd of markt.")+'</div><div class="navbar"><button class="btn btn-primary" onclick="STEP=1;render()">← Andere wedstrijd kiezen</button></div></div>'; drawSteps(0); return; }
+    RESULT=res.bets; STEP=7; render();
   }catch(e){ clearInterval(window._lt); app.innerHTML='<div class="screen on"><div class="empty">Kon De Bookie niet bereiken. Probeer opnieuw.</div><div class="navbar"><button class="btn btn-primary" onclick="STEP=5;render()">← Terug</button></div></div>'; }
 }
-function slipHtml(b,expired){
+function slipHtml(b,expired,i){ i=i||0;
   const legs=(b.legs||[]).map(l=>'<div class="leg"><div class="leg-match">'+esc(l.wedstrijd||"")+'</div><div class="leg-pick">'+esc(l.selection||l.market_name)+'</div>'+(l.explanation?'<div class="leg-why">'+esc(l.explanation)+'</div>':'')+(l.kans!=null?'<div class="leg-ev '+(l.ev>=0?'ev-pos':'ev-neg')+'">kans ~'+esc(l.kans)+'% · waarde '+(l.ev>=0?'+':'')+esc(l.ev)+'%</div>':'')+'<div class="leg-od">'+(typeof l.odds==="number"?l.odds.toFixed(2):esc(l.odds))+'</div></div>').join("");
   const created=b.created_at?new Date(b.created_at).toLocaleString("nl-NL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
   return '<div class="slip"><div class="slip-h"><div class="slip-title">'+esc(b.title||b.generated_bet_title||"WK-tip")+'</div>'
@@ -343,22 +351,34 @@ function slipHtml(b,expired){
     +(b.reasoning?'<div class="slip-why">'+esc(b.reasoning)+'</div>':'')
     +'<div class="slip-meta"><span>via '+esc(b.bron||"Unibet")+'</span><span>'+created+'</span></div>'
     +'<div class="slip-actions">'
-    +'<button class="btn btn-wa" id="waCopy">'+ICON.chat+' Kopieer WhatsApp</button>'
-    +'<button class="btn btn-line" id="waShare">'+ICON.share+' Deel via WhatsApp</button>'
-    +'<button class="btn btn-ghost" id="cpLink">'+ICON.link2+' Kopieer link</button>'
-    +'<button class="btn btn-ghost" id="newBet">'+ICON.plus+' Nieuwe WK-bet</button>'
-    +'<button class="btn btn-ghost btn-wide" id="seeMine">'+ICON.folder+' Mijn eerdere bets</button>'
+    +'<button class="btn btn-wa" id="waCopy'+i+'">'+ICON.chat+' Kopieer WhatsApp</button>'
+    +'<button class="btn btn-line" id="waShare'+i+'">'+ICON.share+' Deel via WhatsApp</button>'
+    +'<button class="btn btn-ghost" id="cpLink'+i+'">'+ICON.link2+' Kopieer link</button>'
     +'</div></div>';
 }
-function wireSlip(b){
+function wireSlipShare(b,i){ i=i||0;
   const wa=b.share_text||"";
-  document.getElementById("waCopy").onclick=()=>navigator.clipboard.writeText(wa).then(()=>toast("WhatsApp-bericht gekopieerd"));
-  document.getElementById("waShare").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent(wa),"_blank");
-  document.getElementById("cpLink").onclick=()=>{const url=location.origin+location.pathname+"?bet="+(b.slug||"");navigator.clipboard.writeText(url).then(()=>toast("Link gekopieerd"));};
-  document.getElementById("newBet").onclick=()=>{S.scope=S.matchKey=S.ticket=S.risk=S.oddRange=S.legs=null;S.matches=[];S.groups=[];STEP=1;render();};
+  document.getElementById("waCopy"+i).onclick=()=>navigator.clipboard.writeText(wa).then(()=>toast("WhatsApp-bericht gekopieerd"));
+  document.getElementById("waShare"+i).onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent(wa),"_blank");
+  document.getElementById("cpLink"+i).onclick=()=>{const url=location.origin+location.pathname+"?bet="+(b.slug||"");navigator.clipboard.writeText(url).then(()=>toast("Link gekopieerd"));};
+}
+function actionBarHtml(){ return '<div class="navbar"><button class="btn btn-primary" id="newBet">'+ICON.plus+' Nieuwe WK-bet</button><button class="btn btn-ghost btn-wide" id="seeMine">'+ICON.folder+' Mijn eerdere bets</button></div>'; }
+function wireActions(){
+  document.getElementById("newBet").onclick=()=>{S.scope=S.matchKey=S.ticket=S.risk=S.oddRange=S.legs=null;S.matches=[];S.groups=[];S.notes="";STEP=1;render();};
   document.getElementById("seeMine").onclick=()=>{STEP=8;render();};
 }
-function scrResult(){ drawSteps(0); app.innerHTML='<div class="screen on">'+slipHtml(RESULT,false)+'</div>'; wireSlip(RESULT); }
+function scrResult(){
+  drawSteps(0);
+  const bets=Array.isArray(RESULT)?RESULT:[RESULT];
+  const labels=["Sterkste +EV","Alternatief","Outsider"];
+  let h='<div class="screen on">';
+  if(bets.length>1) h+='<h2 class="q">3 opties voor je</h2><div class="q-sub">Gegenereerd op basis van je keuzes\u2014 kies of deel de bet die jou het beste ligt.</div>';
+  bets.forEach((b,i)=>{ h+='<div class="optwrap">'+(bets.length>1?'<div class="optlabel"><span class="optnum">Optie '+(i+1)+'</span>'+(labels[i]?'<span class="optsub">'+labels[i]+'</span>':'')+'</div>':'')+slipHtml(b,false,i)+'</div>'; });
+  h+=actionBarHtml()+'</div>';
+  app.innerHTML=h;
+  bets.forEach((b,i)=>wireSlipShare(b,i));
+  wireActions();
+}
 async function scrMyBets(){
   drawSteps(0);
   app.innerHTML='<div class="screen on"><h2 class="q">Mijn WK-bets</h2><div class="q-sub">Opgeslagen op dit apparaat.</div><div id="mbList"><div class="empty">Laden…</div></div><div class="navbar"><button class="btn btn-primary" id="back2">'+ICON.plus+' Nieuwe WK-bet</button></div></div>';
@@ -381,7 +401,7 @@ async function openSlug(slug){
     const legs=(r.bet_legs||[]).map(l=>({wedstrijd:"",selection:l.selection,market_name:l.market_name,odds:Number(l.odds),explanation:l.explanation}));
     const expired = r.status!=="active" || (r.expires_at && new Date(r.expires_at).getTime()<Date.now());
     const b={title:r.generated_bet_title,match_name:r.match_name,bet_type_label:r.bet_type,risk_label:r.risk_level,total_odds:Number(r.total_odds),legs,reasoning:r.reasoning,bron:(r.unibet_market_snapshot&&r.unibet_market_snapshot.bron)||"Unibet",created_at:r.created_at,share_text:r.share_text,slug:r.share_slug};
-    RESULT=b; drawSteps(0); app.innerHTML='<div class="screen on">'+slipHtml(b,expired)+'</div>'; wireSlip(b);
+    RESULT=b; drawSteps(0); app.innerHTML='<div class="screen on">'+slipHtml(b,expired,0)+actionBarHtml()+'</div>'; wireSlipShare(b,0); wireActions();
   }catch(e){ toast("Fout bij laden"); STEP=8; render(); }
 }
 async function init(){
