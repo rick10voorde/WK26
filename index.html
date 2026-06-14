@@ -112,6 +112,10 @@
   .ab-share{font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--groen);background:#fff;color:var(--groen);cursor:pointer;}
   .ab-share:hover{background:var(--groen);color:#fff;}
   .ab-empty{font-size:13px;color:#5C6A61;padding:6px 0;}
+  .ab-loading{display:flex;align-items:center;gap:12px;padding:10px 2px;font-size:13px;color:#5C6A61;}
+  .ab-loading small{color:#8a968d;}
+  .ab-spin{width:20px;height:20px;border-radius:50%;border:3px solid #E2EAE2;border-top-color:var(--groen);animation:abspin .8s linear infinite;flex:none;}
+  @keyframes abspin{to{transform:rotate(360deg);}}
   /* ── mobiel ── */
   @media (max-width:560px){
     .wrap{padding:18px 12px 48px;}
@@ -184,7 +188,7 @@
     <h1>WK 2026<span class="accent">.</span> Speelschema &amp; uitslagen</h1>
     <div class="statusline">
       <span><span class="dot"></span><b>Toernooi loopt</b> · 11 juni — 19 juli</span>
-      <span>Bijgewerkt: <b>14-06-2026 07:29</b></span>
+      <span>Bijgewerkt: <b>14-06-2026 07:54</b></span>
       <span>Gespeeld: <b>7</b> van 104 wedstrijden</span>
     </div>
   </header>
@@ -217,7 +221,7 @@
         <div class="t-when">06:00</div>
         <div class="t-teams">🇦🇺 Australië — Turkije 🇹🇷</div>
         <div class="t-meta">Groep D</div>
-        <span class="t-score t-live">1–0 ●</span>
+        <span class="t-score t-live">2–0 ●</span>
       </div>
       <div class="today-row">
         <div class="t-when">19:00</div>
@@ -244,8 +248,8 @@
         <span class="t-time">04:00</span>
       </div>
     
-    <div class="ai-bets" data-aibets="{&quot;datum&quot;: &quot;zondag 14 jun&quot;, &quot;gegenereerd&quot;: &quot;2026-06-14T07:28:58.552914+02:00&quot;, &quot;bron&quot;: &quot;Unibet (UK)&quot;, &quot;wedstrijden&quot;: [{&quot;key&quot;: &quot;Duitsland - Curaçao&quot;, &quot;tijd&quot;: &quot;19:00&quot;}, {&quot;key&quot;: &quot;Nederland - Japan&quot;, &quot;tijd&quot;: &quot;22:00&quot;}, {&quot;key&quot;: &quot;Ivoorkust - Ecuador&quot;, &quot;tijd&quot;: &quot;01:00&quot;}, {&quot;key&quot;: &quot;Zweden - Tunesië&quot;, &quot;tijd&quot;: &quot;04:00&quot;}], &quot;bets&quot;: {&quot;banker&quot;: {&quot;type&quot;: &quot;banker&quot;, &quot;wedstrijd&quot;: &quot;Duitsland - Curaçao&quot;, &quot;markt&quot;: &quot;Duitsland wint&quot;, &quot;odds&quot;: 1.03, &quot;kans&quot;: &quot;~97%&quot;, &quot;uitleg&quot;: &quot;Duitsland is favoriet tegen Curaçao met odds van 1.03; de laagste odds van vandaag betekent het hoogste vertrouwen in deze uitkomst.&quot;, &quot;bron&quot;: &quot;Unibet (UK)&quot;}, &quot;builder&quot;: {&quot;type&quot;: &quot;builder&quot;, &quot;wedstrijd&quot;: &quot;Nederland - Japan&quot;, &quot;selecties&quot;: [{&quot;markt&quot;: &quot;Nederland wint&quot;, &quot;odds&quot;: 2.0}, {&quot;markt&quot;: &quot;Gelijkspel&quot;, &quot;odds&quot;: 3.6}], &quot;combi_odds&quot;: 7.2, &quot;uitleg&quot;: &quot;Nederland is favoriet (2.0) maar Japan is sterk (3.8 voor winst); deze twee uitkomsten dekken de meest waarschijnlijke scenario's af.&quot;, &quot;bron&quot;: &quot;Unibet (UK)&quot;}, &quot;combi&quot;: {&quot;type&quot;: &quot;combi&quot;, &quot;selecties&quot;: [{&quot;wedstrijd&quot;: &quot;Duitsland - Curaçao&quot;, &quot;markt&quot;: &quot;Duitsland wint&quot;, &quot;odds&quot;: 1.03}, {&quot;wedstrijd&quot;: &quot;Zweden - Tunesië&quot;, &quot;markt&quot;: &quot;Zweden wint&quot;, &quot;odds&quot;: 1.91}], &quot;combi_odds&quot;: 1.97, &quot;uitleg&quot;: &quot;Twee sterke favorieten (1.03 × 1.91 = 1.97 totaal) uit verschillende groepen met redelijk rendement bij winst.&quot;, &quot;bron&quot;: &quot;Unibet (UK)&quot;}, &quot;longshot&quot;: {&quot;type&quot;: &quot;longshot&quot;, &quot;selecties&quot;: [{&quot;wedstrijd&quot;: &quot;Ivoorkust - Ecuador&quot;, &quot;markt&quot;: &quot;Ivoorkust wint&quot;, &quot;odds&quot;: 3.4}], &quot;combi_odds&quot;: 3.4, &quot;uitleg&quot;: &quot;Ivoorkust tegen Ecuador is evenwichtig maar Ivoorkust heeft tegen neutrale tegenstander kansen; 3.4 odds biedt speelbare waarde voor een durf-bet.&quot;, &quot;bron&quot;: &quot;Unibet (UK)&quot;}}}">
-      <div class="ai-bets-head">🤖 AI-bets <span class="ai-bets-sub">· kies een soort</span></div>
+    <div class="ai-bets" data-aicfg="{&quot;url&quot;: &quot;https://jjdpqzwvckubqqpuneup.supabase.co/functions/v1/ai-bet&quot;, &quot;key&quot;: &quot;sb_publishable_V5vkJ6vDVjdbekgaVl7Hjg_6zAFXN17&quot;, &quot;datum&quot;: &quot;zondag 14 jun&quot;, &quot;wedstrijden&quot;: [{&quot;key&quot;: &quot;Duitsland - Curaçao&quot;, &quot;home_nl&quot;: &quot;Duitsland&quot;, &quot;away_nl&quot;: &quot;Curaçao&quot;, &quot;home_en&quot;: &quot;Germany&quot;, &quot;away_en&quot;: &quot;Curaçao&quot;, &quot;tijd&quot;: &quot;19:00&quot;}, {&quot;key&quot;: &quot;Nederland - Japan&quot;, &quot;home_nl&quot;: &quot;Nederland&quot;, &quot;away_nl&quot;: &quot;Japan&quot;, &quot;home_en&quot;: &quot;Netherlands&quot;, &quot;away_en&quot;: &quot;Japan&quot;, &quot;tijd&quot;: &quot;22:00&quot;}, {&quot;key&quot;: &quot;Ivoorkust - Ecuador&quot;, &quot;home_nl&quot;: &quot;Ivoorkust&quot;, &quot;away_nl&quot;: &quot;Ecuador&quot;, &quot;home_en&quot;: &quot;Ivory Coast&quot;, &quot;away_en&quot;: &quot;Ecuador&quot;, &quot;tijd&quot;: &quot;01:00&quot;}, {&quot;key&quot;: &quot;Zweden - Tunesië&quot;, &quot;home_nl&quot;: &quot;Zweden&quot;, &quot;away_nl&quot;: &quot;Tunesië&quot;, &quot;home_en&quot;: &quot;Sweden&quot;, &quot;away_en&quot;: &quot;Tunisia&quot;, &quot;tijd&quot;: &quot;04:00&quot;}]}">
+      <div class="ai-bets-head">🤖 AI-bets <span class="ai-bets-sub">· live analyse op aanvraag</span></div>
       <div class="ai-bets-menu">
         <button class="ai-chip" type="button" data-bt="banker">🛡️ Veilige tip</button>
         <button class="ai-chip" type="button" data-bt="builder">🏗️ Bet builder</button>
@@ -253,7 +257,7 @@
         <button class="ai-chip" type="button" data-bt="longshot">🎲 Verrassing</button>
       </div>
       <div class="ai-bets-panel" id="ai-bets-panel" hidden></div>
-      <div class="ai-bets-disc">AI-suggesties met Unibet (UK)-odds · geen garantie, wed met mate</div>
+      <div class="ai-bets-disc">Opus 4.8 zoekt live vorm, nieuws &amp; odds (~20s) · geen garantie, wed met mate</div>
     </div>
   </div>
   
@@ -392,7 +396,7 @@
     </div><div class="match " data-key="Australië - Turkije" data-ts="1781409600000">
       <div class="m-when"><b>14 jun</b>06:00</div>
       <div class="m-teams">🇦🇺 Australië<br>🇹🇷 Turkije<div class="chips" data-chips="Australië - Turkije"></div></div>
-      <div class="m-score live">1–0</div>
+      <div class="m-score live">2–0</div>
     </div><div class="match " data-key="Verenigde Staten - Australië" data-ts="1781895600000">
       <div class="m-when"><b>19 jun</b>21:00</div>
       <div class="m-teams">🇺🇸 Verenigde Staten<br>🇦🇺 Australië<div class="chips" data-chips="Verenigde Staten - Australië"></div></div>
@@ -1022,10 +1026,10 @@
 <script>
 (function(){
   const box=document.querySelector('.ai-bets'); if(!box) return;
-  let DATA={}; try{ DATA=JSON.parse(box.getAttribute('data-aibets')); }catch(e){ return; }
-  const bets=DATA.bets||{};
+  let CFG={}; try{ CFG=JSON.parse(box.getAttribute('data-aicfg')); }catch(e){ return; }
   const panel=document.getElementById('ai-bets-panel');
   const labels={banker:'🛡️ Veilige tip',builder:'🏗️ Bet builder',combi:'🔗 Combi van de dag',longshot:'🎲 Verrassing'};
+  let busy=false;
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
   function od(n){ return (typeof n==='number')? n.toFixed(2): esc(n); }
   function selList(items, withMatch){
@@ -1033,9 +1037,7 @@
       +(withMatch?('<b>'+esc(s.wedstrijd)+'</b> — '):'')+esc(s.markt)
       +'</span><span class="ab-od">'+od(s.odds)+'</span></li>').join('')+'</ul>';
   }
-  function render(t){
-    const b=bets[t];
-    if(!b){ panel.innerHTML='<div class="ab-empty">Geen '+labels[t].replace(/^[^ ]+ /,'').toLowerCase()+' voor vandaag.</div>'; panel.hidden=false; return; }
+  function renderBet(t,b){
     let h='<div class="ab-title">'+labels[t]+'</div>';
     if(t==='banker'){
       h+='<div class="ab-match">'+esc(b.wedstrijd)+'</div>';
@@ -1050,8 +1052,8 @@
       h+='<div class="ab-total">Samen <b>'+od(b.combi_odds)+'</b></div>';
     }
     if(b.uitleg) h+='<div class="ab-why">'+esc(b.uitleg)+'</div>';
-    h+='<div class="ab-foot"><span class="ab-bron">via '+esc(b.bron||'Unibet')+'</span><button class="ab-share" type="button">📋 Deel</button></div>';
-    panel.innerHTML=h; panel.hidden=false;
+    h+='<div class="ab-foot"><span class="ab-bron">via '+esc(b.bron||'Unibet')+' · Opus 4.8 live</span><button class="ab-share" type="button">📋 Deel</button></div>';
+    panel.innerHTML=h;
     const sb=panel.querySelector('.ab-share');
     if(sb) sb.addEventListener('click',()=>{
       navigator.clipboard.writeText(shareText(t,b)).then(
@@ -1060,7 +1062,7 @@
     });
   }
   function shareText(t,b){
-    let x='🤖 '+labels[t]+' ('+(DATA.datum||'')+')\n';
+    let x='🤖 '+labels[t]+' ('+(CFG.datum||'')+')\n';
     if(t==='banker'){ x+=b.wedstrijd+'\n'+b.markt+' @ '+od(b.odds)+'\n'; }
     else if(t==='builder'){ x+=b.wedstrijd+'\n'+b.selecties.map(s=>'• '+s.markt+' @ '+od(s.odds)).join('\n')+'\nSamen @ '+od(b.combi_odds)+'\n'; }
     else { x+=b.selecties.map(s=>'• '+s.wedstrijd+': '+s.markt+' @ '+od(s.odds)).join('\n')+'\nSamen @ '+od(b.combi_odds)+'\n'; }
@@ -1068,12 +1070,22 @@
     x+='(AI-suggestie, geen garantie · '+(b.bron||'Unibet')+')';
     return x;
   }
+  async function zoek(t){
+    if(busy) return; busy=true;
+    box.querySelectorAll('.ai-chip').forEach(c=>c.classList.remove('actief'));
+    const chip=box.querySelector('.ai-chip[data-bt="'+t+'"]'); if(chip) chip.classList.add('actief');
+    panel.hidden=false;
+    panel.innerHTML='<div class="ab-loading"><span class="ab-spin"></span><div>Opus 4.8 zoekt live vorm, nieuws &amp; odds…<br><small>dit kan ~20 seconden duren</small></div></div>';
+    try{
+      const r=await fetch(CFG.url,{method:'POST',headers:{'apikey':CFG.key,'Authorization':'Bearer '+CFG.key,'Content-Type':'application/json'},body:JSON.stringify({type:t,datum:CFG.datum,wedstrijden:CFG.wedstrijden})});
+      const j=await r.json().catch(()=>({error:'Ongeldig antwoord'}));
+      if(!r.ok || j.error || !j.bet){ panel.innerHTML='<div class="ab-empty">'+esc(j.error||('Fout '+r.status))+'</div>'; busy=false; return; }
+      renderBet(t,j.bet);
+    }catch(e){ panel.innerHTML='<div class="ab-empty">Kon de AI niet bereiken. Probeer het zo nog eens.</div>'; }
+    busy=false;
+  }
   box.querySelectorAll('.ai-chip').forEach(ch=>{
-    ch.addEventListener('click',()=>{
-      box.querySelectorAll('.ai-chip').forEach(c=>c.classList.remove('actief'));
-      ch.classList.add('actief');
-      render(ch.getAttribute('data-bt'));
-    });
+    ch.addEventListener('click',()=>zoek(ch.getAttribute('data-bt')));
   });
 })();
 </script>
