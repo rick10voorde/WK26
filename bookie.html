@@ -77,7 +77,10 @@
   .leg-match{grid-column:1;font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;}
   .leg-pick{grid-column:1;font-size:15px;font-weight:700;}
   .leg-why{grid-column:1;font-size:12px;color:var(--ink-soft);margin-top:3px;line-height:1.4;}
-  .leg-od{grid-column:2;grid-row:1 / span 3;align-self:center;font-family:'Caveat',cursive;font-size:30px;font-weight:700;color:var(--pen);}
+  .leg-ev{grid-column:1;font-size:11px;font-weight:700;margin-top:4px;letter-spacing:.01em;}
+  .ev-pos{color:var(--groen);}
+  .ev-neg{color:var(--ink-soft);}
+  .leg-od{grid-column:2;grid-row:1 / span 4;align-self:center;font-family:'Caveat',cursive;font-size:30px;font-weight:700;color:var(--pen);}
   .slip-total{display:flex;justify-content:space-between;align-items:center;margin:0 18px;padding:13px 0;border-top:2px solid var(--ink);}
   .slip-total b{font-size:12.5px;text-transform:uppercase;letter-spacing:.1em;}
   .slip-bigod{font-family:'Caveat',cursive;font-size:46px;font-weight:700;color:var(--oranje);line-height:.7;}
@@ -305,7 +308,7 @@ async function analyze(){
   }catch(e){ clearInterval(window._lt); app.innerHTML='<div class="screen on"><div class="empty">Kon De Bookie niet bereiken. Probeer opnieuw.</div><div class="navbar"><button class="btn btn-primary" onclick="STEP=5;render()">← Terug</button></div></div>'; }
 }
 function slipHtml(b,expired){
-  const legs=(b.legs||[]).map(l=>'<div class="leg"><div class="leg-match">'+esc(l.wedstrijd||"")+'</div><div class="leg-pick">'+esc(l.selection||l.market_name)+'</div>'+(l.explanation?'<div class="leg-why">'+esc(l.explanation)+'</div>':'')+'<div class="leg-od">'+(typeof l.odds==="number"?l.odds.toFixed(2):esc(l.odds))+'</div></div>').join("");
+  const legs=(b.legs||[]).map(l=>'<div class="leg"><div class="leg-match">'+esc(l.wedstrijd||"")+'</div><div class="leg-pick">'+esc(l.selection||l.market_name)+'</div>'+(l.explanation?'<div class="leg-why">'+esc(l.explanation)+'</div>':'')+(l.kans!=null?'<div class="leg-ev '+(l.ev>=0?'ev-pos':'ev-neg')+'">kans ~'+esc(l.kans)+'% · waarde '+(l.ev>=0?'+':'')+esc(l.ev)+'%</div>':'')+'<div class="leg-od">'+(typeof l.odds==="number"?l.odds.toFixed(2):esc(l.odds))+'</div></div>').join("");
   const created=b.created_at?new Date(b.created_at).toLocaleString("nl-NL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
   return '<div class="slip"><div class="slip-h"><div class="slip-title">'+esc(b.title||b.generated_bet_title||"WK-tip")+'</div>'
     +'<div class="slip-tags"><span class="tag">'+esc(b.match_name)+'</span><span class="tag">'+esc(b.bet_type_label||b.bet_type)+'</span><span class="tag">'+esc(b.risk_label||b.risk_level)+'</span><span class="tag live">Opus 4.8 live</span></div></div>'
